@@ -1,0 +1,17 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+dist/
+wheels/
+*.egg-info
+.ruff_cache
+
+# Virtual environments
+.venv
+
+# Generated Protobuf files
+src/tak_simulator/proto/*
+!src/tak_simulator/proto/__init__.py
+
+# Other
+.vscode
