@@ -66,6 +66,11 @@ class Emulator:
             data = encode_tak_message(tak_message)
             sock.sendto(data, self.multicast_addr)
 
+            tak_action = self.handle_action(t)
+
+            if tak_action is not None:
+                pass
+
             await asyncio.sleep(3)  # TODO
 
     def tak_message(self, t: float) -> TakMessage:
@@ -143,6 +148,10 @@ class Emulator:
         x = (t - t1) / (t2 - t1)
 
         return tuple(a + (b - a) * x for a, b in zip(p1, p2))
+
+    
+    def handle_action(self, t: float):
+        pass
 
 
 async def handle(
