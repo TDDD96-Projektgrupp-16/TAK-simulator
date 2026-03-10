@@ -18,6 +18,8 @@ from tak_simulator.proto.cotevent_pb2 import CotEvent
 from tak_simulator.config import EmulatorConfig
 from tak_simulator.time_keeper import TimeKeeper
 
+import logging
+logger = logging.getLogger(__name__)
 
 @dataclass
 class Emulator:
