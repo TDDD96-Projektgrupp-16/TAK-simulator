@@ -20,3 +20,7 @@ dev = [
 
 [tool.uv]
 package = true
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["src/tak_simulator/proto/*"]
