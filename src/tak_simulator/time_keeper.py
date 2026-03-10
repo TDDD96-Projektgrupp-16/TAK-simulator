@@ -1,5 +1,8 @@
 import time
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class TimeKeeper:
     _real_time_at_last_unpause: float

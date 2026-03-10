@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from dataclasses import fields
 from typing import get_origin, get_args, Self, Any
 
+import logging
+logger = logging.getLogger(__name__)
 
 def _parse_dataclass(cls, data):
     if data is None:
