@@ -13,4 +13,12 @@ uv run python-grpc-tools-protoc \
 
 # Run simulator
 uv run tak_simulator examples/scenario.json
+
+# Run tests
+uv run pytest tests/
+
+# run tests and report missing coverage
+uv run pytest tests/ \
+    --cov=src/tak_simulator \
+    --cov-report=term-missing
 ```
