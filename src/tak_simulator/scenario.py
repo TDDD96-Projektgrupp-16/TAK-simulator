@@ -10,6 +10,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def export_scenario_schema():
+    print(json.dumps(Scenario.model_json_schema(), indent=2))
+
+
 def load_scenario(file: int | str) -> Scenario:
     with open(file) as f:
         return Scenario.model_validate(json.load(f))

@@ -10,7 +10,7 @@ dependencies = ["pydantic>=2.12.5"]
 tak_simulator = "tak_simulator.main:main"
 atak_uid = "tak_simulator.uid:generate_believable_atak_uid"
 wintak_uid = "tak_simulator.uid:generate_believable_wintak_uid"
-validate = "tak_simulator.scenario:validate"
+scenario_schema = "tak_simulator.scenario:export_scenario_schema"
 
 [dependency-groups]
 dev = ["grpcio-tools>=1.78.0", "pytest>=9.0.2", "pytest-cov>=7.0.0"]
