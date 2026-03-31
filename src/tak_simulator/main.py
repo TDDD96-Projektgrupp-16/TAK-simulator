@@ -28,8 +28,8 @@ async def run(scenario: Scenario, host: str):
     time_keeper = TimeKeeper()
 
     async with asyncio.TaskGroup() as tg:
-        for config in scenario.emulators:
-            emulator = Emulator(config, time_keeper, host)
+        for options in scenario.emulators:
+            emulator = Emulator(options, time_keeper, host)
             tg.create_task(emulator.run())
 
         time_keeper.unpause()
