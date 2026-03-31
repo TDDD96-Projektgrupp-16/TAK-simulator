@@ -4,19 +4,16 @@ version = "0.1.0"
 description = "Tool to simulate multiple TAK clients"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = ["pydantic>=2.12.5"]
 
 [project.scripts]
 tak_simulator = "tak_simulator.main:main"
 atak_uid = "tak_simulator.uid:generate_believable_atak_uid"
 wintak_uid = "tak_simulator.uid:generate_believable_wintak_uid"
+validate = "tak_simulator.scenario:validate"
 
 [dependency-groups]
-dev = [
-    "grpcio-tools>=1.78.0",
-    "pytest>=9.0.2",
-    "pytest-cov>=7.0.0",
-]
+dev = ["grpcio-tools>=1.78.0", "pytest>=9.0.2", "pytest-cov>=7.0.0"]
 
 [tool.uv]
 package = true

@@ -4,7 +4,7 @@
     },
     "emulators": [
         {
-            "type_": "a-f-G-U-C",
+            "type": "a-f-G-U-C",
             "access": "Undefined",
             "uid": "ANDROID-180a4dc924264cf1",
             "callsign": "Algot Johansson",
@@ -36,7 +36,7 @@
             ]
         },
         {
-            "type_": "a-f-G-U-C-I",
+            "type": "a-f-G-U-C-I",
             "access": "Undefined",
             "uid": "S-1-5-21-71047030-3540295278-26651015-1001",
             "callsign": "Arvid Ramsberg",
