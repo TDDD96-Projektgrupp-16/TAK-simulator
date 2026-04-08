@@ -20,3 +20,4 @@ src/tak_simulator/proto/*
 
 # Other
 .vscode
+.zed
