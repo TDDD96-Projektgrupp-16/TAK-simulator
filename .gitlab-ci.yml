@@ -1,0 +1,22 @@
+image: python:3.14-slim
+
+variables:
+    UV_CACHE_DIR: .uv-cache
+
+cache:
+    key:
+        files:
+            - uv.lock
+    paths:
+        - $UV_CACHE_DIR
+
+stages:
+    - test
+
+run_tests:
+    stage: test
+    before_script:
+        - pip install uv
+    script:
+        - uv sync --locked
+        - uv run pytest ./tests/
