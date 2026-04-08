@@ -1,9 +1,9 @@
 from typing import Any
 import asyncio
-import time
 import socket
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 
 from tak_simulator.proto.track_pb2 import Track
 from tak_simulator.proto.takv_pb2 import Takv
@@ -18,6 +18,8 @@ from tak_simulator.proto.cotevent_pb2 import CotEvent
 from tak_simulator.config import EmulatorConfig
 from tak_simulator.time_keeper import TimeKeeper
 
+from tak_simulator.xml_encoder import encode_chat_message, encode_position_from_scenario
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -28,6 +30,7 @@ class Emulator:
     host: str
 
     multicast_addr: Any = ("239.2.3.1", 6969)  # TODO
+    simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     async def run(self):
         server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
@@ -64,14 +67,17 @@ class Emulator:
         while True:
             t = self.time_keeper.get_time()
             tak_message = self.tak_message(t)
+            xml_message = self.xml_message(t)
 
             data = encode_tak_message(tak_message)
             sock.sendto(data, self.multicast_addr)
 
+            logger.debug("outgoing CoT XML: %s", xml_message)
+
             await asyncio.sleep(3)  # TODO
 
     def tak_message(self, t: float) -> TakMessage:
-        send_time = int(time.time() * 1000)
+        send_time = int((self.simulation_start_time.timestamp() + self.time_keeper.get_time()) * 1000)
 
         lat, lon = self.get_position(t)
 
@@ -128,6 +134,7 @@ class Emulator:
             cotEvent=cot_event,
         )
 
+
     def get_position(self, t: float) -> tuple[float, float]:
         i = 0
         while i < len(self.config.path) and t > self.config.path[i][0]:
@@ -145,6 +152,40 @@ class Emulator:
         x = (t - t1) / (t2 - t1)
 
         return tuple(a + (b - a) * x for a, b in zip(p1, p2))
+
+
+    def xml_message(self, t: float) -> str:
+        return encode_position_from_scenario(
+            emulator_data=self.config.__dict__,
+            time_keeper=self.time_keeper,
+            simulation_start_time=self.simulation_start_time,
+            path_index=-1,
+            stale_seconds=75,
+            endpoint=self.endpoint,
+            battery=100,
+            speed=None,
+            course=None,
+            geopointsrc="GPS",
+            altsrc="GPS",
+            xml_detail=f'<uid Droid="{self.config.callsign}"/>',
+        )
+
+
+    def chat_xml_message(self, message: str, t: float) -> str:
+        lat, lon = self.get_position(t)
+
+        return encode_chat_message(
+            uid=self.config.uid,
+            sender_callsign=self.config.callsign,
+            chatroom=self.config.callsign,
+            message_id=f"{self.config.uid}-{int((self.simulation_start_time.timestamp() + t) * 1000)}",
+            point=(lat, lon),
+            time_keeper=self.time_keeper,
+            simulation_start_time=self.simulation_start_time,
+            chat_group_id=self.config.uid,
+            chat_group_uid0=self.config.uid,
+            remarks=message,
+        )
 
 
 async def handle(
