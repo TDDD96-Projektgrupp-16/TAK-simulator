@@ -2,6 +2,7 @@ image: python:3.14-slim
 
 variables:
     UV_CACHE_DIR: .uv-cache
+    REPORT_PATH: report.xml
 
 cache:
     key:
@@ -19,4 +20,8 @@ run_tests:
         - pip install uv
     script:
         - uv sync --locked
-        - uv run pytest ./tests/
+        - uv run pytest tests/ --junitxml=$REPORT_PATH
+    artifacts:
+        when: always
+        reports:
+            junit: $REPORT_PATH
