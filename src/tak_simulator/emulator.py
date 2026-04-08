@@ -1,25 +1,23 @@
-from typing import Any
 import asyncio
-import time
 import socket
-
+import time
 from dataclasses import dataclass
-
-from tak_simulator.proto.track_pb2 import Track
-from tak_simulator.proto.takv_pb2 import Takv
-from tak_simulator.proto.status_pb2 import Status
-from tak_simulator.proto.precisionlocation_pb2 import PrecisionLocation
-from tak_simulator.proto.group_pb2 import Group
-from tak_simulator.proto.contact_pb2 import Contact
-from tak_simulator.proto.detail_pb2 import Detail
-from tak_simulator.proto.takmessage_pb2 import TakMessage
-from tak_simulator.proto.cotevent_pb2 import CotEvent
+from typing import Any
 
 from tak_simulator.scenario import EmulatorOptions
 from tak_simulator.time_keeper import TimeKeeper
 
-import logging
+from tak_simulator.proto.contact_pb2 import Contact
+from tak_simulator.proto.cotevent_pb2 import CotEvent
+from tak_simulator.proto.detail_pb2 import Detail
+from tak_simulator.proto.group_pb2 import Group
+from tak_simulator.proto.precisionlocation_pb2 import PrecisionLocation
+from tak_simulator.proto.status_pb2 import Status
+from tak_simulator.proto.takmessage_pb2 import TakMessage
+from tak_simulator.proto.takv_pb2 import Takv
+from tak_simulator.proto.track_pb2 import Track
 
+import logging
 logger = logging.getLogger(__name__)
 
 
