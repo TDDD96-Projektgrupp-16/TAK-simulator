@@ -15,5 +15,8 @@ wheels/
 src/tak_simulator/proto/*
 !src/tak_simulator/proto/__init__.py
 
+# Generated json schema
+*.schema.json
+
 # Other
 .vscode

@@ -14,6 +14,9 @@ uv run python-grpc-tools-protoc \
 # Run simulator
 uv run tak_simulator examples/scenario.json
 
+# Export scenario json schema
+uv run scenario_schema > scenario.schema.json
+
 # Run tests
 uv run pytest tests/
 

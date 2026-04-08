@@ -1,23 +1,14 @@
 {
+    "$schema": "../scenario.schema.json",
     "metadata": {
         "description": "Algot är sen till möte 🫣"
     },
     "emulators": [
         {
-            "type_": "a-f-G-U-C",
-            "access": "Undefined",
-            "uid": "ANDROID-180a4dc924264cf1",
+            "like": "atak",
             "callsign": "Algot Johansson",
-            "how": "m-g",
-            "group": {
-                "name": "Cyan",
-                "role": "Team Member"
-            },
             "takv": {
-                "device": "SAMSUNG SM-S901B",
-                "platform": "ATAK-CIV",
-                "os": "36",
-                "version": "5.6.0.12 [9c9a5897](playstore).1769863102-CIV"
+                "device": "SAMSUNG SM-S901B"
             },
             "path": [
                 [0, [58.4135, 15.5629444444]],
@@ -36,20 +27,13 @@
             ]
         },
         {
-            "type_": "a-f-G-U-C-I",
-            "access": "Undefined",
-            "uid": "S-1-5-21-71047030-3540295278-26651015-1001",
+            "like": "wintak",
             "callsign": "Arvid Ramsberg",
-            "how": "h-e",
             "group": {
-                "name": "Cyan",
                 "role": "Team Leader"
             },
             "takv": {
-                "device": "LENOVO LNVNB161216",
-                "platform": "WinTAK-CIV",
-                "os": "Microsoft Windows 11 Home",
-                "version": "5.6.0.148"
+                "device": "LENOVO LNVNB161216"
             },
             "path": [
                 [0, [58.3980597222, 15.5767777778]]

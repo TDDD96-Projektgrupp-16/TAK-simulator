@@ -1,35 +1,35 @@
 import asyncio
 import argparse
 
-from tak_simulator.config import Config
+from tak_simulator.scenario import load_scenario, Scenario
 from tak_simulator.time_keeper import TimeKeeper
 from tak_simulator.util import host_ip
 from tak_simulator.emulator import Emulator
-from tak_simulator.logging_conf import logging_setup 
+from tak_simulator.logging_conf import logging_setup
 
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 def main():
     args = get_args()
 
     logging_setup(args.log)
 
-    with open(args.filename) as f:
-        config = f.read()
+    scenario = load_scenario(args.filename)
 
-    config = Config.from_str(config)
     host = host_ip()
 
-    asyncio.run(run(config, host))
+    asyncio.run(run(scenario, host))
 
 
-async def run(config: Config, host: str):
+async def run(scenario: Scenario, host: str):
     time_keeper = TimeKeeper()
 
     async with asyncio.TaskGroup() as tg:
-        for conf in config.emulators:
-            emulator = Emulator(conf, time_keeper, host)
+        for options in scenario.emulators:
+            emulator = Emulator(options, time_keeper, host)
             tg.create_task(emulator.run())
 
         time_keeper.unpause()
