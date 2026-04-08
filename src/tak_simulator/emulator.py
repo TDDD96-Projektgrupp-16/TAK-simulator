@@ -18,6 +18,7 @@ from tak_simulator.proto.takv_pb2 import Takv
 from tak_simulator.proto.track_pb2 import Track
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

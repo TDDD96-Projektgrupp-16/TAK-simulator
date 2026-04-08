@@ -13,7 +13,13 @@ wintak_uid = "tak_simulator.uid:generate_believable_wintak_uid"
 scenario_schema = "tak_simulator.scenario:export_scenario_schema"
 
 [dependency-groups]
-dev = ["grpcio-tools>=1.78.0", "pytest>=9.0.2", "pytest-cov>=7.0.0"]
+dev = [
+    "grpcio-tools>=1.78.0",
+    "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.9",
+]
 
 [tool.uv]
 package = true

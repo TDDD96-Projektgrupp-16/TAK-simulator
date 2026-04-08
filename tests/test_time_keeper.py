@@ -1,5 +1,3 @@
-import pytest
-
 from tak_simulator.time_keeper import TimeKeeper
 
 

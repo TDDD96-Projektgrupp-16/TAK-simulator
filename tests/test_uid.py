@@ -1,5 +1,3 @@
-import pytest
-
 from tak_simulator.uid import (
     generate_believable_atak_uid,
     generate_believable_wintak_uid,
