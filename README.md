@@ -14,11 +14,21 @@ uv run python-grpc-tools-protoc \
 # Run simulator
 uv run tak_simulator examples/scenario.json
 
+# Export scenario json schema
+uv run scenario_schema > scenario.schema.json
+
 # Run tests
 uv run pytest tests/
 
-# run tests and report missing coverage
+# Run tests and report missing coverage
 uv run pytest tests/ \
     --cov=src/tak_simulator \
     --cov-report=term-missing
+
+# Install git hook
+uv run pre-commit install
+
+# Run formatter
+./format.sh # Linux / Mac
+./format.bat # Windows
 ```
