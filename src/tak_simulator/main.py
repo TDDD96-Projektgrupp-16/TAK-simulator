@@ -1,13 +1,12 @@
-import asyncio
 import argparse
+import asyncio
+import logging
 
-from tak_simulator.scenario import load_scenario, Scenario
-from tak_simulator.time_keeper import TimeKeeper
-from tak_simulator.util import host_ip
 from tak_simulator.emulator import Emulator
 from tak_simulator.logging_conf import logging_setup
-
-import logging
+from tak_simulator.scenario import Scenario, load_scenario
+from tak_simulator.time_keeper import TimeKeeper
+from tak_simulator.util import host_ip
 
 logger = logging.getLogger(__name__)
 
