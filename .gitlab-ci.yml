@@ -3,13 +3,17 @@ image: python:3.14-slim
 variables:
     UV_CACHE_DIR: .uv-cache
     REPORT_PATH: report.xml
+    HF_HOME: ${CI_PROJECT_DIR}/.model-cache
 
 cache:
-    key:
-        files:
-            - uv.lock
-    paths:
-        - $UV_CACHE_DIR
+    - key:
+          files:
+              - uv.lock
+      paths:
+          - $UV_CACHE_DIR
+    - key: "ai-models"
+      paths:
+          - .model-cache/
 
 stages:
     - test
@@ -17,8 +21,10 @@ stages:
 run_tests:
     stage: test
     before_script:
+        - apt-get update && apt-get install -y --no-install-recommends build-essential cmake
         - pip install uv
     script:
+        - mkdir -p .model-cache
         - uv sync --locked
         - uv run pytest tests/ --junitxml=$REPORT_PATH
     artifacts:
