@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
 from datetime import UTC, datetime, timedelta
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from xml.sax.saxutils import escape
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -16,11 +15,12 @@ _DEFAULT_SIMULATION_START_TIME: datetime | None = None
 
 
 # ---------------------------------------------------
-# Helpers for XML encoding and CoT event construction 
+# Helpers for XML encoding and CoT event construction
 # ---------------------------------------------------
 
+
 def _escape_attr(value: str) -> str:
-    return escape(value, {'"': '&quot;'})
+    return escape(value, {'"': "&quot;"})
 
 
 def _format_float(value: float) -> str:
@@ -81,6 +81,7 @@ def _with_tcp_xml_framing(xml_body: str) -> str:
 # ---------------------------------------------------------
 # Validation models for scenario data and CoT event details
 # ---------------------------------------------------------
+
 
 class GroupModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -197,11 +198,12 @@ class CotEventModel(BaseModel):
         if value.tzinfo is None:
             raise ValueError("datetime must be timezone-aware")
         return value
-    
+
 
 # ---------------------------------------------------
 # Encoding and building CoT events from scenario data
 # ---------------------------------------------------
+
 
 def encode_contact(contact: ContactModel) -> str:
     return _self_closing_tag(
@@ -259,7 +261,10 @@ def encode_track(track: TrackModel) -> str:
         "track",
         [
             ("speed", _format_float(track.speed) if track.speed is not None else None),
-            ("course", _format_float(track.course) if track.course is not None else None),
+            (
+                "course",
+                _format_float(track.course) if track.course is not None else None,
+            ),
         ],
     )
 
@@ -289,16 +294,20 @@ def encode_chat_detail(chat: ChatDetailModel) -> str:
     if chat.remarks is not None:
         children.append(encode_remarks(chat.remarks))
 
-    return _open_tag(
-        "__chat",
-        [
-            ("id", chat.id),
-            ("chatroom", chat.chatroom),
-            ("senderCallsign", chat.sender_callsign),
-            ("groupOwner", "true" if chat.group_owner else "false"),
-            ("messageId", chat.message_id),
-        ],
-    ) + "".join(children) + "</__chat>"
+    return (
+        _open_tag(
+            "__chat",
+            [
+                ("id", chat.id),
+                ("chatroom", chat.chatroom),
+                ("senderCallsign", chat.sender_callsign),
+                ("groupOwner", "true" if chat.group_owner else "false"),
+                ("messageId", chat.message_id),
+            ],
+        )
+        + "".join(children)
+        + "</__chat>"
+    )
 
 
 def encode_detail(detail: CotDetailModel | None) -> str:

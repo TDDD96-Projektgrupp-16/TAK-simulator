@@ -8,13 +8,9 @@ Run manual chat encoding with:
 """
 
 from datetime import UTC, datetime
-import pytest
 from xml.etree import ElementTree as ET
 
-from tak_simulator.xml_encoder import (
-    encode_chat_message,
-    encode_chat_message_for_tcp
-)
+from tak_simulator.xml_encoder import encode_chat_message, encode_chat_message_for_tcp
 
 
 def test_encode_chat_message() -> None:
