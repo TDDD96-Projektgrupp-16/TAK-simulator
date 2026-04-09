@@ -67,12 +67,9 @@ class Emulator:
         while True:
             t = self.time_keeper.get_time()
             tak_message = self.tak_message(t)
-            xml_message = self.xml_message(t)
 
             data = encode_tak_message(tak_message)
             sock.sendto(data, self.multicast_addr)
-
-            logger.debug("outgoing CoT XML: %s", xml_message)
 
             await asyncio.sleep(3)  # TODO
 
