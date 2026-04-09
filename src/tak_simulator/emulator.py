@@ -1,7 +1,8 @@
 import asyncio
-import socket
 import time
-from dataclasses import dataclass
+import socket
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from typing import Any
 
 from tak_simulator.scenario import EmulatorOptions
@@ -29,6 +30,7 @@ class Emulator:
     host: str
 
     multicast_addr: Any = ("239.2.3.1", 6969)  # TODO
+    simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     async def run(self):
         server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
