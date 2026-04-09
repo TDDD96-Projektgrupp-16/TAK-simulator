@@ -4,6 +4,7 @@ variables:
     UV_CACHE_DIR: .uv-cache
     REPORT_PATH: report.xml
     HF_HOME: ${CI_PROJECT_DIR}/.model-cache
+    HF_TOKEN: $HF_TOKEN
 
 cache:
     - key:
