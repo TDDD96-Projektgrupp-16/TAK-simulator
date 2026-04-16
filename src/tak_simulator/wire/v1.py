@@ -2,6 +2,22 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from tak_simulator.wire.models import (
+    Contact,
+    CotDetail,
+    CotEvent,
+    ExtensionDetail,
+    Group,
+    MessageContext,
+    Point,
+    PrecisionLocation,
+    Status,
+    TakControl,
+    TakEnvelope,
+    TakVersion,
+    Track,
+)
+
 from tak_simulator.proto.cotevent_pb2 import CotEvent as ProtoCotEvent
 from tak_simulator.proto.contact_pb2 import Contact as ProtoContact
 from tak_simulator.proto.detail_pb2 import Detail as ProtoDetail
@@ -15,25 +31,47 @@ from tak_simulator.proto.takmessage_pb2 import TakMessage as ProtoTakMessage
 from tak_simulator.proto.takv_pb2 import Takv as ProtoTakv
 from tak_simulator.proto.track_pb2 import Track as ProtoTrack
 
-from tak_simulator.cot_event import (
-    Contact,
-    CotDetail,
-    CotEvent,
-    ExtensionDetail,
-    MessageContext,
-    Point,
-    PrecisionLocation,
-    ProtobufTakCodec,
-    Status,
-    TakControl,
-    TakEnvelope,
-    TakVersion,
-    Track,
-    WireFormat,
-    Group,
-)
-
+FRAME_PREFIX = b"\xbf\001\xbf"
 UNKNOWN_NUMERIC_VALUE = 999999.0
+
+
+class V1Codec:
+    def decode(self, data: bytes, *, unframe: bool = True) -> TakEnvelope:
+        raw = _unframe(data) if unframe else data
+
+        proto = ProtoTakMessage()
+        proto.ParseFromString(raw)
+
+        return TakEnvelope(
+            event=_decode_event(proto.cotEvent) if proto.HasField("cotEvent") else None,
+            control=(
+                _decode_control(proto.takControl)
+                if proto.HasField("takControl")
+                else None
+            ),
+            context=MessageContext(origin_format=1),
+        )
+
+    def encode(self, message: TakEnvelope, *, frame: bool = True) -> bytes:
+        proto = ProtoTakMessage()
+
+        if message.control is not None:
+            proto.takControl.CopyFrom(_encode_control(message.control))
+
+        if message.event is not None:
+            proto.cotEvent.CopyFrom(_encode_event(message.event))
+
+        raw = proto.SerializeToString()
+
+        return _frame(raw) if frame else raw
+
+
+def _frame(raw: bytes) -> bytes:
+    return bytes(FRAME_PREFIX + raw)
+
+
+def _unframe(data: bytes) -> bytes:
+    return data.removeprefix(FRAME_PREFIX)
 
 
 def _dt_to_ms(value: datetime) -> int:
@@ -48,49 +86,12 @@ def _none_if_empty(value: str) -> str | None:
     return value or None
 
 
-def _maybe_unframe_v1(payload: bytes) -> bytes:
-    # Placeholder: strip TAK v1 transport framing here if present.
-    return payload
+def _none_if_unknown_numeric(value: float) -> float | None:
+    return None if value == UNKNOWN_NUMERIC_VALUE else value
 
 
-def _maybe_frame_v1(payload: bytes) -> bytes:
-    # Placeholder: add TAK v1 transport framing here if needed.
-    return payload
-
-
-class ProtobufTakCodecImpl(ProtobufTakCodec):
-    def can_decode(self, payload: bytes) -> bool:
-        # Real implementation should inspect TAK v1 framing/header.
-        return True
-
-    def decode(self, payload: bytes) -> TakEnvelope:
-        raw = _maybe_unframe_v1(payload)
-
-        proto = ProtoTakMessage()
-        proto.ParseFromString(raw)
-
-        return TakEnvelope(
-            event=_decode_event(proto.cotEvent) if proto.HasField("cotEvent") else None,
-            control=_decode_control(proto.takControl)
-            if proto.HasField("takControl")
-            else None,
-            context=MessageContext(
-                wire_format=WireFormat.PROTOBUF_V1,
-                protocol_version=1,
-                transport_framing="tak_v1",
-            ),
-        )
-
-    def encode(self, message: TakEnvelope) -> bytes:
-        proto = ProtoTakMessage()
-
-        if message.control is not None:
-            proto.takControl.CopyFrom(_encode_control(message.control))
-
-        if message.event is not None:
-            proto.cotEvent.CopyFrom(_encode_event(message.event))
-
-        return _maybe_frame_v1(proto.SerializeToString())
+def _decode_access(value: str) -> str:
+    return value or "Undefined"
 
 
 def _decode_control(proto: ProtoTakControl) -> TakControl:
@@ -127,12 +128,12 @@ def _decode_event(proto: ProtoCotEvent) -> CotEvent:
         point=Point(
             lat=proto.lat,
             lon=proto.lon,
-            hae=proto.hae,
-            ce=proto.ce,
-            le=proto.le,
+            hae=_none_if_unknown_numeric(proto.hae),
+            ce=_none_if_unknown_numeric(proto.ce),
+            le=_none_if_unknown_numeric(proto.le),
         ),
         detail=_decode_detail(proto.detail) if proto.HasField("detail") else None,
-        access=_none_if_empty(proto.access),
+        access=_decode_access(proto.access),
         caveat=_none_if_empty(proto.caveat),
         releasable_to=_none_if_empty(proto.releasableTo),
         qos=_none_if_empty(proto.qos),
@@ -153,10 +154,9 @@ def _encode_event(event: CotEvent) -> ProtoCotEvent:
         hae=event.point.hae if event.point.hae is not None else UNKNOWN_NUMERIC_VALUE,
         ce=event.point.ce if event.point.ce is not None else UNKNOWN_NUMERIC_VALUE,
         le=event.point.le if event.point.le is not None else UNKNOWN_NUMERIC_VALUE,
+        access=event.access if event.access is not None else "Undefined",
     )
 
-    if event.access not in (None, "", "Undefined"):  # TODO
-        proto.access = event.access
     if event.caveat is not None:
         proto.caveat = event.caveat
     if event.releasable_to is not None:
