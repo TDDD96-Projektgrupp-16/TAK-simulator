@@ -20,6 +20,10 @@ run_tests:
         - pip install uv
     script:
         - uv sync --locked
+        - uv run python-grpc-tools-protoc \
+            --proto_path=proto \
+            --python_out=src/tak_simulator/proto \
+            proto/*.proto
         - uv run pytest tests/ --junitxml=$REPORT_PATH
     artifacts:
         when: always
