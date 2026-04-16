@@ -1,23 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
-
-
-class WireFormat(str, Enum):
-    XML_V0 = "xml_v0"
-    PROTOBUF_V1 = "protobuf_v1"
 
 
 @dataclass(slots=True)
 class MessageContext:
     """Metadata discovered during decode or chosen before encode."""
 
-    wire_format: WireFormat | None = None
-    protocol_version: int | None = None
-    transport_framing: str | None = None
+    origin_format: int | None = None
 
 
 @dataclass(slots=True)
@@ -128,72 +119,3 @@ class TakEnvelope:
     event: CotEvent | None = None
     control: TakControl | None = None
     context: MessageContext = field(default_factory=MessageContext)
-
-
-class TakCodec(ABC):
-    """Codec boundary between wire formats and the shared domain model."""
-
-    wire_format: WireFormat
-
-    @abstractmethod
-    def can_decode(self, payload: bytes) -> bool:
-        """Return True when this codec recognizes the payload."""
-
-    @abstractmethod
-    def decode(self, payload: bytes) -> TakEnvelope:
-        """Decode wire bytes into the shared TAK abstraction."""
-
-    @abstractmethod
-    def encode(self, message: TakEnvelope) -> bytes:
-        """Encode the shared TAK abstraction into wire bytes."""
-
-
-class TakCodecRegistry:
-    """Select codecs without coupling callers to XML/protobuf details."""
-
-    def __init__(self, codecs: list[TakCodec]):
-        self._codecs = codecs
-
-    def codec_for_payload(self, payload: bytes) -> TakCodec:
-        for codec in self._codecs:
-            if codec.can_decode(payload):
-                return codec
-        raise ValueError("No TAK codec matched the payload")
-
-    def codec_for_format(self, wire_format: WireFormat) -> TakCodec:
-        for codec in self._codecs:
-            if codec.wire_format == wire_format:
-                return codec
-        raise ValueError(f"No TAK codec registered for format {wire_format}")
-
-    def decode(self, payload: bytes) -> TakEnvelope:
-        return self.codec_for_payload(payload).decode(payload)
-
-    def encode(self, message: TakEnvelope, wire_format: WireFormat) -> bytes:
-        return self.codec_for_format(wire_format).encode(message)
-
-
-class XmlCotCodec(TakCodec):
-    wire_format = WireFormat.XML_V0
-
-    def can_decode(self, payload: bytes) -> bool:
-        raise NotImplementedError
-
-    def decode(self, payload: bytes) -> TakEnvelope:
-        raise NotImplementedError
-
-    def encode(self, message: TakEnvelope) -> bytes:
-        raise NotImplementedError
-
-
-class ProtobufTakCodec(TakCodec):
-    wire_format = WireFormat.PROTOBUF_V1
-
-    def can_decode(self, payload: bytes) -> bool:
-        raise NotImplementedError
-
-    def decode(self, payload: bytes) -> TakEnvelope:
-        raise NotImplementedError
-
-    def encode(self, message: TakEnvelope) -> bytes:
-        raise NotImplementedError
