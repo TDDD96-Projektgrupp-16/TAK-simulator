@@ -11,8 +11,8 @@ def main():
     args = get_args()
     logging_setup(args.log)
 
-    c = TAK(args.filename)
-    c.start()
+    app = TAK(args.filename)
+    app.start()
 
 
 def get_args():
