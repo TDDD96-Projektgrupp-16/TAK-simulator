@@ -41,6 +41,8 @@ class Emulator:
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     async def run(self):
+        logger.info("started emulator with callsign: " + self.options.callsign)
+
         server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
         addr, port = server.sockets[0].getsockname()
         self.endpoint = f"{self.host}:{port}:tcp"
