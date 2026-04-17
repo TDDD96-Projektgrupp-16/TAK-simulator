@@ -4,6 +4,7 @@ from tak_simulator.logging_conf import logging_setup
 from tak_simulator.tak import TAK
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
