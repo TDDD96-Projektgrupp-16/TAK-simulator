@@ -1,13 +1,11 @@
 import asyncio
+import logging
 import time
-import socket
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, List, Tuple
 
-from tak_simulator.scenario import EmulatorOptions
-from tak_simulator.time_keeper import TimeKeeper
-
+from tak_simulator.network_handler import NetworkHandler, Server
 from tak_simulator.proto.contact_pb2 import Contact
 from tak_simulator.proto.cotevent_pb2 import CotEvent
 from tak_simulator.proto.detail_pb2 import Detail
@@ -17,8 +15,8 @@ from tak_simulator.proto.status_pb2 import Status
 from tak_simulator.proto.takmessage_pb2 import TakMessage
 from tak_simulator.proto.takv_pb2 import Takv
 from tak_simulator.proto.track_pb2 import Track
-
-import logging
+from tak_simulator.scenario import EmulatorOptions
+from tak_simulator.time_keeper import TimeKeeper
 
 logger = logging.getLogger(__name__)
 
@@ -29,39 +27,30 @@ class Emulator:
     time_keeper: TimeKeeper
     host: str
 
-    multicast_addr: Any = ("239.2.3.1", 6969)  # TODO
+    multicast_addr: Tuple[str, int] = ("239.2.3.1", 6969)  # TODO
+    servers: List[Server] = field(
+        default_factory=lambda: [
+            Server(
+                "192.71.171.115",
+                "./certs/ca.pem",
+                "./certs/client.pem",
+                "./certs/client.key",
+            )
+        ]
+    )
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     async def run(self):
         server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
-
         addr, port = server.sockets[0].getsockname()
         self.endpoint = f"{self.host}:{port}:tcp"
 
-        sock = socket.socket(
-            socket.AF_INET,
-            socket.SOCK_DGRAM,
-            socket.IPPROTO_UDP,
-        )
-
-        sock.bind((self.host, 0))
-
-        sock.setsockopt(
-            socket.IPPROTO_IP,
-            socket.IP_MULTICAST_IF,
-            socket.inet_aton(self.host),
-        )
-
-        sock.setsockopt(
-            socket.IPPROTO_IP,
-            socket.IP_MULTICAST_TTL,
-            64,
-        )
-
-        sock.setsockopt(
-            socket.IPPROTO_IP,
-            socket.IP_MULTICAST_LOOP,
-            1,
+        logger.info(f"Server started on {self.endpoint}")
+        self.connection = await NetworkHandler.create_connection(
+            self.multicast_addr[0],
+            self.multicast_addr[1],
+            self.dataReceived,
+            self.servers,
         )
 
         while True:
@@ -69,9 +58,12 @@ class Emulator:
             tak_message = self.tak_message(t)
 
             data = encode_tak_message(tak_message)
-            sock.sendto(data, self.multicast_addr)
+            self.connection.send_all(data)
 
             await asyncio.sleep(3)  # TODO
+
+    def dataReceived(self, data: bytes, addr: Tuple[str | Any, int]) -> None:
+        logger.debug(f"Received data from {addr}")
 
     def tak_message(self, t: float) -> TakMessage:
         send_time = int(time.time() * 1000)
