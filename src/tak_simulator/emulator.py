@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from tak_simulator.scenario import EmulatorOptions, ScenarioEvent
-from tak_simulator.scenario_scheduler import ScenarioScheduler
+from tak_simulator.scenario_scheduler import ScenarioScheduler, ScheduledEvent
 from tak_simulator.time_keeper import TimeKeeper
 
 from tak_simulator.proto.contact_pb2 import Contact
@@ -37,10 +37,12 @@ class Emulator:
     endpoint: str = field(init=False, default="")
     sock: socket.socket | None = field(init=False, default=None)
     server: asyncio.AbstractServer | None = field(init=False, default=None)
+    publish_position_event: ScheduledEvent | None = field(init=False, default=None)
+    is_connected: bool = field(init=False, default=True)
 
-    async def run(self):
+    async def run(self) -> None:
         logger.info("started emulator with callsign: %s", self.options.callsign)
-        self.server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
+        self.server = await asyncio.start_server(handle_tcp_connection, "0.0.0.0")  # TODO
 
         addr, port = self.server.sockets[0].getsockname()
         self.endpoint = f"{self.host}:{port}:tcp"
@@ -71,7 +73,7 @@ class Emulator:
             1,
         )
 
-        self.scheduler.schedule_recurring(
+        self.publish_position_event = self.scheduler.schedule_recurring(
             start_time=0.0,
             interval=3.0,
             callback=self.publish_position,
@@ -92,11 +94,19 @@ class Emulator:
             len(self.options.events),
         )
 
-        await asyncio.Future()
+        assert self.server is not None
+        await self.server.serve_forever()
 
     async def publish_position(self) -> None:
         if self.sock is None:
             logger.warning("Emulator %s has no socket yet", self.options.callsign)
+            return
+
+        if not self.is_connected:
+            logger.debug(
+                "Skipping position publish for disconnected emulator %s",
+                self.options.callsign,
+            )
             return
 
         t = self.time_keeper.get_time()
@@ -105,28 +115,56 @@ class Emulator:
         self.sock.sendto(data, self.multicast_addr)
 
     async def handle_scenario_event(self, event: ScenarioEvent) -> None:
+        current_time = self.time_keeper.get_time()
+
         if event.event_type == "chat":
+            if not self.is_connected:
+                logger.info(
+                    "Skipping scenario chat event for disconnected emulator %s at t=%.3f",
+                    self.options.callsign,
+                    current_time,
+                )
+                return
+
             logger.info(
                 "Scenario chat event for %s at t=%.3f: %s",
                 self.options.callsign,
-                self.time_keeper.get_time(),
+                current_time,
                 event.message,
             )
             return
 
         if event.event_type == "connect":
+            if self.is_connected:
+                logger.info(
+                    "%s is already connected at t=%.3f",
+                    self.options.callsign,
+                    current_time,
+                )
+                return
+
+            self.is_connected = True
             logger.info(
                 "Scenario connect event for %s at t=%.3f",
                 self.options.callsign,
-                self.time_keeper.get_time(),
+                current_time,
             )
             return
 
         if event.event_type == "disconnect":
+            if not self.is_connected:
+                logger.info(
+                    "%s is already disconnected at t=%.3f",
+                    self.options.callsign,
+                    current_time,
+                )
+                return
+
+            self.is_connected = False
             logger.info(
                 "Scenario disconnect event for %s at t=%.3f",
                 self.options.callsign,
-                self.time_keeper.get_time(),
+                current_time,
             )
             return
 
@@ -207,12 +245,12 @@ class Emulator:
         return tuple(a + (b - a) * x for a, b in zip(p1, p2))
 
 
-async def handle(
+async def handle_tcp_connection(
     reader: asyncio.StreamReader,
     writer: asyncio.StreamWriter,
 ):
     raw = await reader.read()
-    print(f"got message {raw=}")
+    logger.info("got message raw=%r", raw)
 
     writer.close()
     await writer.wait_closed()

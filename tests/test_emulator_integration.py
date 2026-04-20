@@ -25,6 +25,9 @@ class FakeSocket:
 class FakeServer:
     sockets = [SimpleNamespace(getsockname=lambda: ("127.0.0.1", 5000))]
 
+    async def serve_forever(self):
+        await asyncio.Future()
+
 
 def build_scenario_with_event() -> Scenario:
     return Scenario.model_validate(
