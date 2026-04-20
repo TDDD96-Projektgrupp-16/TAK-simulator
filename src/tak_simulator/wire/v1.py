@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime
 
-from tak_simulator.wire.exceptions import DecodeError, EncodeError
+from tak_simulator.wire.exceptions import DecodeError
 from tak_simulator.wire.models import (
     Contact,
     CotDetail,
@@ -157,23 +157,6 @@ def _decode_event(proto: ProtoCotEvent) -> CotEvent:
 
 
 def _encode_event(event: CotEvent) -> ProtoCotEvent:
-    if not event.uid:
-        raise EncodeError("Missing required field: uid")
-    if not event.type:
-        raise EncodeError("Missing required field: type")
-    if not event.how:
-        raise EncodeError("Missing required field: how")
-    # if event.send_time is None:
-    #     raise EncodeError("Missing required field: send_time")
-    # if event.start_time is None:
-    #     raise EncodeError("Missing required field: start_time")
-    # if event.stale_time is None:
-    #     raise EncodeError("Missing required field: stale_time")
-    # if event.point is None:
-    #     raise EncodeError("Missing required field: point")
-    if event.point.lat is None or event.point.lon is None:
-        raise EncodeError("Missing required fields: lat and/or lon")
-
     proto = ProtoCotEvent(
         type=event.type,
         uid=event.uid,
@@ -181,13 +164,20 @@ def _encode_event(event: CotEvent) -> ProtoCotEvent:
         startTime=_dt_to_ms(event.start_time),
         staleTime=_dt_to_ms(event.stale_time),
         how=event.how,
-        lat=event.point.lat,
-        lon=event.point.lon,
-        hae=event.point.hae if event.point.hae is not None else UNKNOWN_NUMERIC_VALUE,
-        ce=event.point.ce if event.point.ce is not None else UNKNOWN_NUMERIC_VALUE,
-        le=event.point.le if event.point.le is not None else UNKNOWN_NUMERIC_VALUE,
-        access=event.access if event.access is not None else "Undefined",
     )
+
+    if event.point.lat is not None:
+        proto.lat = event.point.lat
+    if event.point.lon is not None:
+        proto.lon = event.point.lon
+    if event.point.hae is not None:
+        proto.hae = event.point.hae
+    if event.point.ce is not None:
+        proto.ce = event.point.ce
+    if event.point.le is not None:
+        proto.le = event.point.le
+    if event.access is not None:
+        proto.access = event.access
 
     if event.caveat is not None:
         proto.caveat = event.caveat

@@ -15,7 +15,7 @@ from tak_simulator.wire import (
     TakVersion,
     Track,
 )
-from tak_simulator.wire.v1 import FRAME_PREFIX, UNKNOWN_NUMERIC_VALUE, V1Codec
+from tak_simulator.wire.v1 import FRAME_PREFIX, V1Codec
 from tak_simulator.proto.contact_pb2 import Contact as ProtoContact
 from tak_simulator.proto.cotevent_pb2 import CotEvent as ProtoCotEvent
 from tak_simulator.proto.detail_pb2 import Detail as ProtoDetail
@@ -186,9 +186,9 @@ class TestV1Codec:
                 staleTime=_dt_to_ms(STALE_TIME),
                 lat=58.3980771,
                 lon=15.5770142,
-                hae=UNKNOWN_NUMERIC_VALUE,
-                ce=UNKNOWN_NUMERIC_VALUE,
-                le=UNKNOWN_NUMERIC_VALUE,
+                hae=999999.0,
+                ce=999999.0,
+                le=999999.0,
             )
         )
 
@@ -198,9 +198,9 @@ class TestV1Codec:
         assert message.event.point == Point(
             lat=58.3980771,
             lon=15.5770142,
-            hae=None,
-            ce=None,
-            le=None,
+            hae=999999.0,
+            ce=999999.0,
+            le=999999.0,
         )
         assert message.control is None
 
@@ -224,17 +224,11 @@ class TestV1Codec:
         assert proto.cotEvent.detail.extensionDetails[0].extensionId == 42
         assert proto.cotEvent.detail.extensionDetails[0].data == b"\x01\x02\x03"
 
-    def test_encode_uses_undefined_access_and_unknown_numeric_sentinels(self):
+    def test_encode_omits_none_access(self):
         envelope = _build_envelope(access=None)
         envelope.control = None
         assert envelope.event is not None
-        envelope.event.point = Point(
-            lat=58.3980771,
-            lon=15.5770142,
-            hae=None,
-            ce=None,
-            le=None,
-        )
+        envelope.event.point = Point(lat=58.3980771, lon=15.5770142)
 
         data = V1Codec().encode(envelope, frame=False)
 
@@ -242,12 +236,9 @@ class TestV1Codec:
         proto.ParseFromString(data)
 
         assert not proto.HasField("takControl")
-        assert proto.cotEvent.access == "Undefined"
-        assert proto.cotEvent.hae == UNKNOWN_NUMERIC_VALUE
-        assert proto.cotEvent.ce == UNKNOWN_NUMERIC_VALUE
-        assert proto.cotEvent.le == UNKNOWN_NUMERIC_VALUE
+        assert proto.cotEvent.access == ""
 
-    def test_decode_defaults_empty_access_to_undefined(self):
+    def test_decode_missing_access_returns_none(self):
         proto = ProtoTakMessage(
             cotEvent=ProtoCotEvent(
                 uid="TEST-1234567890",
@@ -267,7 +258,7 @@ class TestV1Codec:
         message = V1Codec().decode(proto.SerializeToString(), unframe=False)
 
         assert message.event is not None
-        assert message.event.access == "Undefined"
+        assert message.event.access is None
 
     def test_round_trip_preserves_event_and_control(self):
         original = _build_envelope()
