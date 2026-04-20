@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 
+from tak_simulator.wire.exceptions import DecodeError, EncodeError
 from tak_simulator.wire.models import (
     Contact,
     CotDetail,
@@ -33,6 +35,8 @@ from tak_simulator.proto.track_pb2 import Track as ProtoTrack
 
 FRAME_PREFIX = b"\xbf\001\xbf"
 UNKNOWN_NUMERIC_VALUE = 999999.0
+
+logger = logging.getLogger(__name__)
 
 
 class V1Codec:
@@ -86,15 +90,6 @@ def _none_if_empty(value: str) -> str | None:
     return value or None
 
 
-def _none_if_unknown_numeric(value: float) -> float | None:
-    return None if value == UNKNOWN_NUMERIC_VALUE else value
-
-
-# TODO: Protocol requires access - currently defaults to "Undefined" if empty
-def _decode_access(value: str) -> str:
-    return value or "Undefined"
-
-
 def _decode_control(proto: ProtoTakControl) -> TakControl:
     return TakControl(
         min_proto_version=proto.minProtoVersion or None,
@@ -119,6 +114,31 @@ def _encode_control(control: TakControl) -> ProtoTakControl:
 
 
 def _decode_event(proto: ProtoCotEvent) -> CotEvent:
+    # TODO: Handle xmlDetail according to the comment in detail.proto
+
+    if not proto.uid:
+        raise DecodeError("Missing required field: uid", field="uid")
+    if not proto.type:
+        raise DecodeError("Missing required field: type", field="type")
+    if not proto.how:
+        raise DecodeError("Missing required field: how", field="how")
+
+    # TODO: Comment
+    if proto.sendTime == 0:
+        raise DecodeError("Missing required field: send", field="send")
+    if proto.startTime == 0:
+        raise DecodeError("Missing required field: start", field="start")
+    if proto.staleTime == 0:
+        raise DecodeError("Missing required field: stale", field="stale")
+
+    # "you cannot determine whether the default (zero) value was set or parsed from the wire or not provided at all"
+    #   - https://protobuf.dev/programming-guides/proto3/
+    lat = proto.lat
+    lon = proto.lon
+    hae = proto.hae
+    ce = proto.ce
+    le = proto.le
+
     return CotEvent(
         uid=proto.uid,
         type=proto.type,
@@ -126,15 +146,9 @@ def _decode_event(proto: ProtoCotEvent) -> CotEvent:
         send_time=_ms_to_dt(proto.sendTime),
         start_time=_ms_to_dt(proto.startTime),
         stale_time=_ms_to_dt(proto.staleTime),
-        point=Point(
-            lat=proto.lat,
-            lon=proto.lon,
-            hae=_none_if_unknown_numeric(proto.hae),
-            ce=_none_if_unknown_numeric(proto.ce),
-            le=_none_if_unknown_numeric(proto.le),
-        ),
+        point=Point(lat=lat, lon=lon, hae=hae, ce=ce, le=le),
         detail=_decode_detail(proto.detail) if proto.HasField("detail") else None,
-        access=_decode_access(proto.access),
+        access=_none_if_empty(proto.access),
         caveat=_none_if_empty(proto.caveat),
         releasable_to=_none_if_empty(proto.releasableTo),
         qos=_none_if_empty(proto.qos),
@@ -143,6 +157,23 @@ def _decode_event(proto: ProtoCotEvent) -> CotEvent:
 
 
 def _encode_event(event: CotEvent) -> ProtoCotEvent:
+    if not event.uid:
+        raise EncodeError("Missing required field: uid")
+    if not event.type:
+        raise EncodeError("Missing required field: type")
+    if not event.how:
+        raise EncodeError("Missing required field: how")
+    # if event.send_time is None:
+    #     raise EncodeError("Missing required field: send_time")
+    # if event.start_time is None:
+    #     raise EncodeError("Missing required field: start_time")
+    # if event.stale_time is None:
+    #     raise EncodeError("Missing required field: stale_time")
+    # if event.point is None:
+    #     raise EncodeError("Missing required field: point")
+    if event.point.lat is None or event.point.lon is None:
+        raise EncodeError("Missing required fields: lat and/or lon")
+
     proto = ProtoCotEvent(
         type=event.type,
         uid=event.uid,
