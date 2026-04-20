@@ -1,7 +1,9 @@
+import logging
 from datetime import UTC, datetime
 from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
 
+from .exceptions import DecodeError, EncodeError
 from .models import (
     TakEnvelope,
     CotEvent,
@@ -20,6 +22,8 @@ type Attrs = list[tuple[str, str | None]]
 
 FRAME_PREFIX = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n".encode()
 UNKNOWN_NUMERIC_VALUE = 999999.0  # TODO: Refactor
+
+logger = logging.getLogger(__name__)
 
 
 class V0Codec:
@@ -54,8 +58,6 @@ def _unframe(data: bytes) -> bytes:
         end = data.find(b"?>")
         if end != -1:
             return data[end + 2 :].lstrip()
-    if data.startswith(FRAME_PREFIX):
-        return data[len(FRAME_PREFIX) :]
     return data
 
 
@@ -96,11 +98,26 @@ def _paired_tag(name: str, content: str, attrs: Attrs | None = None) -> str:
 
 def _encode_event(event: CotEvent | None) -> str:
     if event is None:
-        return _self_closing_tag("event")
+        raise EncodeError("Cannot encode None event")
 
-    access_value = (
-        None if event.access in (None, "", "Undefined") else event.access
-    )  # TODO
+    if not event.uid:
+        raise EncodeError("Missing required field: uid")
+    if not event.type:
+        raise EncodeError("Missing required field: type")
+    if not event.how:
+        raise EncodeError("Missing required field: how")
+    if event.send_time is None:
+        raise EncodeError("Missing required field: send_time")
+    if event.start_time is None:
+        raise EncodeError("Missing required field: start_time")
+    if event.stale_time is None:
+        raise EncodeError("Missing required field: stale_time")
+    if event.point is None:
+        raise EncodeError("Missing required field: point")
+    if event.point.lat is None or event.point.lon is None:
+        raise EncodeError("Missing required fields: lat and/or lon")
+
+    access_value = None if event.access in (None, "", "Undefined") else event.access
 
     event_attrs = [
         ("version", "2.0"),
@@ -227,15 +244,6 @@ def _encode_track(track: Track) -> str:
     )
 
 
-def _parse_cot_timestamp(value: str | None) -> datetime | None:
-    if value is None:
-        return None
-    try:
-        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=UTC)
-    except ValueError:
-        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
-
-
 def _none_if_unknown(value: float | None) -> float | None:
     return None if value == UNKNOWN_NUMERIC_VALUE else value
 
@@ -247,40 +255,70 @@ def _parse_float(value: str | None) -> float | None:
 
 
 def _decode_event(root: ET.Element) -> CotEvent:
-    point_elem = root.find("point")
+    def _require_attribute(key: str, element: ET.Element = root) -> str:
+        value = element.get(key)
+        if not value:
+            raise DecodeError(f"Missing required field: {key}", field=key)
+        return value
+
+    def _require_timestamp_attribute(key: str, element: ET.Element = root) -> datetime:
+        value = _require_attribute(key, element)
+
+        try:
+            return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=UTC)
+        except ValueError:
+            pass
+
+        try:
+            return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+        except ValueError:
+            raise DecodeError(f"Invalid timestamp format for field: {key}", field=key)
+
+    def _require_float_attribute(key: str, element: ET.Element = root) -> float:
+        value = _require_attribute(key, element)
+
+        try:
+            return float(value)
+        except ValueError:
+            raise DecodeError(f"Invalid float format for field: {key}", field=key)
+
+    uid = _require_attribute("uid")
+    type = _require_attribute("type")
+    how = _require_attribute("how")
+
+    send_time = _require_timestamp_attribute("time")
+    start_time = _require_timestamp_attribute("start")
+    stale_time = _require_timestamp_attribute("stale")
+
+    point = root.find("point")
+    if point is None:
+        raise DecodeError("Missing required element: point", field="point")
+
+    lat = _require_float_attribute("lat", point)
+    lon = _require_float_attribute("lon", point)
+    hae = _require_float_attribute("hae", point)
+    ce = _require_float_attribute("ce", point)
+    le = _require_float_attribute("le", point)
+
+    point = Point(lat=lat, lon=lon, hae=hae, ce=ce, le=le)
+
     detail_elem = root.find("detail")
-
-    point = Point(
-        # TODO: Protocol requires lat/lon - currently defaults to 0.0 if missing
-        lat=float(point_elem.get("lat", 0)) if point_elem is not None else 0.0,
-        lon=float(point_elem.get("lon", 0)) if point_elem is not None else 0.0,
-        hae=_none_if_unknown(_parse_float(point_elem.get("hae")))
-        if point_elem is not None
-        else None,
-        ce=_none_if_unknown(_parse_float(point_elem.get("ce")))
-        if point_elem is not None
-        else None,
-        le=_none_if_unknown(_parse_float(point_elem.get("le")))
-        if point_elem is not None
-        else None,
-    )
-
     detail = _decode_detail(detail_elem) if detail_elem is not None else None
 
-    # TODO: Protocol requires uid, type, how - currently defaults to empty string/"Undefined" if missing
-    # TODO: Protocol requires time/start/stale - currently defaults to current time if missing
+    access = _require_attribute("access")
+
     return CotEvent(
-        uid=root.get("uid", ""),
-        type=root.get("type", ""),
-        how=root.get("how", ""),
-        send_time=_parse_cot_timestamp(root.get("time")) or datetime.now(tz=UTC),
-        start_time=_parse_cot_timestamp(root.get("start")) or datetime.now(tz=UTC),
-        stale_time=_parse_cot_timestamp(root.get("stale")) or datetime.now(tz=UTC),
+        uid=uid,
+        type=type,
+        how=how,
+        send_time=send_time,
+        start_time=start_time,
+        stale_time=stale_time,
         point=point,
         detail=detail,
-        access=root.get("access") or "Undefined",
-        caveat=root.get("caveat") or None,
-        releasable_to=root.get("releasableTo") or None,
+        access=access,
+        caveat=root.get("caveat") or None,  # TODO: Field might be v1 only?
+        releasable_to=root.get("releasableTo") or None,  # TODO: Field might be v1 only?
         qos=root.get("qos") or None,
         opex=root.get("opex") or None,
     )
