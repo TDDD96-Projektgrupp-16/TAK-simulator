@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
 
 from .models import (
@@ -11,6 +12,8 @@ from .models import (
     Track,
     Group,
     CotDetail,
+    Point,
+    MessageContext,
 )
 
 type Attrs = list[tuple[str, str | None]]
@@ -21,7 +24,18 @@ UNKNOWN_NUMERIC_VALUE = 999999.0  # TODO: Refactor
 
 class V0Codec:
     def decode(self, data: bytes, *, unframe: bool = True) -> TakEnvelope:
-        raise NotImplementedError()
+        raw = _unframe(data) if unframe else data
+
+        if not raw:
+            return TakEnvelope(event=None, context=MessageContext(origin_format=0))
+
+        root = ET.fromstring(raw)
+
+        if root.tag != "event":
+            return TakEnvelope(event=None, context=MessageContext(origin_format=0))
+
+        event = _decode_event(root)
+        return TakEnvelope(event=event, context=MessageContext(origin_format=0))
 
     def encode(self, message: TakEnvelope, *, frame: bool = True) -> bytes:
         event = _encode_event(message.event)
@@ -36,7 +50,13 @@ def _frame(raw: bytes) -> bytes:
 
 
 def _unframe(data: bytes) -> bytes:
-    raise NotImplementedError()
+    if data.startswith(b"<?xml"):
+        end = data.find(b"?>")
+        if end != -1:
+            return data[end + 2 :].lstrip()
+    if data.startswith(FRAME_PREFIX):
+        return data[len(FRAME_PREFIX) :]
+    return data
 
 
 def _escape_attr(value: str) -> str:
@@ -205,3 +225,105 @@ def _encode_track(track: Track) -> str:
             ),
         ],
     )
+
+
+def _parse_cot_timestamp(value: str | None) -> datetime | None:
+    if value is None:
+        return None
+    try:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=UTC)
+    except ValueError:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+
+
+def _none_if_unknown(value: float | None) -> float | None:
+    return None if value == UNKNOWN_NUMERIC_VALUE else value
+
+
+def _parse_float(value: str | None) -> float | None:
+    if value is None:
+        return None
+    return float(value)
+
+
+def _decode_event(root: ET.Element) -> CotEvent:
+    point_elem = root.find("point")
+    detail_elem = root.find("detail")
+
+    point = Point(
+        # TODO: Protocol requires lat/lon - currently defaults to 0.0 if missing
+        lat=float(point_elem.get("lat", 0)) if point_elem is not None else 0.0,
+        lon=float(point_elem.get("lon", 0)) if point_elem is not None else 0.0,
+        hae=_none_if_unknown(_parse_float(point_elem.get("hae")))
+        if point_elem is not None
+        else None,
+        ce=_none_if_unknown(_parse_float(point_elem.get("ce")))
+        if point_elem is not None
+        else None,
+        le=_none_if_unknown(_parse_float(point_elem.get("le")))
+        if point_elem is not None
+        else None,
+    )
+
+    detail = _decode_detail(detail_elem) if detail_elem is not None else None
+
+    # TODO: Protocol requires uid, type, how - currently defaults to empty string/"Undefined" if missing
+    # TODO: Protocol requires time/start/stale - currently defaults to current time if missing
+    return CotEvent(
+        uid=root.get("uid", ""),
+        type=root.get("type", ""),
+        how=root.get("how", ""),
+        send_time=_parse_cot_timestamp(root.get("time")) or datetime.now(tz=UTC),
+        start_time=_parse_cot_timestamp(root.get("start")) or datetime.now(tz=UTC),
+        stale_time=_parse_cot_timestamp(root.get("stale")) or datetime.now(tz=UTC),
+        point=point,
+        detail=detail,
+        access=root.get("access") or "Undefined",
+        caveat=root.get("caveat") or None,
+        releasable_to=root.get("releasableTo") or None,
+        qos=root.get("qos") or None,
+        opex=root.get("opex") or None,
+    )
+
+
+def _decode_detail(elem: ET.Element | None) -> CotDetail | None:
+    if elem is None:
+        return None
+
+    detail = CotDetail()
+
+    for child in elem:
+        if child.tag == "contact":
+            detail.contact = Contact(
+                endpoint=child.get("endpoint") or None,
+                callsign=child.get("callsign") or None,
+            )
+        elif child.tag == "__group":
+            detail.group = Group(
+                name=child.get("name") or None,
+                role=child.get("role") or None,
+            )
+        elif child.tag == "precisionlocation":
+            detail.precision_location = PrecisionLocation(
+                geopointsrc=child.get("geopointsrc") or None,
+                altsrc=child.get("altsrc") or None,
+            )
+        elif child.tag == "status":
+            battery_str = child.get("battery")
+            detail.status = Status(
+                battery=int(battery_str) if battery_str else None,
+            )
+        elif child.tag == "takv":
+            detail.takv = TakVersion(
+                device=child.get("device") or None,
+                platform=child.get("platform") or None,
+                os=child.get("os") or None,
+                version=child.get("version") or None,
+            )
+        elif child.tag == "track":
+            detail.track = Track(
+                speed=_parse_float(child.get("speed")),
+                course=_parse_float(child.get("course")),
+            )
+
+    return detail
