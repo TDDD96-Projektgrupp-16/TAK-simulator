@@ -90,6 +90,7 @@ def _none_if_unknown_numeric(value: float) -> float | None:
     return None if value == UNKNOWN_NUMERIC_VALUE else value
 
 
+# TODO: Protocol requires access - currently defaults to "Undefined" if empty
 def _decode_access(value: str) -> str:
     return value or "Undefined"
 
