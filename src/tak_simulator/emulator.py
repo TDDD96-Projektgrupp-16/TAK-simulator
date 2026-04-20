@@ -5,7 +5,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
-from tak_simulator.scenario import EmulatorOptions
+from tak_simulator.scenario import EmulatorOptions, ScenarioEvent
+from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.time_keeper import TimeKeeper
 
 from tak_simulator.proto.contact_pb2 import Contact
@@ -27,53 +28,107 @@ logger = logging.getLogger(__name__)
 class Emulator:
     options: EmulatorOptions
     time_keeper: TimeKeeper
+    scheduler: ScenarioScheduler
     host: str
 
     multicast_addr: Any = ("239.2.3.1", 6969)  # TODO
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
+    endpoint: str = field(init=False, default="")
+    sock: socket.socket | None = field(init=False, default=None)
+    server: asyncio.AbstractServer | None = field(init=False, default=None)
+
     async def run(self):
-        logger.info("started emulator with callsign: " + self.options.callsign)
+        logger.info("started emulator with callsign: %s", self.options.callsign)
+        self.server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
 
-        server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
-
-        addr, port = server.sockets[0].getsockname()
+        addr, port = self.server.sockets[0].getsockname()
         self.endpoint = f"{self.host}:{port}:tcp"
 
-        sock = socket.socket(
+        self.sock = socket.socket(
             socket.AF_INET,
             socket.SOCK_DGRAM,
             socket.IPPROTO_UDP,
         )
 
-        sock.bind((self.host, 0))
+        self.sock.bind((self.host, 0))
 
-        sock.setsockopt(
+        self.sock.setsockopt(
             socket.IPPROTO_IP,
             socket.IP_MULTICAST_IF,
             socket.inet_aton(self.host),
         )
 
-        sock.setsockopt(
+        self.sock.setsockopt(
             socket.IPPROTO_IP,
             socket.IP_MULTICAST_TTL,
             64,
         )
 
-        sock.setsockopt(
+        self.sock.setsockopt(
             socket.IPPROTO_IP,
             socket.IP_MULTICAST_LOOP,
             1,
         )
 
-        while True:
-            t = self.time_keeper.get_time()
-            tak_message = self.tak_message(t)
+        self.scheduler.schedule_recurring(
+            start_time=0.0,
+            interval=3.0,
+            callback=self.publish_position,
+            name=f"publish_position:{self.options.callsign}",
+        )
 
-            data = encode_tak_message(tak_message)
-            sock.sendto(data, self.multicast_addr)
+        for event in self.options.events:
+            self.scheduler.schedule_once(
+                due_time=event.time,
+                callback=self.handle_scenario_event,
+                event=event,
+                name=f"{event.event_type}:{self.options.callsign}",
+            )
 
-            await asyncio.sleep(3)  # TODO
+        logger.info(
+            "Emulator %s registered recurring position updates and %d scenario events",
+            self.options.callsign,
+            len(self.options.events),
+        )
+
+        await asyncio.Future()
+
+    async def publish_position(self) -> None:
+        if self.sock is None:
+            logger.warning("Emulator %s has no socket yet", self.options.callsign)
+            return
+
+        t = self.time_keeper.get_time()
+        tak_message = self.tak_message(t)
+        data = encode_tak_message(tak_message)
+        self.sock.sendto(data, self.multicast_addr)
+
+    async def handle_scenario_event(self, event: ScenarioEvent) -> None:
+        if event.event_type == "chat":
+            logger.info(
+                "Scenario chat event for %s at t=%.3f: %s",
+                self.options.callsign,
+                self.time_keeper.get_time(),
+                event.message,
+            )
+            return
+
+        if event.event_type == "connect":
+            logger.info(
+                "Scenario connect event for %s at t=%.3f",
+                self.options.callsign,
+                self.time_keeper.get_time(),
+            )
+            return
+
+        if event.event_type == "disconnect":
+            logger.info(
+                "Scenario disconnect event for %s at t=%.3f",
+                self.options.callsign,
+                self.time_keeper.get_time(),
+            )
+            return
 
     def tak_message(self, t: float) -> TakMessage:
         send_time = int(time.time() * 1000)
