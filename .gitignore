@@ -26,3 +26,7 @@ src/tak_simulator/proto/*
 certs
 admin.p12
 p12converter.sh
+
+run.sh
+.idea/
+.gitignore

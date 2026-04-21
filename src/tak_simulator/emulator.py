@@ -20,6 +20,16 @@ from tak_simulator.proto.track_pb2 import Track
 
 import logging
 
+from src.tak_simulator.uid import generate_message_uid
+from src.tak_simulator.xml_encoder import (
+    CotEventModel,
+    CotPointModel,
+    encode_cot_event_for_tcp,
+    CotDetailModel,
+    ChatDetailModel,
+    encode_chat_detail,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -132,6 +142,43 @@ class Emulator:
         return TakMessage(
             cotEvent=cot_event,
         )
+
+    def send_msg(self, to_uid: str, msg: str):
+        send_time = datetime.fromtimestamp(time.time() * 1000)
+
+        lat, lon = self.get_position(self.time_keeper.get_time())
+
+        event = CotEventModel(
+            type_=self.options.type,
+            access=self.options.access,
+            caveat=None,
+            qos=None,
+            opex=None,
+            uid=self.options.uid,
+            send_time=send_time,
+            start_time=send_time,
+            stale_time=send_time + 75000,  # TODO
+            how=self.options.how,
+            point=CotPointModel(
+                lat=lat,
+                lon=lon,
+                hae=0,  # TODO
+                ce=999999,  # TODO
+                le=999999,  # TODO
+            ),
+            detail=CotDetailModel(
+                xml_detail=encode_chat_detail(
+                    ChatDetailModel(
+                        id=self.options.uid,
+                        chatroom="",  # TODO
+                        sender_callsign=self.options.callsign,
+                        message_id=generate_message_uid(),
+                        remarks=msg,
+                    )
+                )
+            ),
+        )
+        encode_cot_event_for_tcp(event)
 
     def get_position(self, t: float) -> tuple[float, float]:
         i = 0
