@@ -4,10 +4,10 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from typing import Any, List, Tuple
 
+from tak_simulator.network_handler import NetworkHandler, Server
 from tak_simulator.scenario import EmulatorOptions, ScenarioEvent
 from tak_simulator.scenario_scheduler import ScenarioScheduler, ScheduledEvent
 from tak_simulator.time_keeper import TimeKeeper
-
 from tak_simulator.wire import (
     Codec,
     Contact,
@@ -20,7 +20,6 @@ from tak_simulator.wire import (
     TakVersion,
 )
 from tak_simulator.wire.v1 import V1Codec
-from tak_simulator.network_handler import NetworkHandler, Server
 
 logger = logging.getLogger(__name__)
 
