@@ -1,25 +1,25 @@
 image: python:3.14-slim
 
 variables:
-    UV_CACHE_DIR: .uv-cache
-    REPORT_PATH: report.xml
+  UV_CACHE_DIR: .uv-cache
+  REPORT_PATH: report.xml
 
 cache:
-    key:
-        files:
-            - uv.lock
-    paths:
-        - $UV_CACHE_DIR
+  key:
+    files:
+      - uv.lock
+  paths:
+    - $UV_CACHE_DIR
 
 stages:
-    - test
-
+  - test
 run_tests:
     stage: test
     before_script:
         - pip install uv
     script:
         - uv sync --locked
+        - bash -c 'uv run python-grpc-tools-protoc --proto_path=proto --python_out=src/tak_simulator/proto proto/*.proto'
         - uv run pytest tests/ --junitxml=$REPORT_PATH
     artifacts:
         when: always

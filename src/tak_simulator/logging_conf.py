@@ -1,5 +1,5 @@
-import logging.config
 import logging
+import logging.config
 
 
 def logging_setup(level):
