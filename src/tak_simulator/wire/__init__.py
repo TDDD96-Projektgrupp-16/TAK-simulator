@@ -14,7 +14,10 @@ from .models import (
     Track,
 )
 
+from .protocol import Codec
+
 __all__ = [
+    "Codec",
     "Contact",
     "CotDetail",
     "CotEvent",

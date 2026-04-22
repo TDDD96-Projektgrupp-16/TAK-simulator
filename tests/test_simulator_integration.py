@@ -45,7 +45,9 @@ def build_scenario() -> Scenario:
 
 
 @pytest.mark.asyncio
-async def test_simulator_uses_shared_timekeeper_scheduler_and_emulator_flow(monkeypatch):
+async def test_simulator_uses_shared_timekeeper_scheduler_and_emulator_flow(
+    monkeypatch,
+):
     simulator = Simulator()
     scenario = build_scenario()
 

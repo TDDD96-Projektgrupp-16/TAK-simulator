@@ -1,26 +1,26 @@
 import asyncio
 import logging
-import time
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any, List, Tuple
 
 from tak_simulator.scenario import EmulatorOptions, ScenarioEvent
 from tak_simulator.scenario_scheduler import ScenarioScheduler, ScheduledEvent
 from tak_simulator.time_keeper import TimeKeeper
 
+from tak_simulator.wire import (
+    Codec,
+    Contact,
+    CotDetail,
+    CotEvent,
+    Group,
+    Point,
+    Status,
+    TakEnvelope,
+    TakVersion,
+)
+from tak_simulator.wire.v1 import V1Codec
 from tak_simulator.network_handler import NetworkHandler, Server
-from tak_simulator.proto.contact_pb2 import Contact
-from tak_simulator.proto.cotevent_pb2 import CotEvent
-from tak_simulator.proto.detail_pb2 import Detail
-from tak_simulator.proto.group_pb2 import Group
-from tak_simulator.proto.precisionlocation_pb2 import PrecisionLocation
-from tak_simulator.proto.status_pb2 import Status
-from tak_simulator.proto.takmessage_pb2 import TakMessage
-from tak_simulator.proto.takv_pb2 import Takv
-from tak_simulator.proto.track_pb2 import Track
-from tak_simulator.scenario import EmulatorOptions
-from tak_simulator.time_keeper import TimeKeeper
 
 logger = logging.getLogger(__name__)
 
@@ -46,55 +46,25 @@ class Emulator:
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     endpoint: str = field(init=False, default="")
-    sock: socket.socket | None = field(init=False, default=None)
     server: asyncio.AbstractServer | None = field(init=False, default=None)
     publish_position_event: ScheduledEvent | None = field(init=False, default=None)
     is_connected: bool = field(init=False, default=True)
+    codec: Codec = field(default_factory=V1Codec)
 
-<<<<<<< src/tak_simulator/emulator.py
     async def run(self) -> None:
         logger.info("started emulator with callsign: %s", self.options.callsign)
-        self.server = await asyncio.start_server(handle_tcp_connection, "0.0.0.0")  # TODO
+        self.server = await asyncio.start_server(
+            handle_tcp_connection, "0.0.0.0"
+        )  # TODO
 
         addr, port = self.server.sockets[0].getsockname()
         self.endpoint = f"{self.host}:{port}:tcp"
 
-        self.sock = socket.socket(
-            socket.AF_INET,
-            socket.SOCK_DGRAM,
-            socket.IPPROTO_UDP,
-        )
-
-        self.sock.bind((self.host, 0))
-
-        self.sock.setsockopt(
-            socket.IPPROTO_IP,
-            socket.IP_MULTICAST_IF,
-            socket.inet_aton(self.host),
-        )
-
-        self.sock.setsockopt(
-            socket.IPPROTO_IP,
-            socket.IP_MULTICAST_TTL,
-            64,
-        )
-
-        self.sock.setsockopt(
-            socket.IPPROTO_IP,
-            socket.IP_MULTICAST_LOOP,
-            1,
-=======
-        server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
-        addr, port = server.sockets[0].getsockname()
-        self.endpoint = f"{self.host}:{port}:tcp"
-
-        logger.info(f"Server started on {self.endpoint}")
         self.connection = await NetworkHandler.create_connection(
             self.multicast_addr[0],
             self.multicast_addr[1],
-            self.dataReceived,
+            self.data_received,
             self.servers,
->>>>>>> src/tak_simulator/emulator.py
         )
 
         self.publish_position_event = self.scheduler.schedule_recurring(
@@ -104,7 +74,6 @@ class Emulator:
             name=f"publish_position:{self.options.callsign}",
         )
 
-<<<<<<< src/tak_simulator/emulator.py
         for event in self.options.events:
             self.scheduler.schedule_once(
                 due_time=event.time,
@@ -112,10 +81,6 @@ class Emulator:
                 event=event,
                 name=f"{event.event_type}:{self.options.callsign}",
             )
-=======
-            data = encode_tak_message(tak_message)
-            self.connection.send_all(data)
->>>>>>> src/tak_simulator/emulator.py
 
         logger.info(
             "Emulator %s registered recurring position updates and %d scenario events",
@@ -127,21 +92,11 @@ class Emulator:
         await self.server.serve_forever()
 
     async def publish_position(self) -> None:
-        if self.sock is None:
-            logger.warning("Emulator %s has no socket yet", self.options.callsign)
-            return
-
-        if not self.is_connected:
-            logger.debug(
-                "Skipping position publish for disconnected emulator %s",
-                self.options.callsign,
-            )
-            return
-
         t = self.time_keeper.get_time()
-        tak_message = self.tak_message(t)
-        data = encode_tak_message(tak_message)
-        self.sock.sendto(data, self.multicast_addr)
+
+        envelope = self.tak_env(t)
+        data = self.codec.encode(envelope)
+        self.connection.send_all(data)
 
     async def handle_scenario_event(self, event: ScenarioEvent) -> None:
         current_time = self.time_keeper.get_time()
@@ -197,35 +152,31 @@ class Emulator:
             )
             return
 
-    def dataReceived(self, data: bytes, addr: Tuple[str | Any, int]) -> None:
+    def data_received(self, data: bytes, addr: Tuple[str | Any, int]) -> None:
         logger.debug(f"Received data from {addr}")
 
-    def tak_message(self, t: float) -> TakMessage:
-        send_time = int(time.time() * 1000)
+    def tak_env(self, t: float) -> TakEnvelope:
+        send_time = datetime.now(UTC)
 
         lat, lon = self.get_position(t)
 
-        hae: float = 0  # TODO
-
-        cot_event = CotEvent(
+        event = CotEvent(
             type=self.options.type,
             access=self.options.access,
             caveat=None,
-            releasableTo=None,
+            releasable_to=None,
             qos=None,
             opex=None,
             uid=self.options.uid,
-            sendTime=send_time,
-            startTime=send_time,
-            staleTime=send_time + 75000,  # TODO
+            send_time=send_time,
+            start_time=send_time,
+            stale_time=send_time + timedelta(seconds=75),  # TODO
             how=self.options.how,
-            lat=lat,
-            lon=lon,
-            hae=hae,
-            ce=999999,  # TODO
-            le=999999,  # TODO
-            detail=Detail(
-                xmlDetail=f'<uid Droid="{self.options.callsign}"/>',
+            point=Point(
+                lat=lat,
+                lon=lon,
+            ),
+            detail=CotDetail(
                 contact=Contact(
                     endpoint=self.endpoint,
                     callsign=self.options.callsign,
@@ -234,29 +185,20 @@ class Emulator:
                     name=self.options.group.name,
                     role=self.options.group.role,
                 ),
-                precisionLocation=PrecisionLocation(
-                    geopointsrc="GPS",
-                    altsrc="GPS",
-                ),
                 status=Status(
                     battery=100,  # TODO
                 ),
-                takv=Takv(
+                takv=TakVersion(
                     device=self.options.takv.device,
                     platform=self.options.takv.platform,
                     os=self.options.takv.os,
                     version=self.options.takv.version,
                 ),
-                track=Track(
-                    speed=None,  # TODO
-                    course=None,  # TODO
-                ),
+                opaque_xml=f'<uid Droid="{self.options.callsign}"/>',
             ),
         )
 
-        return TakMessage(
-            cotEvent=cot_event,
-        )
+        return TakEnvelope(event=event)
 
     def get_position(self, t: float) -> tuple[float, float]:
         i = 0
@@ -269,12 +211,15 @@ class Emulator:
         if i >= len(self.options.path):
             return self.options.path[-1][1]
 
-        t1, p1 = self.options.path[i - 1]
-        t2, p2 = self.options.path[i]
+        t1, (la1, lo1) = self.options.path[i - 1]
+        t2, (la2, lo2) = self.options.path[i]
 
-        x = (t - t1) / (t2 - t1)
+        n = (t - t1) / (t2 - t1)
 
-        return tuple(a + (b - a) * x for a, b in zip(p1, p2))
+        return (
+            la1 + (la2 - la1) * n,
+            lo1 + (lo2 - lo1) * n,
+        )
 
 
 async def handle_tcp_connection(
@@ -286,7 +231,3 @@ async def handle_tcp_connection(
 
     writer.close()
     await writer.wait_closed()
-
-
-def encode_tak_message(tak_message: TakMessage) -> bytes:
-    return b"\277\001\277" + tak_message.SerializeToString()
