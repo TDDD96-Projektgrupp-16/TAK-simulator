@@ -1,14 +1,15 @@
 import asyncio
+import logging
 import time
-import socket
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, List, Tuple
 
 from tak_simulator.scenario import EmulatorOptions, ScenarioEvent
 from tak_simulator.scenario_scheduler import ScenarioScheduler, ScheduledEvent
 from tak_simulator.time_keeper import TimeKeeper
 
+from tak_simulator.network_handler import NetworkHandler, Server
 from tak_simulator.proto.contact_pb2 import Contact
 from tak_simulator.proto.cotevent_pb2 import CotEvent
 from tak_simulator.proto.detail_pb2 import Detail
@@ -18,8 +19,8 @@ from tak_simulator.proto.status_pb2 import Status
 from tak_simulator.proto.takmessage_pb2 import TakMessage
 from tak_simulator.proto.takv_pb2 import Takv
 from tak_simulator.proto.track_pb2 import Track
-
-import logging
+from tak_simulator.scenario import EmulatorOptions
+from tak_simulator.time_keeper import TimeKeeper
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,17 @@ class Emulator:
     scheduler: ScenarioScheduler
     host: str
 
-    multicast_addr: Any = ("239.2.3.1", 6969)  # TODO
+    multicast_addr: Tuple[str, int] = ("239.2.3.1", 6969)  # TODO
+    servers: List[Server] = field(
+        default_factory=lambda: [
+            Server(
+                "192.71.171.115",
+                "./certs/ca.pem",
+                "./certs/client.pem",
+                "./certs/client.key",
+            )
+        ]
+    )
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     endpoint: str = field(init=False, default="")
@@ -40,6 +51,7 @@ class Emulator:
     publish_position_event: ScheduledEvent | None = field(init=False, default=None)
     is_connected: bool = field(init=False, default=True)
 
+<<<<<<< src/tak_simulator/emulator.py
     async def run(self) -> None:
         logger.info("started emulator with callsign: %s", self.options.callsign)
         self.server = await asyncio.start_server(handle_tcp_connection, "0.0.0.0")  # TODO
@@ -71,6 +83,18 @@ class Emulator:
             socket.IPPROTO_IP,
             socket.IP_MULTICAST_LOOP,
             1,
+=======
+        server = await asyncio.start_server(handle, "0.0.0.0")  # TODO
+        addr, port = server.sockets[0].getsockname()
+        self.endpoint = f"{self.host}:{port}:tcp"
+
+        logger.info(f"Server started on {self.endpoint}")
+        self.connection = await NetworkHandler.create_connection(
+            self.multicast_addr[0],
+            self.multicast_addr[1],
+            self.dataReceived,
+            self.servers,
+>>>>>>> src/tak_simulator/emulator.py
         )
 
         self.publish_position_event = self.scheduler.schedule_recurring(
@@ -80,6 +104,7 @@ class Emulator:
             name=f"publish_position:{self.options.callsign}",
         )
 
+<<<<<<< src/tak_simulator/emulator.py
         for event in self.options.events:
             self.scheduler.schedule_once(
                 due_time=event.time,
@@ -87,6 +112,10 @@ class Emulator:
                 event=event,
                 name=f"{event.event_type}:{self.options.callsign}",
             )
+=======
+            data = encode_tak_message(tak_message)
+            self.connection.send_all(data)
+>>>>>>> src/tak_simulator/emulator.py
 
         logger.info(
             "Emulator %s registered recurring position updates and %d scenario events",
@@ -167,6 +196,9 @@ class Emulator:
                 current_time,
             )
             return
+
+    def dataReceived(self, data: bytes, addr: Tuple[str | Any, int]) -> None:
+        logger.debug(f"Received data from {addr}")
 
     def tak_message(self, t: float) -> TakMessage:
         send_time = int(time.time() * 1000)

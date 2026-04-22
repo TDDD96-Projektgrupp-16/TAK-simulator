@@ -1,9 +1,9 @@
 import asyncio
 
-from tak_simulator.time_keeper import TimeKeeper
-from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.emulator import Emulator
+from tak_simulator.time_keeper import TimeKeeper
 from tak_simulator.scenario import Scenario
+from tak_simulator.scenario_scheduler import ScenarioScheduler
 
 
 class Simulator:

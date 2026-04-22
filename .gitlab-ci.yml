@@ -14,19 +14,14 @@ cache:
 stages:
   - test
 run_tests:
-  stage: test
-  before_script:
-    - pip install uv
-  script:
-    - uv sync --locked
-    - |
-      uv run python-grpc-tools-protoc \
-        --proto_path=proto \
-        --python_out=src/tak_simulator/proto \
-        --pyi_out=src/tak_simulator/proto \
-        proto/*.proto
-    - uv run pytest tests/ --junitxml=$REPORT_PATH
-  artifacts:
-    when: always
-    reports:
-      junit: $REPORT_PATH
+    stage: test
+    before_script:
+        - pip install uv
+    script:
+        - uv sync --locked
+        - bash -c 'uv run python-grpc-tools-protoc --proto_path=proto --python_out=src/tak_simulator/proto proto/*.proto'
+        - uv run pytest tests/ --junitxml=$REPORT_PATH
+    artifacts:
+        when: always
+        reports:
+            junit: $REPORT_PATH
