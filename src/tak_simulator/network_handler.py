@@ -3,7 +3,7 @@ import logging
 import socket
 import ssl
 import struct
-from typing import Any, Callable
+from typing import Any, Callable, Self
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class NetworkHandler:
         multicast_port: int,
         callback: Callable[[bytes, tuple[str | Any, int]], None],
         servers: list[Server] = [],
-    ):
+    ) -> Self:
         """Creates a multicast connection and optionally connects to servers."""
         logger.info(
             f"Setting up multicast connection to {multicast_addr}:{multicast_port}"

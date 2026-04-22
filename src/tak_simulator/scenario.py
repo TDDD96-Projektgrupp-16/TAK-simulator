@@ -56,6 +56,12 @@ Role = Literal[
     "K9",
 ]
 
+EventType = Literal[
+    "chat",
+    "connect",
+    "disconnect",
+]
+
 
 class Metadata(BaseModel):
     """Optional metadata for the scenario."""
@@ -95,6 +101,22 @@ class Takv(BaseModel):
     )
     version: str = Field(
         description="TAK application version string.",
+    )
+
+
+class ScenarioEvent(BaseModel):
+    """A timed event for one emulator in the scenario."""
+
+    time: float = Field(
+        description="Simulation time when the event should happen.",
+    )
+    event_type: EventType = Field(
+        description="Type of scenario event.",
+        alias="type",
+    )
+    message: Optional[str] = Field(
+        default=None,
+        description="Message text for chat events.",
     )
 
 
@@ -155,6 +177,11 @@ class EmulatorOptionsBase(BaseModel):
         if path != sorted(path, key=lambda p: p[0]):
             raise ValueError("path must be in chronological order")
         return path
+
+    events: list[ScenarioEvent] = Field(
+        default_factory=list,
+        description="Timed events for this emulator.",
+    )
 
 
 class ATAKEmulatorOptions(EmulatorOptionsBase):
