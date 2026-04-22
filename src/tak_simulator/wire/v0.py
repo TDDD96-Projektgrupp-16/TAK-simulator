@@ -1,9 +1,8 @@
-import logging
 from datetime import UTC, datetime
 from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
 
-from .exceptions import DecodeError, EncodeError
+from .exceptions import DecodeError
 from .models import (
     TakEnvelope,
     CotEvent,
@@ -22,8 +21,6 @@ type Attrs = list[tuple[str, str | None]]
 
 FRAME_PREFIX = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n".encode()
 UNKNOWN_NUMERIC_VALUE = 999999.0  # TODO: Refactor
-
-logger = logging.getLogger(__name__)
 
 
 class V0Codec:
@@ -65,12 +62,13 @@ def _escape_attr(value: str) -> str:
     return escape(value, {"'": "&apos;"})
 
 
-def _format_float(value: float | None) -> str:
-    if value is None:
-        value = UNKNOWN_NUMERIC_VALUE
-
+def _format_float(value: float) -> str:
     text = f"{value:.15f}".rstrip("0").rstrip(".")
     return text if text else "0"
+
+
+def _unwrap_or[T](maybe_value: T | None, default: T) -> T:
+    return maybe_value if maybe_value is not None else default
 
 
 def _format_cot_timestamp(dt: datetime) -> str:
@@ -98,31 +96,12 @@ def _paired_tag(name: str, content: str, attrs: Attrs | None = None) -> str:
 
 def _encode_event(event: CotEvent | None) -> str:
     if event is None:
-        raise EncodeError("Cannot encode None event")
-
-    if not event.uid:
-        raise EncodeError("Missing required field: uid")
-    if not event.type:
-        raise EncodeError("Missing required field: type")
-    if not event.how:
-        raise EncodeError("Missing required field: how")
-    if event.send_time is None:
-        raise EncodeError("Missing required field: send_time")
-    if event.start_time is None:
-        raise EncodeError("Missing required field: start_time")
-    if event.stale_time is None:
-        raise EncodeError("Missing required field: stale_time")
-    if event.point is None:
-        raise EncodeError("Missing required field: point")
-    if event.point.lat is None or event.point.lon is None:
-        raise EncodeError("Missing required fields: lat and/or lon")
-
-    access_value = None if event.access in (None, "", "Undefined") else event.access
+        return _self_closing_tag("event")
 
     event_attrs = [
         ("version", "2.0"),
         ("type", event.type),
-        ("access", access_value),
+        ("access", event.access),
         ("caveat", event.caveat),
         ("releasableTo", event.releasable_to),
         ("qos", event.qos),
@@ -134,16 +113,19 @@ def _encode_event(event: CotEvent | None) -> str:
         ("how", event.how),
     ]
 
-    point_xml = _self_closing_tag(
-        "point",
-        [
-            ("lat", _format_float(event.point.lat)),
-            ("lon", _format_float(event.point.lon)),
-            ("hae", _format_float(event.point.hae)),
-            ("ce", _format_float(event.point.ce)),
-            ("le", _format_float(event.point.le)),
-        ],
-    )
+    point_attrs = []
+    if event.point.lat is not None:
+        point_attrs.append(("lat", _format_float(event.point.lat)))
+    if event.point.lon is not None:
+        point_attrs.append(("lon", _format_float(event.point.lon)))
+    if event.point.hae is not None:
+        point_attrs.append(("hae", _format_float(event.point.hae)))
+    if event.point.ce is not None:
+        point_attrs.append(("ce", _format_float(event.point.ce)))
+    if event.point.le is not None:
+        point_attrs.append(("le", _format_float(event.point.le)))
+
+    point_xml = _self_closing_tag("point", point_attrs)
 
     detail_xml = (
         _encode_detail(event.detail) if event.detail else _self_closing_tag("detail")
@@ -242,6 +224,15 @@ def _encode_track(track: Track) -> str:
             ),
         ],
     )
+
+
+def _parse_cot_timestamp(value: str | None) -> datetime | None:
+    if value is None:
+        return None
+    try:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=UTC)
+    except ValueError:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
 
 
 def _none_if_unknown(value: float | None) -> float | None:

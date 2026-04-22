@@ -60,8 +60,8 @@ class Track:
 
 @dataclass(slots=True)
 class Point:
-    lat: float
-    lon: float
+    lat: float | None = None
+    lon: float | None = None
     hae: float | None = None
     ce: float | None = None
     le: float | None = None
@@ -91,20 +91,40 @@ class CotDetail:
 
 @dataclass(slots=True)
 class CotEvent:
-    """Wire-format-neutral representation of a CoT event."""
+    """Wire-format-neutral representation of a CoT event.
 
+    Required fields (encode/decode will raise on missing):
+        uid, type, how, send_time, start_time, stale_time, point (with lat/lon)
+
+    Fields with protocol defaults (warnings logged if missing, defaults applied):
+        hae, ce, le (default to 999999 sentinel), access (default to "Undefined"),
+        how (default to "unknown")
+    """
+
+    # Required
     uid: str
+    # Required
     type: str
+    # Required
     how: str
+    # Required
     send_time: datetime
+    # Required
     start_time: datetime
+    # Required
     stale_time: datetime
+    # Required
     point: Point
     detail: CotDetail | None = None
+    # Defaults to "Undefined" if left as None when enoding.
     access: str | None = None
+    # Optional (v1 protobuf only?)
     caveat: str | None = None
+    # Optional (v1 protobuf only?)
     releasable_to: str | None = None
+    # Optional
     qos: str | None = None
+    # Optional
     opex: str | None = None
 
 
