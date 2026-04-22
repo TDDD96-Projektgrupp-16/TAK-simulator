@@ -2,8 +2,8 @@ import asyncio
 import threading
 
 from tak_simulator.scenario import load_scenario
-from tak_simulator.util import host_ip
 from tak_simulator.simulator import Simulator
+from tak_simulator.util import host_ip
 
 
 def _start_background_loop(loop: asyncio.AbstractEventLoop):
@@ -31,4 +31,6 @@ class TAK:
         host = host_ip()
         self.simulator = Simulator()
 
-        asyncio.run_coroutine_threadsafe(self.simulator.run(scenario, host), self.loop)
+        asyncio.run_coroutine_threadsafe(
+            self.simulator.run(scenario, host), self.loop
+        ).result()
