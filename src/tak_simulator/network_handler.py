@@ -43,6 +43,7 @@ class NetworkHandler:
         logger.info(
             f"Setting up multicast connection to {multicast_addr}:{multicast_port}"
         )
+
         transport, protocol = await cls._setup_multicast(
             multicast_addr, multicast_port, callback
         )

@@ -1,9 +1,8 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
-from typing import Any, List, Tuple
 
-from tak_simulator.network_handler import NetworkHandler, Server
+from tak_simulator.network_handler import NetworkHandler
 from tak_simulator.scenario import EmulatorOptions, ScenarioEvent
 from tak_simulator.scenario_scheduler import ScenarioScheduler, ScheduledEvent
 from tak_simulator.time_keeper import TimeKeeper
@@ -28,35 +27,15 @@ class Emulator:
     options: EmulatorOptions
     time_keeper: TimeKeeper
     scheduler: ScenarioScheduler
-    port: int
+    connection: NetworkHandler
 
-    multicast_addr: Tuple[str, int] = ("239.2.3.1", 6969)  # TODO
-    servers: List[Server] = field(
-        default_factory=lambda: [
-            Server(
-                "192.71.171.115",
-                "./certs/ca.pem",
-                "./certs/client.pem",
-                "./certs/client.key",
-            )
-        ]
-    )
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
-
     publish_position_event: ScheduledEvent | None = field(init=False, default=None)
     is_connected: bool = field(init=False, default=True)
     codec: Codec = field(default_factory=V1Codec)
 
     async def run(self) -> None:
         logger.info("started emulator with callsign: %s", self.options.callsign)
-
-        self.connection = await NetworkHandler.create_connection(
-            self.multicast_addr[0],
-            self.multicast_addr[1],
-            self.port,
-            self.data_received,
-            self.servers,
-        )
 
         self.publish_position_event = self.scheduler.schedule_recurring(
             start_time=0.0,
@@ -139,9 +118,6 @@ class Emulator:
                 current_time,
             )
             return
-
-    def data_received(self, data: bytes, addr: Tuple[str | Any, int]) -> None:
-        logger.debug(f"Received data from {addr}")
 
     def tak_env(self, t: float) -> TakEnvelope:
         send_time = datetime.now(UTC)
