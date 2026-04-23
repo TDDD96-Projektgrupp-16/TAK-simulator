@@ -69,7 +69,7 @@ async def test_simulator_uses_shared_timekeeper_scheduler_and_emulator_flow(
 
     monkeypatch.setattr(Emulator, "run", fake_emulator_run)
 
-    run_task = asyncio.create_task(simulator.run(scenario, "127.0.0.1"))
+    run_task = asyncio.create_task(simulator.run(scenario))
 
     while not triggered:
         await asyncio.sleep(0.001)
