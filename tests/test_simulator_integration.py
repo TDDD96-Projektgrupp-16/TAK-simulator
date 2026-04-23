@@ -1,10 +1,21 @@
 import asyncio
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from tak_simulator.emulator import Emulator
 from tak_simulator.scenario import Scenario
 from tak_simulator.simulator import Simulator
+
+
+class FakeConnection:
+    def __init__(self):
+        self.send_all = MagicMock()
+        self.multicast_send = MagicMock()
+        self.send_to_servers = MagicMock()
+        self.get_endpoint = MagicMock(return_value="127.0.0.1:8000:tcp")
+        self.send_to_user = MagicMock()
+        self.set_callback_for_user = MagicMock()
 
 
 def build_scenario() -> Scenario:
@@ -48,6 +59,15 @@ def build_scenario() -> Scenario:
 async def test_simulator_uses_shared_timekeeper_scheduler_and_emulator_flow(
     monkeypatch,
 ):
+    from tak_simulator import network_handler
+
+    fake_connection = FakeConnection()
+    monkeypatch.setattr(
+        network_handler.NetworkHandler,
+        "create_connection",
+        AsyncMock(return_value=fake_connection),
+    )
+
     simulator = Simulator()
     scenario = build_scenario()
 
