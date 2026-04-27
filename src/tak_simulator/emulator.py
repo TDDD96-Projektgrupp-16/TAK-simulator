@@ -19,15 +19,6 @@ from tak_simulator.wire import (
 )
 from tak_simulator.wire.v1 import V1Codec
 
-from src.tak_simulator.uid import generate_message_uid
-from src.tak_simulator.xml_encoder import (
-    CotEventModel,
-    CotPointModel,
-    encode_cot_event_for_tcp,
-    CotDetailModel,
-    ChatDetailModel,
-    encode_chat_detail,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -129,87 +120,65 @@ class Emulator:
             )
             return
 
-    def tak_env(self, t: float) -> TakEnvelope:
+    def _create_msg(self, t: float, msg: str) -> TakEnvelope:
         send_time = datetime.now(UTC)
 
         lat, lon = self.get_position(t)
 
-        event = CotEvent(
-            type=self.options.type,
-            access=self.options.access,
-            caveat=None,
-            releasable_to=None,
-            qos=None,
-            opex=None,
-            uid=self.options.uid,
-            send_time=send_time,
-            start_time=send_time,
-            stale_time=send_time + timedelta(seconds=75),  # TODO
-            how=self.options.how,
-            point=Point(
-                lat=lat,
-                lon=lon,
-            ),
-            detail=CotDetail(
-                contact=Contact(
-                    endpoint=self.connection.get_endpoint(),
-                    callsign=self.options.callsign,
+        return TakEnvelope(
+            event=CotEvent(
+                type=self.options.type,
+                access=self.options.access,
+                caveat=None,
+                releasable_to=None,
+                qos=None,
+                opex=None,
+                uid=self.options.uid,
+                send_time=send_time,
+                start_time=send_time,
+                stale_time=send_time + timedelta(seconds=75),  # TODO
+                how=self.options.how,
+                point=Point(
+                    lat=lat,
+                    lon=lon,
                 ),
-                group=Group(
-                    name=self.options.group.name,
-                    role=self.options.group.role,
+                detail=CotDetail(
+                    contact=Contact(
+                        # endpoint=self.endpoint,
+                        callsign=self.options.callsign,
+                    ),
+                    group=Group(
+                        name=self.options.group.name,
+                        role=self.options.group.role,
+                    ),
+                    status=Status(
+                        battery=100,  # TODO
+                    ),
+                    takv=TakVersion(
+                        device=self.options.takv.device,
+                        platform=self.options.takv.platform,
+                        os=self.options.takv.os,
+                        version=self.options.takv.version,
+                    ),
+                    opaque_xml=msg,
                 ),
-                status=Status(
-                    battery=100,  # TODO
-                ),
-                takv=TakVersion(
-                    device=self.options.takv.device,
-                    platform=self.options.takv.platform,
-                    os=self.options.takv.os,
-                    version=self.options.takv.version,
-                ),
-                opaque_xml=f'<uid Droid="{self.options.callsign}"/>',
-            ),
+            )
         )
 
-        return TakEnvelope(event=event)
+    def tak_env(self, t: float) -> TakEnvelope:
+        return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>')
 
     def send_msg(self, to_uid: str, msg: str):
-        send_time = datetime.fromtimestamp(time.time() * 1000)
-
-        lat, lon = self.get_position(self.time_keeper.get_time())
-
-        event = CotEventModel(
-            type_=self.options.type,
-            access=self.options.access,
-            caveat=None,
-            qos=None,
-            opex=None,
-            uid=self.options.uid,
-            send_time=send_time,
-            start_time=send_time,
-            stale_time=send_time + 75000,  # TODO
-            how=self.options.how,
-            point=CotPointModel(
-                lat=lat,
-                lon=lon,
-                hae=0,  # TODO
-                ce=999999,  # TODO
-                le=999999,  # TODO
-            ),
-            detail=CotDetailModel(
-                xml_detail=encode_chat_detail(
-                    ChatDetailModel(
-                        id=self.options.uid,
-                        chatroom="",  # TODO
-                        sender_callsign=self.options.callsign,
-                        message_id=generate_message_uid(),
-                        remarks=msg,
-                    )
-                )
-            ),
+        env = self._create_msg(self.time_keeper.get_time(), msg)
+        data = self.codec.encode(env)
+        self.connection.send_to_user(to_uid, data)
+        logger.info(
+            "Emulator %s sent message %s to %s at time %.3f",
+            self.options.uid,
+            self.options.callsign,
+            to_uid,
+            self.time_keeper.get_time(),
         )
-        encode_cot_event_for_tcp(event)
 
     def get_position(self, t: float) -> tuple[float, float]:
         i = 0
