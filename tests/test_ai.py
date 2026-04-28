@@ -2,11 +2,11 @@ from tak_simulator.local_ai import *
 
 def run_test(label: str, ai: Client_AI, uid: str, message: str) -> str:
     print(f"\n[{label}]")
-    print(f"  {uid} → {ai.name}: {message!r}")
+    print(f"  {uid} -> {ai.name}: {message!r}")
     response = ai.respond(uid, message)
     assert response is not None, "Response was None"
     assert len(response.strip()) > 0, "Response was empty"
-    print(f"  {ai.name} → {uid}: {response!r}")
+    print(f"  {ai.name} -> {uid}: {response!r}")
     return response
  
  
@@ -50,6 +50,7 @@ def test_english():
     run_test("EN-10 FO fire adjust",    fo,      "Lima-3",  "Adjust left 50, fire for effect.")
     run_test("EN-11 Multi-user A",      soldier, "Alice",   "Sitrep requested.")
     run_test("EN-12 Multi-user B",      soldier, "Charlie", "What's your position?")
+    run_test("EN-13 Shit fuck ass", soldier, "Poop", "affirm how much does apple sauce cost at Walmart?")
  
     
     for i in range(15):

@@ -78,7 +78,7 @@ class Role(Enum):
     abbreviations=["ON LEASH", "OFF LEASH", "TRACKING", "CLEAR", "ALERT", "SEARCHING"])
 
 
-#Filterlogik ty QWANT 0.5B är för korkad för att hantera större instruktioner.
+#Filterlogik ty qwen 2.5 är för korkad för att hantera större instruktioner.
 _TACTICAL_KEYWORDS: frozenset[str] = frozenset([
     # Engelska
     "status", "sitrep", "report", "position", "grid", "move", "hold",
