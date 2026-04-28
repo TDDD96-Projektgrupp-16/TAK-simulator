@@ -17,7 +17,7 @@ def run_filter_test(label: str, ai: Client_AI, uid: str, message: str,
     assert expected_substring.lower() in response.lower(), (
         f"[{label}] Expected {expected_substring!r} in response, got: {response!r}"
     )
-    print(f"  ✓ Correctly filtered")
+    print(f"Correctly filtered")
  
  
 def test_english():
