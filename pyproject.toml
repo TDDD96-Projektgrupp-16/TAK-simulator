@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Tool to simulate multiple TAK clients"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = ["names>=0.3.0", "pydantic>=2.12.5"]
+dependencies = [
+    "names>=0.3.0",
+    "pydantic>=2.12.5",
+    "pydantic-xml>=2.20.0",
+]
 
 [project.scripts]
 tak_simulator = "tak_simulator.main:main"
