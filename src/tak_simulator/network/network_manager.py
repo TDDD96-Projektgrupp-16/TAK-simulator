@@ -2,24 +2,36 @@ import asyncio
 from typing import List, Tuple, cast
 
 from tak_simulator.network.multicast import MulticastHandler
+from tak_simulator.network.network_user import NetworkUser
 from tak_simulator.network.server import Server, ServerHandler
+from tak_simulator.util import host_ip
+from tak_simulator.wire import Codec, TakEnvelope
+from tak_simulator.wire.v0 import V0Codec
 
 
 class NetworkManager:
     def __init__(
-        self, multicast: MulticastHandler, server_handler: ServerHandler
+        self,
+        multicast: MulticastHandler,
+        server_handler: ServerHandler,
+        codec: Codec,
+        port: int,
     ) -> None:
         self._server = None
         self.multicast = multicast
         self.server_handler = server_handler
+        self.users: dict[str, NetworkUser] = {}
+        self.codec = codec
+        self.port = port
 
     @classmethod
     async def create_connection(
-        cls, multicast: MulticastHandler, servers: List[Server], port: int
+        cls, multicast: MulticastHandler, servers: List[Server], port: int, codec: Codec
     ):
-        server_handler = await ServerHandler.create_server_connection(servers)
 
-        instance = cls(multicast, server_handler)
+        server_handler = await ServerHandler.create_server_connection(servers)
+        instance = cls(multicast, server_handler, codec, port)
+        server_handler.callback = instance.callback
         asyncio.create_task(instance._start_server(port))
 
         return instance
@@ -31,8 +43,37 @@ class NetworkManager:
         )
         await self._server.serve_forever()
 
-    def callback(self, data: bytes, addr: Tuple[str, int]) -> None:
-        pass
+    def callback(
+        self, envelope: TakEnvelope, addr: Tuple[str, int], transport: asyncio.Transport
+    ) -> None:
+        if envelope.event is None:
+            return
+        uid = envelope.event.uid
+
+        if uid not in self.users:
+            self.users[uid] = NetworkUser(uid, addr, V0Codec(), transport)
+
+        self.users[uid].callback(envelope)
+
+    def broadcast(self, envelope: TakEnvelope):
+        """Sends data to all servers and multicast group."""
+        self.multicast.send(envelope)
+        self.server_handler.send(envelope)
+
+    async def send_to(self, uid: str, envelope: TakEnvelope) -> bool:
+        """Sends data to a specific user via tcp or server."""
+        if uid not in self.users:
+            addr = self.multicast.get_user_addr(uid)
+            if addr is not None:
+                self.users[uid] = NetworkUser(uid, addr, V0Codec())
+                await self.users[uid].make_connection()
+            else:
+                return False
+        await self.users[uid].send(envelope)
+        return True
+
+    def get_endpoint(self):
+        return f"{host_ip()}:{self.port}:tcp"
 
 
 class ServerProtocol(asyncio.Protocol):
@@ -46,5 +87,7 @@ class ServerProtocol(asyncio.Protocol):
     def data_received(self, data):
         if self._transport is not None:
             self.network_manager.callback(
-                data, self._transport.get_extra_info("peername")
+                self.network_manager.codec.decode(data),
+                self._transport.get_extra_info("peername"),
+                self._transport,
             )

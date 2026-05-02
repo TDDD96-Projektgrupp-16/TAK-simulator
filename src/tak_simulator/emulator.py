@@ -1,8 +1,11 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
+from typing import List
 
-from tak_simulator.network_handler import NetworkHandler
+from tak_simulator.network.multicast import MulticastHandler
+from tak_simulator.network.network_manager import NetworkManager
+from tak_simulator.network.server import Server
 from tak_simulator.scenario import EmulatorOptions, ScenarioEvent
 from tak_simulator.scenario_scheduler import ScenarioScheduler, ScheduledEvent
 from tak_simulator.time_keeper import TimeKeeper
@@ -17,7 +20,7 @@ from tak_simulator.wire import (
     TakEnvelope,
     TakVersion,
 )
-from tak_simulator.wire.v1 import V1Codec
+from tak_simulator.wire.v0 import V0Codec
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +30,21 @@ class Emulator:
     options: EmulatorOptions
     time_keeper: TimeKeeper
     scheduler: ScenarioScheduler
-    connection: NetworkHandler
+    multicast: MulticastHandler
+    port: int
+    servers: List[Server]
 
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
     publish_position_event: ScheduledEvent | None = field(init=False, default=None)
     is_connected: bool = field(init=False, default=True)
-    codec: Codec = field(default_factory=V1Codec)
+    codec: Codec = field(default_factory=V0Codec)
 
     async def run(self) -> None:
+
+        self.connection = await NetworkManager.create_connection(
+            self.multicast, self.servers, self.port, self.codec
+        )
+
         logger.info("started emulator with callsign: %s", self.options.callsign)
 
         self.publish_position_event = self.scheduler.schedule_recurring(
@@ -62,8 +72,7 @@ class Emulator:
         t = self.time_keeper.get_time()
 
         envelope = self.tak_env(t)
-        data = self.codec.encode(envelope)
-        self.connection.send_all(data)
+        self.connection.broadcast(envelope)
 
     async def handle_scenario_event(self, event: ScenarioEvent) -> None:
         current_time = self.time_keeper.get_time()

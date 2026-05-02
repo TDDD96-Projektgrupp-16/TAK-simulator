@@ -8,9 +8,15 @@ from tak_simulator.wire import Codec, TakEnvelope
 class ServerHandler:
     def __init__(self, servers: List[Server]) -> None:
         self.servers: List[Server] = servers
+        self.callback: (
+            Callable[[TakEnvelope, tuple[str, int], asyncio.Transport], None] | None
+        ) = None
 
     @classmethod
-    async def create_server_connection(cls, servers: List[Server]) -> Self:
+    async def create_server_connection(
+        cls,
+        servers: List[Server],
+    ) -> Self:
         instance = cls(servers)
         for server in instance.servers:
             await server.connect()
@@ -21,8 +27,11 @@ class ServerHandler:
         for server in self.servers:
             server.send(envelope)
 
-    def _callback(self, envelope: TakEnvelope, addr: tuple[str, int]) -> None:
-        pass
+    def _callback(
+        self, envelope: TakEnvelope, addr: tuple[str, int], transport: asyncio.Transport
+    ) -> None:
+        if self.callback:
+            self.callback(envelope, addr, transport)
 
 
 class Server:
@@ -49,7 +58,8 @@ class Server:
         self.transport = transport
 
     def set_callback(
-        self, callback: Callable[[TakEnvelope, tuple[str, int]], None]
+        self,
+        callback: Callable[[TakEnvelope, tuple[str, int], asyncio.Transport], None],
     ) -> None:
         self.callback = callback
 
@@ -68,9 +78,11 @@ class Server:
         )
         self.set_server(transport)
 
-    def _callback(self, data: bytes, addr: tuple[str, int]) -> None:
+    def _callback(
+        self, data: bytes, addr: tuple[str, int], transport: asyncio.Transport
+    ) -> None:
         if self.callback:
-            self.callback(self.codec.decode(data), addr)
+            self.callback(self.codec.decode(data), addr, transport)
 
 
 class ServerProtocol(asyncio.Protocol):
@@ -83,4 +95,6 @@ class ServerProtocol(asyncio.Protocol):
 
     def data_received(self, data: bytes) -> None:
         if self.transport:
-            self.server._callback(data, self.transport.get_extra_info("peername"))
+            self.server._callback(
+                data, self.transport.get_extra_info("peername"), self.transport
+            )
