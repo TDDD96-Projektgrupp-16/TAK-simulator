@@ -57,4 +57,5 @@ class Simulator:
             self.time_keeper.start()
 
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
+        """Multicast data received handler. If we need to handle it, we can do so here."""
         logger.debug(f"Received data from {addr}")

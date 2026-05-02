@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import List, Tuple, cast
 
 from tak_simulator.network.multicast import MulticastHandler
@@ -7,6 +8,8 @@ from tak_simulator.network.server import Server, ServerHandler
 from tak_simulator.util import host_ip
 from tak_simulator.wire import Codec, TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
+
+logger = logging.getLogger(__name__)
 
 
 class NetworkManager:
@@ -46,6 +49,7 @@ class NetworkManager:
     def callback(
         self, envelope: TakEnvelope, addr: Tuple[str, int], transport: asyncio.Transport
     ) -> None:
+        logger.debug(f"Received data from {addr}: {envelope}")
         if envelope.event is None:
             return
         uid = envelope.event.uid
@@ -83,6 +87,9 @@ class ServerProtocol(asyncio.Protocol):
 
     def connection_made(self, transport):
         self._transport = cast(asyncio.Transport, transport)
+        logger.debug(
+            f"Connection made from {self._transport.get_extra_info('peername')}"
+        )
 
     def data_received(self, data):
         if self._transport is not None:

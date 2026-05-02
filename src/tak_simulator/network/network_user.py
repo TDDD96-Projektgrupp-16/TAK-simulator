@@ -1,7 +1,10 @@
 import asyncio
+import logging
 from typing import Tuple
 
 from tak_simulator.wire import Codec, TakEnvelope
+
+logger = logging.getLogger(__name__)
 
 
 class NetworkUser:
@@ -34,7 +37,7 @@ class NetworkUser:
         self.transport = transport
 
     def callback(self, data: TakEnvelope):
-        pass
+        logger.info(f"Received data from {self.uid}: {data}")
 
 
 class TcpUserProtocol(asyncio.Protocol):
