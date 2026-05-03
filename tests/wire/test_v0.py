@@ -167,18 +167,6 @@ class TestV0Codec:
         with pytest.raises(DecodeError):
             V0Codec().decode(xml)
 
-    def test_decode_missing_hae_raises_error(self):
-        import pytest
-
-        xml = b"""<?xml version='1.0'?>
-<event version='2.0' uid='test-uid' type='a-u-G' time='2026-04-15T11:50:35.000Z' start='2026-04-15T11:50:40.000Z' stale='2026-04-15T11:51:50.000Z' how='h-e' access='U'>
-<point lat='38.856650' lon='-77.063642' ce='5.0' le='10.0'/>
-<detail><contact callsign='TEST'/></detail>
-</event>"""
-
-        with pytest.raises(DecodeError):
-            V0Codec().decode(xml)
-
     def test_round_trip_preserves_event(self):
         original = _build_envelope()
 

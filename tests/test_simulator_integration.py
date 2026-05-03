@@ -59,11 +59,11 @@ def build_scenario() -> Scenario:
 async def test_simulator_uses_shared_timekeeper_scheduler_and_emulator_flow(
     monkeypatch,
 ):
-    from tak_simulator import network_handler
+    from tak_simulator.network import network_manager
 
     fake_connection = FakeConnection()
     monkeypatch.setattr(
-        network_handler.NetworkHandler,
+        network_manager.NetworkManager,
         "create_connection",
         AsyncMock(return_value=fake_connection),
     )
