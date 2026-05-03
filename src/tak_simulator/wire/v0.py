@@ -4,17 +4,17 @@ from xml.sax.saxutils import escape
 
 from .exceptions import DecodeError
 from .models import (
-    TakEnvelope,
-    CotEvent,
     Contact,
+    CotDetail,
+    CotEvent,
+    Group,
+    MessageContext,
+    Point,
     PrecisionLocation,
     Status,
+    TakEnvelope,
     TakVersion,
     Track,
-    Group,
-    CotDetail,
-    Point,
-    MessageContext,
 )
 
 type Attrs = list[tuple[str, str | None]]
@@ -287,16 +287,16 @@ def _decode_event(root: ET.Element) -> CotEvent:
 
     lat = _require_float_attribute("lat", point)
     lon = _require_float_attribute("lon", point)
-    hae = _require_float_attribute("hae", point)
-    ce = _require_float_attribute("ce", point)
-    le = _require_float_attribute("le", point)
+    hae = _none_if_unknown(_parse_float(point.get("hae")))
+    ce = _none_if_unknown(_parse_float(point.get("ce")))
+    le = _none_if_unknown(_parse_float(point.get("le")))
 
     point = Point(lat=lat, lon=lon, hae=hae, ce=ce, le=le)
 
     detail_elem = root.find("detail")
     detail = _decode_detail(detail_elem) if detail_elem is not None else None
 
-    access = _require_attribute("access")
+    access = root.get("access") or None
 
     return CotEvent(
         uid=uid,
