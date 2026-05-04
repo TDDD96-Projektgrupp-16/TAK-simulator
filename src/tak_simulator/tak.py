@@ -16,7 +16,9 @@ class TAK:
     def __init__(self, filename=None, server_configs: list[ServerConfig] | None = None):
         self.simulator = None
         self.filename = filename
-        self.server_configs = server_configs or []
+        if server_configs is None:
+            server_configs = []
+        self.server_configs = server_configs
 
         self.loop = asyncio.new_event_loop()
         threading.Thread(

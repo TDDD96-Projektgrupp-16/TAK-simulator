@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 
 from tak_simulator.emulator import Emulator
 from tak_simulator.network.multicast import MulticastHandler
@@ -21,18 +21,21 @@ class Simulator:
         self.emulators: list[Emulator] = []
         self.time_keeper = TimeKeeper()
         self.scheduler = ScenarioScheduler(self.time_keeper)
-        self.server_configs = server_configs or []
-        self.servers: List[Server] = [
+
+        if server_configs is None:
+            server_configs = []
+
+        self.servers = [
             Server(
-                config.host,
-                V0Codec(),
+                ip=config.ip,
                 port=config.port,
-                upgrade=config.upgrade,
+                codec=V0Codec(),
                 cafile=config.cafile,
                 certfile=config.certfile,
                 keyfile=config.keyfile,
+                upgrade=config.upgrade,
             )
-            for config in self.server_configs
+            for config in server_configs
         ]
 
     async def run(self, scenario: Scenario):

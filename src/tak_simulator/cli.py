@@ -1,12 +1,9 @@
 import argparse
 import json
-import logging
 
 from pydantic import TypeAdapter, ValidationError
 
 from tak_simulator.network.server import ServerConfig
-
-logger = logging.getLogger(__name__)
 
 _UPGRADE_VALUES = {"yes", "no", "1", "0", "true", "false"}
 
@@ -23,7 +20,7 @@ def parse_server_arg(value: str) -> ServerConfig:
             f"Valid forms: HOST:PORT[:UPGRADE] | HOST:PORT:CAFILE:CERTFILE:KEYFILE[:UPGRADE], "
             f"got {len(parts)} part(s)"
         )
-    host = parts[0]
+    ip = parts[0]
     try:
         port = int(parts[1])
     except ValueError:
@@ -44,12 +41,12 @@ def parse_server_arg(value: str) -> ServerConfig:
             upgrade = _parse_upgrade(parts[5])
 
     return ServerConfig(
-        host=host,
+        ip=ip,
         port=port,
-        upgrade=upgrade,
         cafile=cafile,
         certfile=certfile,
         keyfile=keyfile,
+        upgrade=upgrade,
     )
 
 
@@ -58,11 +55,12 @@ _server_list_adapter = TypeAdapter(list[ServerConfig])
 
 def load_servers_file(path: str) -> list[ServerConfig]:
     with open(path) as f:
-        data = json.load(f)
-    try:
-        return _server_list_adapter.validate_python(data)
-    except ValidationError as e:
-        raise ValueError(f"Servers file is invalid: {e}") from e
+        try:
+            return _server_list_adapter.validate_python(json.load(f))
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Servers file is not valid JSON: {e}") from e
+        except ValidationError as e:
+            raise ValueError(f"Servers file is invalid: {e}") from e
 
 
 def get_args():
