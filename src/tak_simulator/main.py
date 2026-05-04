@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     args = get_args()
-    logging_setup(args.log, not args.notui)
+    logging_setup(args.log)
 
     if args.notui:
         if not args.filename:
