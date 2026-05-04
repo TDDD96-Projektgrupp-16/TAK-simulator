@@ -13,7 +13,7 @@ def _start_background_loop(loop: asyncio.AbstractEventLoop):
 
 class TAK:
     def __init__(self, filename=None):
-        self.active_uid = None
+
         self.simulator = None
         self.filename = filename
 
@@ -31,16 +31,4 @@ class TAK:
 
         asyncio.run_coroutine_threadsafe(
             self.simulator.run(scenario), self.loop
-        )
-
-        self._run_loop()
-
-    def _run_loop(self):
-        try:
-            while True:
-                ...
-        except KeyboardInterrupt:
-            pass # Caught Ctrl+C
-        finally:
-            self.simulator.stop()
-            print("\nSimulator shut down safely.")
+        ).result()
