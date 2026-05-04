@@ -1,7 +1,7 @@
 import argparse
 
 from tak_simulator.logging_conf import logging_setup
-from tak_simulator.ui import TakApp
+from tak_simulator.tak import TAK
 
 import logging
 
@@ -12,13 +12,13 @@ def main():
     args = get_args()
     logging_setup(args.log)
 
-    app = TakApp(filename=args.filename)
-    app.run()
+    app = TAK(args.filename)
+    app.start()
 
 
 def get_args():
     parser = argparse.ArgumentParser("tak_emulator")
-    parser.add_argument("--filename", metavar="SCENARIO", nargs=1 ,default=None)
+    parser.add_argument("filename", metavar="SCENARIO")
     parser.add_argument("--log", default="INFO")
     return parser.parse_args()
 

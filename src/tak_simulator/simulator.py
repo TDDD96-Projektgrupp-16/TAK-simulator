@@ -1,6 +1,5 @@
 import asyncio
 import logging
-from pathlib import Path
 from typing import Any, List, Tuple
 
 from tak_simulator.emulator import Emulator
@@ -22,19 +21,15 @@ class Simulator:
         self.emulators: list[Emulator] = []
         self.time_keeper = TimeKeeper()
         self.scheduler = ScenarioScheduler(self.time_keeper)
-
-        self.servers: List[Server] = []
-
-        if Path("./certs/ca.pem").exists():
-            self.servers.append(
-                Server(
-                    "192.71.171.115",
-                    "./certs/ca.pem",
-                    "./certs/client.pem",
-                    "./certs/client.key",
-                    V0Codec(),
-                )
+        self.servers: List[Server] = [
+            Server(
+                "192.71.171.115",
+                "./certs/ca.pem",
+                "./certs/client.pem",
+                "./certs/client.key",
+                V0Codec(),
             )
+        ]
 
     async def run(self, scenario: Scenario):
         port = DEFAULT_START_PORT
