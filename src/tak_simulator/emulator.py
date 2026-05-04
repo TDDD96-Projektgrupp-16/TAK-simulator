@@ -177,14 +177,13 @@ class Emulator:
     def tak_env(self, t: float) -> TakEnvelope:
         return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>')
 
-    def send_msg(self, to_uid: str, msg: str):
+    async def send_msg(self, to_uid: str, msg: str):
         env = self._create_msg(self.time_keeper.get_time(), msg)
-        data = self.codec.encode(env)
-        self.connection.send_to_user(to_uid, data)
+        await self.connection.send_to(to_uid, env)
         logger.info(
             "Emulator %s sent message %s to %s at time %.3f",
             self.options.uid,
-            self.options.callsign,
+            msg,
             to_uid,
             self.time_keeper.get_time(),
         )

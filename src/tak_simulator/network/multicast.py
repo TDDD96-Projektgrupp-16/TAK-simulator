@@ -5,6 +5,8 @@ from typing import Callable, Self, Tuple
 
 from tak_simulator.wire import Codec, TakEnvelope
 
+from tak_simulator.wire.v1 import V1Codec
+
 MULTICAST_ADDR = "239.2.3.1"
 MULTICAST_PORT = 6969
 
@@ -51,7 +53,15 @@ class MulticastHandler:
         return instanse
 
     def _multicast_data_received(self, data: bytes, addr: tuple[str, int]) -> None:
-        envelope = self.codec.decode(data)
+        # try:
+        print(str(data))
+
+        if str(data).__contains__("Arvid") or str(data).__contains__("Algot"):
+            envelope = self.codec.decode(data)
+        else:
+            # except xml.etree.ElementTree.ParseError as e:
+            envelope = V1Codec().decode(data)
+
         if envelope.event is not None:
             self._user[envelope.event.uid] = addr
         self.callback(envelope, addr)

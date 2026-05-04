@@ -30,6 +30,7 @@ class Simulator:
                 V0Codec(),
             )
         ]
+        self.servers = []  # ingen server
 
     async def run(self, scenario: Scenario):
         port = DEFAULT_START_PORT
@@ -40,6 +41,7 @@ class Simulator:
             )
 
             tg.create_task(self.scheduler.run())
+            tg.create_task(self.rea())
 
             for options in scenario.emulators:
                 emulator = Emulator(
@@ -55,6 +57,12 @@ class Simulator:
                 self.emulators.append(emulator)
 
             self.time_keeper.start()
+
+    async def rea(self):
+        for i in range(20):
+            await asyncio.sleep(5)
+            # "ANDROID-6eb795c71729d40b"
+            await self.emulators[0].send_msg("argar", "Hej")
 
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
         """Multicast data received handler. If we need to handle it, we can do so here."""

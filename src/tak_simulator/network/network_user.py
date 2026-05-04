@@ -48,4 +48,5 @@ class TcpUserProtocol(asyncio.Protocol):
         return super().connection_made(transport)
 
     def data_received(self, data: bytes):
+        print(data)
         self.user.callback(self.user.codec.decode(data))

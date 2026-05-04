@@ -6,6 +6,7 @@
     "emulators": [
         {
             "like": "atak",
+            "uid": "algal",
             "callsign": "Algot Johansson",
             "takv": {
                 "device": "SAMSUNG SM-S901B"
@@ -28,6 +29,7 @@
         },
         {
             "like": "wintak",
+            "uid": "argar",
             "callsign": "Arvid Ramsberg",
             "group": {
                 "role": "Team Leader"
