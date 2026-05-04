@@ -4,7 +4,7 @@ from typing import Any, List, Tuple
 
 from tak_simulator.emulator import Emulator
 from tak_simulator.network.multicast import MulticastHandler
-from tak_simulator.network.server import Server
+from tak_simulator.network.server import Server, ServerConfig
 from tak_simulator.scenario import Scenario
 from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.time_keeper import TimeKeeper
@@ -17,18 +17,22 @@ DEFAULT_START_PORT = 8000
 
 
 class Simulator:
-    def __init__(self):
+    def __init__(self, server_configs: list[ServerConfig] | None = None):
         self.emulators: list[Emulator] = []
         self.time_keeper = TimeKeeper()
         self.scheduler = ScenarioScheduler(self.time_keeper)
+        self.server_configs = server_configs or []
         self.servers: List[Server] = [
             Server(
-                "192.71.171.115",
-                "./certs/ca.pem",
-                "./certs/client.pem",
-                "./certs/client.key",
+                config.host,
                 V0Codec(),
+                port=config.port,
+                upgrade=config.upgrade,
+                cafile=config.cafile,
+                certfile=config.certfile,
+                keyfile=config.keyfile,
             )
+            for config in self.server_configs
         ]
 
     async def run(self, scenario: Scenario):

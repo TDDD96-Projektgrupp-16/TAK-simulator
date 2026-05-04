@@ -1,9 +1,20 @@
 import asyncio
 import ssl
+from dataclasses import dataclass
 from typing import Callable, List, Self, cast
 from xml.etree import ElementTree as ET
 
 from tak_simulator.wire import Codec, TakEnvelope
+
+
+@dataclass
+class ServerConfig:
+    host: str
+    port: int
+    upgrade: bool = False
+    cafile: str | None = None
+    certfile: str | None = None
+    keyfile: str | None = None
 
 
 class ServerHandler:
@@ -39,15 +50,16 @@ class Server:
     def __init__(
         self,
         ip: str,
-        cafile: str,
-        certfile: str,
-        keyfile: str,
         codec: Codec,
         port: int = 8089,
+        upgrade: bool = False,
+        cafile: str | None = None,
+        certfile: str | None = None,
+        keyfile: str | None = None,
     ) -> None:
-        """Files are str paths to the CA, cert, and key files."""
         self.ip = ip
         self.port = port
+        self.upgrade = upgrade
         self.cafile = cafile
         self.certfile = certfile
         self.keyfile = keyfile
@@ -69,6 +81,10 @@ class Server:
             self.transport.write(self.codec.encode(data))
 
     async def connect(self) -> None:
+        if self.cafile is None or self.certfile is None or self.keyfile is None:
+            raise ValueError(
+                "Certificate files (cafile, certfile, keyfile) are required for TLS connection"
+            )
         ctx = ssl.create_default_context(cafile=self.cafile)
         ctx.check_hostname = False  # TODO
         ctx.load_cert_chain(certfile=self.certfile, keyfile=self.keyfile)
