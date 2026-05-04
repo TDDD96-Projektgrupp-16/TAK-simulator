@@ -64,3 +64,18 @@ class Simulator:
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
         """Multicast data received handler. If we need to handle it, we can do so here."""
         logger.debug(f"Received data from {addr}")
+
+    def stop(self):
+        self.time_keeper.stop()
+        self.scheduler.stop()
+        self.scheduler.clear()
+
+        if hasattr(self, 'multicast') and self.multicast and self.multicast.transport:
+            self.multicast.transport.close()
+
+        for emu in self.emulators:
+            emu.is_connected = False
+            if hasattr(emu, 'connection') and emu.connection and emu.connection._server:
+                emu.connection._server.close()
+        
+        self.emulators.clear()
