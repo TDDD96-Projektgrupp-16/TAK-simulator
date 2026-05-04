@@ -118,7 +118,8 @@ class TakApp(App):
 
     def load_scenario(self, filename: str):
         try:
-            self.simulator.stop()
+            if self.simulator.time_keeper.get_time() > 0:
+                self.simulator.stop()
 
             self.scenario = load_scenario(filename)
 
