@@ -1,0 +1,140 @@
+from textual.app import App, ComposeResult
+from textual.widgets import Button, DataTable, Footer, Header, Input, Label, Log, Select, Static, TabbedContent
+
+from tak_simulator.scenario import load_scenario
+from tak_simulator.simulator import Simulator
+
+from tak_simulator.ui.load_view import LoadScenarioMode
+from tak_simulator.ui.time_view import TimeTrackerMode
+from tak_simulator.ui.list_view import EmulatorListMode
+from tak_simulator.ui.detail_view import EmulatorDetailMode
+
+
+class TakApp(App):
+    CSS = """
+    #load_container, #time_container { padding: 2; height: auto; }
+    #time_display { text-style: bold; color: green; margin-bottom: 1; }
+    #msg_container { height: 3; margin-top: 1; }
+    #msg_input { width: 1fr; }
+    #detail_header { padding: 1; background: $surface; margin-bottom: 1; }
+    #detail_log { border: solid $primary; height: 1fr; }
+    """
+
+    BINDINGS = [("q", "quit", "Quit")]
+
+    def __init__(self, filename: str | None = None):
+        super().__init__()
+        self.filename = filename
+        self.simulator = Simulator()
+        self.scenario = None
+        self.active_uid = None
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        with TabbedContent(id="tabs"):
+            yield LoadScenarioMode("1. Load Scenario", id="mode_load")
+            yield TimeTrackerMode("2. Time Controls", id="mode_time")
+            yield EmulatorListMode("3. Emulator List", id="mode_list")
+            yield EmulatorDetailMode("4. Emulator Detail", id="mode_detail")
+        yield Footer()
+
+    async def on_mount(self) -> None:
+        table = self.query_one(DataTable)
+        table.cursor_type = "row"
+        table.add_column("Callsign", key="callsign")
+        table.add_column("UID", key="uid")
+        table.add_column("Type", key="type")
+        table.add_column("Status", key="status")
+        
+        if self.filename:
+            try:
+                self.query_one("#scenario_select", Select).value = self.filename
+            except Exception:
+                pass
+
+        self.set_interval(0.1, self.update_view_state)
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        btn_id = event.button.id
+        if btn_id == "btn_load":
+            select = self.query_one("#scenario_select", Select)
+            
+            if select.value and select.value != Select.BLANK:
+                self.load_scenario(str(select.value))
+            else:
+                self.notify("Please select a scenario from the dropdown.", severity="warning")    
+            
+        elif btn_id == "btn_start":
+            if self.simulator.time_keeper.get_time() > 0.0:
+                self.simulator.time_keeper.unpause()
+            else:
+                if not self.scenario:
+                    self.notify("Please select a scenario first.", severity="warning")
+                    return
+                self.run_worker(self.simulator.run(self.scenario), exclusive=True, thread=False)
+        elif btn_id == "btn_pause":
+            self.simulator.time_keeper.pause()
+        elif btn_id == "btn_stop":
+            self.simulator.stop()
+
+    def load_scenario(self, filename: str):
+        try:
+            self.simulator.stop()
+
+            self.scenario = load_scenario(filename)
+
+            self.notify(f"Loaded {filename} successfully.")
+
+            self.query_one("#tabs", TabbedContent).active = "mode_time"
+            self.screen.set_focus(None)
+        except Exception as e:
+            self.notify(f"Error loading scenario: {e}", severity="error")
+
+    def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        self.active_uid = event.row_key.value
+        self.query_one(TabbedContent).active = "mode_detail"
+        self.screen.set_focus(None)
+        self.query_one("#detail_log", Log).clear()
+        self.query_one("#detail_log", Log).write_line(f"--- Connected to {self.active_uid} ---")
+
+    def update_view_state(self):
+        time_display = self.query_one("#time_display", Label)
+        status_display = self.query_one("#time_status", Label)
+        
+        current_time = self.simulator.time_keeper.get_time()
+        is_paused = self.simulator.time_keeper.is_paused
+        
+        time_display.update(f"Simulation Time: {current_time:.2f}s")
+        status_display.update(f"Status: {
+            'Running' if not is_paused else 'Paused' if self.simulator.time_keeper.get_time() > 0.0 else 'Stopped'
+            }")
+
+        table = self.query_one(DataTable)
+        for emu in self.simulator.emulators:
+            status_text = "Online" if emu.is_connected else "Offline"
+            if emu.options.uid in table.rows:
+                table.update_cell(emu.options.uid, "status", status_text)
+            else:  # not in table
+                table.add_row(
+                    emu.options.callsign,
+                    emu.options.uid,
+                    emu.options.type,
+                    status_text,
+                    key=emu.options.uid
+                )
+
+        if self.active_uid:
+            emu = next((e for e in self.simulator.emulators if e.options.uid == self.active_uid), None)
+            if emu:
+                header = self.query_one("#detail_header", Static)
+                header.update(f"[b]{emu.options.callsign}[/b] | {emu.options.uid} | {'Online' if emu.is_connected else 'Offline'}")
+
+    def send_message(self, message: str):
+        if not self.active_uid or not message: 
+            return
+        emu = next((e for e in self.simulator.emulators if e.options.uid == self.active_uid), None)
+        if emu:
+            log = self.query_one("#detail_log", Log)
+            current_time = self.simulator.time_keeper.get_time()
+            log.write_line(f"[{current_time:.2f}s] Sent: {message}")
+            self.query_one("#msg_input", Input).value = ""
