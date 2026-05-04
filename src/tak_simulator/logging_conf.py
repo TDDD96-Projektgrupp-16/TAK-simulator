@@ -2,7 +2,9 @@ import logging
 import logging.config
 
 
-def logging_setup(level):
+def logging_setup(level, is_tui=False):
+    handler_name = "file" if is_tui else "default"
+
     _LOGGING_CONFIG = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -14,12 +16,19 @@ def logging_setup(level):
                 "level": level,
                 "formatter": "standard",
                 "class": "logging.StreamHandler",
-                "stream": "ext://sys.stdout",  # Default is stderr
+                "stream": "ext://sys.stdout",  
+            },
+            "file": {
+                "level": level,
+                "formatter": "standard",
+                "class": "logging.FileHandler",
+                "filename": "simulator.log",  # Background log file
+                "mode": "w",
             },
         },
         "loggers": {
             "": {  # root logger
-                "handlers": ["default"],
+                "handlers": [handler_name],
                 "level": level,
                 "propagate": False,
             }

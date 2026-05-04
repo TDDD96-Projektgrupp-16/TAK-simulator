@@ -1,13 +1,36 @@
+import logging
+
 from textual.app import App, ComposeResult
+from textual.message import Message
 from textual.widgets import Button, DataTable, Footer, Header, Input, Label, Log, Select, Static, TabbedContent
 
 from tak_simulator.scenario import load_scenario
 from tak_simulator.simulator import Simulator
 
 from tak_simulator.ui.load_view import LoadScenarioMode
+from tak_simulator.ui.log_view import SystemLogsMode
 from tak_simulator.ui.time_view import TimeTrackerMode
 from tak_simulator.ui.list_view import EmulatorListMode
 from tak_simulator.ui.detail_view import EmulatorDetailMode
+
+
+class SystemLogMessage(Message):
+    def __init__(self, log_line: str):
+        super().__init__()
+        self.log_line = log_line
+
+class TextualLogHandler(logging.Handler):
+    def __init__(self, app: App):
+        super().__init__()
+        self.app = app
+        self.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
+
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            self.app.post_message(SystemLogMessage(msg))
+        except Exception:
+            self.handleError(record)
 
 
 class TakApp(App):
@@ -36,9 +59,15 @@ class TakApp(App):
             yield TimeTrackerMode("2. Time Controls", id="mode_time")
             yield EmulatorListMode("3. Emulator List", id="mode_list")
             yield EmulatorDetailMode("4. Emulator Detail", id="mode_detail")
+            yield SystemLogsMode("5. System Logs", id="mode_logs")
         yield Footer()
 
     async def on_mount(self) -> None:
+        # set up logger
+        self.textual_log_handler = TextualLogHandler(self)
+        logging.getLogger().addHandler(self.textual_log_handler)
+
+        # set up data table
         table = self.query_one(DataTable)
         table.cursor_type = "row"
         table.add_column("Callsign", key="callsign")
@@ -53,6 +82,16 @@ class TakApp(App):
                 pass
 
         self.set_interval(0.1, self.update_view_state)
+    
+    def on_unmount(self) -> None:
+        logging.getLogger().removeHandler(self.textual_log_handler)
+
+    def on_system_log_message(self, message: SystemLogMessage) -> None:
+        try:
+            log_widget = self.query_one("#system_log", Log)
+            log_widget.write_line(message.log_line)
+        except Exception:
+            pass 
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         btn_id = event.button.id
