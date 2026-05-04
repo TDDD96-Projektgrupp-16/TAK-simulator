@@ -1,4 +1,7 @@
 import argparse
+import json
+
+from pydantic import TypeAdapter, ValidationError
 
 from tak_simulator.logging_conf import logging_setup
 from tak_simulator.network.server import ServerConfig
@@ -54,6 +57,18 @@ def parse_server_arg(value: str) -> ServerConfig:
     )
 
 
+_server_list_adapter = TypeAdapter(list[ServerConfig])
+
+
+def load_servers_file(path: str) -> list[ServerConfig]:
+    with open(path) as f:
+        data = json.load(f)
+    try:
+        return _server_list_adapter.validate_python(data)
+    except ValidationError as e:
+        raise ValueError(f"Servers file is invalid: {e}") from e
+
+
 def main():
     args = get_args()
     logging_setup(args.log)
@@ -74,7 +89,16 @@ def get_args():
         default=[],
         help="Server connection: HOST:PORT[:UPGRADE] | HOST:PORT:CAFILE:CERTFILE:KEYFILE[:UPGRADE] (UPGRADE: yes/no/1/0/true/false)",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--servers-file",
+        default=None,
+        help="JSON file with an array of server configurations",
+    )
+    args = parser.parse_args()
+    if args.servers_file:
+        file_servers = load_servers_file(args.servers_file)
+        args.servers = args.servers + file_servers
+    return args
 
 
 if __name__ == "__main__":

@@ -1,14 +1,14 @@
 import asyncio
 import ssl
-from dataclasses import dataclass
 from typing import Callable, List, Self, cast
 from xml.etree import ElementTree as ET
+
+from pydantic import BaseModel
 
 from tak_simulator.wire import Codec, TakEnvelope
 
 
-@dataclass
-class ServerConfig:
+class ServerConfig(BaseModel):
     host: str
     port: int
     upgrade: bool = False
