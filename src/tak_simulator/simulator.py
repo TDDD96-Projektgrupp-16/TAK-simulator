@@ -10,6 +10,7 @@ from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.time_keeper import TimeKeeper
 from tak_simulator.wire import TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
+from tak_simulator.wire.v1 import V1Codec
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +37,7 @@ class Simulator:
         port = DEFAULT_START_PORT
         async with asyncio.TaskGroup() as tg:
             self.multicast = await MulticastHandler.create_multicast_connection(
-                V0Codec(),
+                V1Codec(),
                 self.data_received,
             )
 

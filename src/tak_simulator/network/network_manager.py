@@ -92,6 +92,7 @@ class ServerProtocol(asyncio.Protocol):
         )
 
     def data_received(self, data):
+        print(data)
         if self._transport is not None:
             self.network_manager.callback(
                 self.network_manager.codec.decode(data),
