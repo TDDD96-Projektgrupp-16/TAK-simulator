@@ -55,8 +55,14 @@ class MulticastHandler:
 
     def _multicast_data_received(self, data: bytes, addr: tuple[str, int]) -> None:
         envelope = self.codec.decode(data)
-        if envelope.event is not None:
-            self._user[envelope.event.uid] = addr
+        if (
+            envelope.event is not None
+            and envelope.event.detail is not None
+            and envelope.event.detail.contact is not None
+            and envelope.event.detail.contact.endpoint is not None
+        ):
+            endpoint = envelope.event.detail.contact.endpoint
+            self._user[endpoint] = (endpoint.split(":")[0], int(endpoint.split(":")[1]))
         self.callback(envelope, addr)
 
     def get_user_addr(self, uid: str) -> Tuple[str, int] | None:
