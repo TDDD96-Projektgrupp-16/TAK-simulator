@@ -24,7 +24,7 @@ class Simulator:
         self.scheduler = ScenarioScheduler(self.time_keeper)
         self.servers: List[Server] = [
             Server(
-                "192.71.171.116",
+                "192.71.171.115",
                 "./certs/ca.pem",
                 "./certs/client.pem",
                 "./certs/client.key",
