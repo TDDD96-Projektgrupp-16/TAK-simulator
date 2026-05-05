@@ -62,7 +62,10 @@ class MulticastHandler:
             and envelope.event.detail.contact.endpoint is not None
         ):
             endpoint = envelope.event.detail.contact.endpoint
-            self._user[endpoint] = (endpoint.split(":")[0], int(endpoint.split(":")[1]))
+            self._user[envelope.event.uid] = (
+                endpoint.split(":")[0],
+                int(endpoint.split(":")[1]),
+            )
         self.callback(envelope, addr)
 
     def get_user_addr(self, uid: str) -> Tuple[str, int] | None:

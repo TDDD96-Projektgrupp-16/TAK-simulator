@@ -60,10 +60,10 @@ class Simulator:
             self.time_keeper.start()
 
     async def rea(self):
-        for i in range(20):
-            await asyncio.sleep(5)
-            # "ANDROID-6eb795c71729d40b"
-            await self.emulators[0].send_msg("argar", "Hej")
+        for i in range(40):
+            await asyncio.sleep(2)
+            #
+            await self.emulators[0].send_msg("ANDROID-6eb795c71729d40b", "Hej")
 
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
         """Multicast data received handler. If we need to handle it, we can do so here."""

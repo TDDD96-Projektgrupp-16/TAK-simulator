@@ -22,6 +22,9 @@ class NetworkUser:
 
     async def send(self, envelope: TakEnvelope):
         """Sends data to the user via multicast and server."""
+        logger.debug(
+            f"SEND: Transport {self.transport}, envelope control {envelope.control}"
+        )
         if self.transport is None:
             await self.make_connection()
         if envelope.control is not None and self.transport is not None:

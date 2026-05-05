@@ -68,6 +68,7 @@ class NetworkManager:
         """Sends data to a specific user via tcp or server."""
         if uid not in self.users:
             addr = self.multicast.get_user_addr(uid)
+            logger.debug(f"Addr {addr} from uid {uid}")
             if addr is not None:
                 self.users[uid] = NetworkUser(uid, addr, V0Codec())
                 await self.users[uid].make_connection()

@@ -153,7 +153,7 @@ class Emulator:
                 ),
                 detail=CotDetail(
                     contact=Contact(
-                        # endpoint=self.endpoint,
+                        endpoint=self.connection.get_endpoint(),
                         callsign=self.options.callsign,
                     ),
                     group=Group(
