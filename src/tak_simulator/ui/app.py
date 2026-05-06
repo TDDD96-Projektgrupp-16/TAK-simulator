@@ -114,26 +114,24 @@ class TakApp(App):
         elif btn_id == "btn_pause":
             self.simulator.time_keeper.pause()
         elif btn_id == "btn_stop":
-            self.simulator.stop()
+            self._stop_simulation()
 
     def load_scenario(self, filename: str):
         try:
             if self.simulator.time_keeper.get_time() > 0:
-                self.simulator.stop()
+                self._stop_simulation()
 
             self.scenario = load_scenario(filename)
 
             self.notify(f"Loaded {filename} successfully.")
-
-            self.query_one("#tabs", TabbedContent).active = "mode_time"
-            self.screen.set_focus(None)
+            
+            self._change_tab("mode_time")
         except Exception as e:
             self.notify(f"Error loading scenario: {e}", severity="error")
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
         self.active_uid = event.row_key.value
-        self.query_one(TabbedContent).active = "mode_detail"
-        self.screen.set_focus(None)
+        self._change_tab("mode_detail")
         self.query_one("#detail_log", Log).clear()
         self.query_one("#detail_log", Log).write_line(f"--- Connected to {self.active_uid} ---")
 
@@ -178,3 +176,15 @@ class TakApp(App):
             current_time = self.simulator.time_keeper.get_time()
             log.write_line(f"[{current_time:.2f}s] Sent: {message}")
             self.query_one("#msg_input", Input).value = ""
+    
+    def _stop_simulation(self):
+        self.simulator.stop()
+        self.query_one(DataTable).clear()
+        if self.active_uid:
+            self.active_uid = None
+            header = self.query_one("#detail_header", Static).update("Select an emulator from the list.")
+            self.query_one("#detail_log", Log).clear()
+    
+    def _change_tab(self, tab_id: str):
+        self.query_one(TabbedContent).active = tab_id
+        self.screen.set_focus(None)
