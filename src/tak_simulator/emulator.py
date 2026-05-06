@@ -23,6 +23,11 @@ from tak_simulator.wire import (
 from tak_simulator.wire.v0 import V0Codec
 
 
+from tak_simulator.xml_parse import (
+    build_chat_detail_for_direct_message,
+    encode_chat_detail,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -178,8 +183,9 @@ class Emulator:
         return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>')
 
     async def send_msg(self, to_uid: str, msg: str):
-        env = self._create_msg(self.time_keeper.get_time(), msg)
-        await self.connection.send_to(to_uid, env)
+        chat_detail = build_chat_detail_for_direct_message(self.options, to_uid, msg)
+        data = encode_chat_detail(chat_detail)
+        await self.connection.send_to(to_uid, data)
         logger.info(
             "Emulator %s sent message %s to %s at time %.3f",
             self.options.uid,

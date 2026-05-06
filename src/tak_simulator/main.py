@@ -19,7 +19,7 @@ def main():
 def get_args():
     parser = argparse.ArgumentParser("tak_emulator")
     parser.add_argument("filename", metavar="SCENARIO")
-    parser.add_argument("--log", default="DEBUG")
+    parser.add_argument("--log", default="INFO")
     return parser.parse_args()
 
 

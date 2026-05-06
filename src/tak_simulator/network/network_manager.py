@@ -9,6 +9,8 @@ from tak_simulator.util import host_ip
 from tak_simulator.wire import Codec, TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
 
+from tak_simulator.xml_parse import ChatDetail, decode_chat_detail
+
 logger = logging.getLogger(__name__)
 
 
@@ -59,12 +61,26 @@ class NetworkManager:
 
         self.users[uid].callback(envelope)
 
+    def callback_msg(
+        self, data: ChatDetail, addr: Tuple[str, int], transport: asyncio.Transport
+    ) -> None:
+        logger.debug(f"Received data from {addr}: {data}")
+        logger.info(
+            f"[{data.remarks.to}] received msg {data.remarks.text} from {data.chat.sender_callsign} [{data.remarks.source_id}] {addr}."
+        )
+        uid = data.link.uid
+
+        if uid not in self.users:
+            self.users[uid] = NetworkUser(uid, addr, V0Codec(), transport)
+
+        # self.users[uid].callback(envelope)
+
     def broadcast(self, envelope: TakEnvelope):
         """Sends data to all servers and multicast group."""
         self.multicast.send(envelope)
         self.server_handler.send(envelope)
 
-    async def send_to(self, uid: str, envelope: TakEnvelope) -> bool:
+    async def send_to(self, uid: str, data: bytes) -> bool:
         """Sends data to a specific user via tcp or server."""
         if uid not in self.users:
             addr = self.multicast.get_user_addr(uid)
@@ -74,7 +90,7 @@ class NetworkManager:
                 await self.users[uid].make_connection()
             else:
                 return False
-        await self.users[uid].send(envelope)
+        await self.users[uid].send(data)
         return True
 
     def get_endpoint(self):
@@ -93,10 +109,10 @@ class ServerProtocol(asyncio.Protocol):
         )
 
     def data_received(self, data):
-        print(data)
+        logger.debug(f"Data received {data}")
         if self._transport is not None:
-            self.network_manager.callback(
-                self.network_manager.codec.decode(data),
+            self.network_manager.callback_msg(
+                decode_chat_detail(str(data)[2:-1]),  # rm b' '
                 self._transport.get_extra_info("peername"),
                 self._transport,
             )

@@ -20,15 +20,12 @@ class NetworkUser:
         self.transport = transport
         self.codec = codec
 
-    async def send(self, envelope: TakEnvelope):
+    async def send(self, data: bytes):
         """Sends data to the user via multicast and server."""
-        logger.debug(
-            f"SEND: Transport {self.transport}, envelope control {envelope.control}"
-        )
         if self.transport is None:
             await self.make_connection()
-        if envelope.control is not None and self.transport is not None:
-            self.transport.write(self.codec.encode(envelope))
+        if """envelope.control is not None""" and self.transport is not None:
+            self.transport.write(data)
 
     async def make_connection(self):
         loop = asyncio.get_running_loop()
@@ -51,5 +48,4 @@ class TcpUserProtocol(asyncio.Protocol):
         return super().connection_made(transport)
 
     def data_received(self, data: bytes):
-        print(data)
         self.user.callback(self.user.codec.decode(data))
