@@ -1,9 +1,0 @@
-2026-05-06 11:13:12,021 [INFO] tak_simulator.logging_conf: Set up logger(INFO)
-2026-05-06 11:13:19,452 [INFO] tak_simulator.scenario_scheduler: Scenario scheduler started
-2026-05-06 11:13:19,452 [INFO] tak_simulator.emulator: started emulator with callsign: Algot Johansson
-2026-05-06 11:13:19,452 [INFO] tak_simulator.emulator: Emulator Algot Johansson registered recurring position updates and 0 scenario events
-2026-05-06 11:13:19,452 [INFO] tak_simulator.emulator: started emulator with callsign: Arvid Ramsberg
-2026-05-06 11:13:19,452 [INFO] tak_simulator.emulator: Emulator Arvid Ramsberg registered recurring position updates and 0 scenario events
-2026-05-06 11:13:19,452 [INFO] tak_simulator.time_keeper: Time keeper started
-2026-05-06 11:13:34,902 [INFO] tak_simulator.time_keeper: Time keeper stopped
-2026-05-06 11:13:34,904 [INFO] tak_simulator.scenario_scheduler: Scenario scheduler stopped
