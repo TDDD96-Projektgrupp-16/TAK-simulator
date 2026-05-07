@@ -2,7 +2,7 @@ import logging
 
 from textual.app import App, ComposeResult
 from textual.message import Message
-from textual.widgets import Button, DataTable, Footer, Header, Input, Label, Log, Select, Static, TabbedContent
+from textual.widgets import Button, DataTable, Footer, Header, Input, Label, Log, RadioSet, Select, Static, TabbedContent
 
 from tak_simulator.scenario import load_scenario
 from tak_simulator.simulator import Simulator
@@ -128,6 +128,18 @@ class TakApp(App):
             self._change_tab("mode_time")
         except Exception as e:
             self.notify(f"Error loading scenario: {e}", severity="error")
+    
+    def on_radio_set_changed(self, event: RadioSet.Changed) -> None:
+        if event.radio_set.id == "speed_radio_set":
+            try:
+                speed_str = event.pressed.id.split("_")[1]+"." + event.pressed.id.split("_")[2]
+                speed_multiplier = float(speed_str)
+                
+                self.simulator.time_keeper.set_speed(speed_multiplier)
+                self.notify(f"Simulation speed set to {speed_multiplier}x")
+                
+            except Exception as e:
+                self.notify(f"Error setting speed: {e}", severity="error")
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
         self.active_uid = event.row_key.value
@@ -180,6 +192,7 @@ class TakApp(App):
     def _stop_simulation(self):
         self.simulator.stop()
         self.query_one(DataTable).clear()
+        self.query_one("#speed_radio_set").value = "speed_1.0"
         if self.active_uid:
             self.active_uid = None
             header = self.query_one("#detail_header", Static).update("Select an emulator from the list.")
