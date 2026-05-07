@@ -3,6 +3,36 @@ from textual.containers import Horizontal, Vertical
 from textual.widgets import Button, Label, RadioButton, RadioSet, TabPane
 
 class TimeTrackerMode(TabPane):
+    DEFAULT_CSS = """
+    #speed_controls {
+        height: auto;
+        align: center middle;
+        background: $panel;
+        padding: 1 1;
+        border: panel $primary;
+        width: auto;
+    }
+
+    #speed_label {
+        content-align: left middle;
+        text-style: bold;
+        margin-right: 2;
+        color: $text;
+    }
+
+    #speed_radio_set {
+        layout: horizontal;
+        border: none;
+        height: auto;
+        background: transparent;
+    }
+
+    #speed_radio_set > RadioButton {
+        margin: 0 1;
+        background: transparent;
+    }
+    """
+    
     def compose(self) -> ComposeResult:
         with Vertical(id="time_container"):
             yield Label("Simulation Time: 0.00s", id="time_display")
