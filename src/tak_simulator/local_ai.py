@@ -87,14 +87,14 @@ _TACTICAL_KEYWORDS: frozenset[str] = frozenset([
     "affirm", "over", "out", "radio", "check", "signal", "broken", "relay",
     "order", "advance", "retreat", "flank", "recon", "observe", "target",
     "threat", "secure", "clear", "moving", "stand", "alert", "tracking",
-    "heading", "bearing", "acknowledge", "break", "soldier", "unit",
+    "heading", "bearing", "acknowledge", "break", "soldier", "unit"
     # Svenska
     "status", "läge", "lägesrapport", "position", "koordinat",
     "håll", "kontakt", "eld", "justera", "skadad", "nere", "sårad",
     "kopierat", "radiocheck", "signal", "bruten", "relä", "order",
     "framåt", "retirera", "rekognosera", "mål", "hot", "säkra", "rensa",
     "rapportera", "soldat", "enheter", "hk", "bas", "bekräfta", "observera",
-    "spana", "begärd", "rör",
+    "spana", "begärd", "rör"
 ])
 
 _INJECTION_PATTERNS: list[re.Pattern] = [
@@ -118,7 +118,7 @@ _SWEDISH_WORDS: frozenset[str] = frozenset([
     "kan", "vill", "inte", "med", "för", "på", "till", "av", "om", "så",
     "hur", "vad", "var", "när", "alla", "läge", "nere", "vid", "kopierat",
     "rapportera", "soldat", "enheter", "håll", "signalen", "bruten",
-    "begärd", "ignorera", "berätta", "rör", "hör", "ni", "oss", "mig",
+    "begärd", "ignorera", "berätta", "rör", "hör", "ni", "oss", "mig"
 ])
  
  
@@ -195,7 +195,7 @@ class Client_AI:
 
 
     def trim_chat(self, uid):
-        """Kortar ner chatten, behåller meddelandet om hur AI:n ska bete sig"""
+        """Kortar ner chatten."""
         chat = self.chats[uid]
         if len(chat) > MAX_MESSAGES:
             self.chats[uid] = chat[-MAX_MESSAGES:]
