@@ -1,6 +1,7 @@
 import asyncio
 import threading
 
+from tak_simulator.network.server import ServerConfig
 from tak_simulator.scenario import load_scenario
 from tak_simulator.simulator import Simulator
 
@@ -12,10 +13,12 @@ def _start_background_loop(loop: asyncio.AbstractEventLoop):
 
 
 class TAK:
-    def __init__(self, filename=None):
-
+    def __init__(self, filename=None, server_configs: list[ServerConfig] | None = None):
         self.simulator = None
         self.filename = filename
+        if server_configs is None:
+            server_configs = []
+        self.server_configs = server_configs
 
         self.loop = asyncio.new_event_loop()
         threading.Thread(
@@ -27,7 +30,7 @@ class TAK:
             return
         scenario = load_scenario(self.filename)
 
-        self.simulator = Simulator()
+        self.simulator = Simulator(server_configs=self.server_configs)
 
         asyncio.run_coroutine_threadsafe(
             self.simulator.run(scenario), self.loop
