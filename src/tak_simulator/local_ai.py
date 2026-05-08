@@ -147,6 +147,7 @@ def _detect_language(text: str) -> str:
 class Client_AI:
     name: str
     role: str
+    enabled: bool
 
     
     def generate_description(self, language):
@@ -186,12 +187,22 @@ class Client_AI:
             raise ValueError("role is not Role enum")
         self.role = role
         self.chats = {}
+        self.enabled = True
         self.llm = Llama.from_pretrained(
         repo_id="Qwen/Qwen2.5-0.5B-Instruct-GGUF",
         filename="qwen2.5-0.5b-instruct-fp16.gguf",
         n_ctx=2048,
         verbose=False,
     )
+
+    def enable(self):
+        self.enabled = True
+
+    def disable(self):
+        self.enabled = False
+
+    def is_enabled(self):
+        return self.enabled
 
 
     def trim_chat(self, uid):
