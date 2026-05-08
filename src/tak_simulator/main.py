@@ -23,12 +23,11 @@ def main():
     else:
         app = TakApp(filename=args.filename)
         app.run()
-        
 
 
 def get_args():
     parser = argparse.ArgumentParser("tak_emulator")
-    parser.add_argument("--filename", metavar="SCENARIO" ,default=None)
+    parser.add_argument("--filename", metavar="SCENARIO", default=None)
     parser.add_argument("--log", default="INFO")
     parser.add_argument("--notui", action="store_true", help="Disable Tui")
     return parser.parse_args()

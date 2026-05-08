@@ -70,12 +70,12 @@ class Simulator:
         self.scheduler.stop()
         self.scheduler.clear()
 
-        if hasattr(self, 'multicast') and self.multicast and self.multicast.transport:
+        if hasattr(self, "multicast") and self.multicast and self.multicast.transport:
             self.multicast.transport.close()
 
         for emu in self.emulators:
             emu.is_connected = False
-            if hasattr(emu, 'connection') and emu.connection and emu.connection._server:
+            if hasattr(emu, "connection") and emu.connection and emu.connection._server:
                 emu.connection._server.close()
-        
+
         self.emulators.clear()

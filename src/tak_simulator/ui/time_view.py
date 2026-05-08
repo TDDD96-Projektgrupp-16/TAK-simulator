@@ -2,6 +2,7 @@ from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Button, Label, RadioButton, RadioSet, TabPane
 
+
 class TimeTrackerMode(TabPane):
     DEFAULT_CSS = """
     #speed_controls {
@@ -32,7 +33,7 @@ class TimeTrackerMode(TabPane):
         background: transparent;
     }
     """
-    
+
     def compose(self) -> ComposeResult:
         with Vertical(id="time_container"):
             yield Label("Simulation Time: 0.00s", id="time_display")

@@ -1,6 +1,7 @@
 from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical
-from textual.widgets import Button, Input, Log, Static, TabPane
+from textual.widgets import Log, Static, TabPane
+
 
 class EmulatorDetailMode(TabPane):
     def compose(self) -> ComposeResult:

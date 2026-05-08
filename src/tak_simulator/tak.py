@@ -29,9 +29,7 @@ class TAK:
 
         self.simulator = Simulator()
 
-        asyncio.run_coroutine_threadsafe(
-            self.simulator.run(scenario), self.loop
-        )
+        asyncio.run_coroutine_threadsafe(self.simulator.run(scenario), self.loop)
 
         self._run_loop()
 
@@ -40,7 +38,7 @@ class TAK:
             while True:
                 ...
         except KeyboardInterrupt:
-            pass # Caught Ctrl+C
+            pass  # Caught Ctrl+C
         finally:
             self.simulator.stop()
             print("\nSimulator shut down safely.")

@@ -16,7 +16,7 @@ def logging_setup(level, is_tui=False):
                 "level": level,
                 "formatter": "standard",
                 "class": "logging.StreamHandler",
-                "stream": "ext://sys.stdout",  
+                "stream": "ext://sys.stdout",
             },
             "file": {
                 "level": level,
