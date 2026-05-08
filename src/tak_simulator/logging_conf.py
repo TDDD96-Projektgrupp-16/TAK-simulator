@@ -2,9 +2,7 @@ import logging
 import logging.config
 
 
-def logging_setup(level, is_tui=False):
-    handler_name = "file" if is_tui else "default"
-
+def logging_setup(level):
     _LOGGING_CONFIG = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -28,7 +26,7 @@ def logging_setup(level, is_tui=False):
         },
         "loggers": {
             "": {  # root logger
-                "handlers": [handler_name],
+                "handlers": ["default"],
                 "level": level,
                 "propagate": False,
             }

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import socket
 import struct
 from typing import Callable, Self, Tuple
@@ -7,6 +8,8 @@ from tak_simulator.wire import Codec, TakEnvelope
 
 MULTICAST_ADDR = "239.2.3.1"
 MULTICAST_PORT = 6969
+
+logger = logging.getLogger(__name__)
 
 
 class MulticastHandler:
@@ -52,8 +55,14 @@ class MulticastHandler:
 
     def _multicast_data_received(self, data: bytes, addr: tuple[str, int]) -> None:
         envelope = self.codec.decode(data)
-        if envelope.event is not None:
-            self._user[envelope.event.uid] = addr
+        if (
+            envelope.event is not None
+            and envelope.event.detail is not None
+            and envelope.event.detail.contact is not None
+            and envelope.event.detail.contact.endpoint is not None
+        ):
+            endpoint = envelope.event.detail.contact.endpoint
+            self._user[endpoint] = (endpoint.split(":")[0], int(endpoint.split(":")[1]))
         self.callback(envelope, addr)
 
     def get_user_addr(self, uid: str) -> Tuple[str, int] | None:
@@ -63,6 +72,7 @@ class MulticastHandler:
         if self.transport is None:
             return
         data = self.codec.encode(envelope)
+        logger.debug("sending multicast data")
         self.transport.sendto(data, (MULTICAST_ADDR, MULTICAST_PORT))
 
 

@@ -1,16 +1,16 @@
 import asyncio
 import logging
-from pathlib import Path
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 
 from tak_simulator.emulator import Emulator
 from tak_simulator.network.multicast import MulticastHandler
-from tak_simulator.network.server import Server
+from tak_simulator.network.server import Server, ServerConfig
 from tak_simulator.scenario import Scenario
 from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.time_keeper import TimeKeeper
 from tak_simulator.wire import TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
+from tak_simulator.wire.v1 import V1Codec
 
 logger = logging.getLogger(__name__)
 
@@ -18,29 +18,32 @@ DEFAULT_START_PORT = 8000
 
 
 class Simulator:
-    def __init__(self):
+    def __init__(self, server_configs: list[ServerConfig] | None = None):
         self.emulators: list[Emulator] = []
         self.time_keeper = TimeKeeper()
         self.scheduler = ScenarioScheduler(self.time_keeper)
 
-        self.servers: List[Server] = []
+        if server_configs is None:
+            server_configs = []
 
-        if Path("./certs/ca.pem").exists():
-            self.servers.append(
-                Server(
-                    "192.71.171.115",
-                    "./certs/ca.pem",
-                    "./certs/client.pem",
-                    "./certs/client.key",
-                    V0Codec(),
-                )
+        self.servers = [
+            Server(
+                ip=config.ip,
+                port=config.port,
+                codec=V0Codec(),
+                cafile=config.cafile,
+                certfile=config.certfile,
+                keyfile=config.keyfile,
+                upgrade=config.upgrade,
             )
+            for config in server_configs
+        ]
 
     async def run(self, scenario: Scenario):
         port = DEFAULT_START_PORT
         async with asyncio.TaskGroup() as tg:
             self.multicast = await MulticastHandler.create_multicast_connection(
-                V0Codec(),
+                V1Codec(),
                 self.data_received,
             )
 

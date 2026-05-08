@@ -3,7 +3,18 @@ import ssl
 from typing import Callable, List, Self, cast
 from xml.etree import ElementTree as ET
 
+from pydantic import BaseModel
+
 from tak_simulator.wire import Codec, TakEnvelope
+
+
+class ServerConfig(BaseModel):
+    ip: str
+    port: int
+    cafile: str | None = None
+    certfile: str | None = None
+    keyfile: str | None = None
+    upgrade: bool = False
 
 
 class ServerHandler:
@@ -39,19 +50,22 @@ class Server:
     def __init__(
         self,
         ip: str,
-        cafile: str,
-        certfile: str,
-        keyfile: str,
+        port: int,
         codec: Codec,
-        port: int = 8089,
+        *,
+        cafile: str | None = None,
+        certfile: str | None = None,
+        keyfile: str | None = None,
+        upgrade: bool = False,
     ) -> None:
-        """Files are str paths to the CA, cert, and key files."""
+
         self.ip = ip
         self.port = port
+        self.codec = codec
         self.cafile = cafile
         self.certfile = certfile
         self.keyfile = keyfile
-        self.codec = codec
+        self.upgrade = upgrade
         self.transport = None
         self.callback = None
 
@@ -69,6 +83,13 @@ class Server:
             self.transport.write(self.codec.encode(data))
 
     async def connect(self) -> None:
+        if self.upgrade:
+            raise NotImplementedError("Using a server with upgrade=True is unsupported")
+
+        if self.cafile is None or self.certfile is None or self.keyfile is None:
+            raise ValueError(
+                "Certificate files (cafile, certfile, keyfile) are required for TLS connection"
+            )
         ctx = ssl.create_default_context(cafile=self.cafile)
         ctx.check_hostname = False  # TODO
         ctx.load_cert_chain(certfile=self.certfile, keyfile=self.keyfile)

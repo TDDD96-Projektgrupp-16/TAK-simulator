@@ -8,7 +8,6 @@ dependencies = [
     "names>=0.3.0",
     "pydantic>=2.12.5",
     "pydantic-xml>=2.20.0",
-    "textual>=8.2.5",
 ]
 
 [project.scripts]
