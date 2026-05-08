@@ -32,6 +32,16 @@ class TAK:
 
         self.simulator = Simulator(server_configs=self.server_configs)
 
-        asyncio.run_coroutine_threadsafe(
-            self.simulator.run(scenario), self.loop
-        ).result()
+        asyncio.run_coroutine_threadsafe(self.simulator.run(scenario), self.loop)
+
+        self._run_loop()
+
+    def _run_loop(self):
+        try:
+            while True:
+                ...
+        except KeyboardInterrupt:
+            pass  # Caught Ctrl+C
+        finally:
+            self.simulator.stop()
+            print("\nSimulator shut down safely.")
