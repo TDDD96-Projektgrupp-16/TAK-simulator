@@ -13,7 +13,7 @@ def main():
             print("Error: SCENARIO filename is required when running in headless mode.")
             return
         print(f"Running headless simulation for {args.filename}. Press Ctrl+C to stop.")
-        app = TAK(filename=args.filename, server_configs=args.servers)
+        app = TAK(filename=args.filename)
         app.start()
     else:
         app = TakApp(filename=args.filename)
