@@ -65,40 +65,23 @@ def load_servers_file(path: str) -> list[ServerConfig]:
 
 def get_args():
     parser = argparse.ArgumentParser("tak_emulator")
-
-    # Changed from required positional to optional positional
-    parser.add_argument(
-        "filename",
-        metavar="SCENARIO",
-        nargs="?",
-        default=None,
-        help="Path to the scenario file (optional if using TUI)",
-    )
-
+    parser.add_argument("filename", metavar="SCENARIO")
     parser.add_argument("--log", default="INFO")
-    parser.add_argument(
-        "--notui",
-        action="store_true",
-        help="Run in headless mode without the graphical interface",
-    )
     parser.add_argument(
         "--server",
         dest="servers",
         type=parse_server_arg,
         action="append",
         default=[],
-        help="Server connection: HOST:PORT[:UPGRADE] | HOST:PORT:CAFILE:CERTFILE:KEYFILE[:UPGRADE]",
+        help="Server connection: HOST:PORT[:UPGRADE] | HOST:PORT:CAFILE:CERTFILE:KEYFILE[:UPGRADE] (UPGRADE: yes/no/1/0/true/false)",
     )
     parser.add_argument(
         "--servers-file",
         default=None,
         help="JSON file with an array of server configurations",
     )
-
     args = parser.parse_args()
-
     if args.servers_file:
         file_servers = load_servers_file(args.servers_file)
         args.servers = args.servers + file_servers
-
     return args
