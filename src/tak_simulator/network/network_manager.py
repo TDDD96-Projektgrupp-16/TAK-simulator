@@ -110,9 +110,20 @@ class ServerProtocol(asyncio.Protocol):
 
     def data_received(self, data):
         logger.debug(f"Data received {data}")
+        k = str(data)
         if self._transport is not None:
-            self.network_manager.callback_msg(
-                decode_chat_detail(str(data)[2:-1]),  # rm b' '
-                self._transport.get_extra_info("peername"),
-                self._transport,
-            )
+            if k[2] == "\\":
+                logger.debug("<__chat" + k.split("<__chat")[1][:-1])
+                self.network_manager.callback_msg(
+                    decode_chat_detail(
+                        "<__chat" + k.split("<__chat")[1][:-1]
+                    ),  # ignore protobuf
+                    self._transport.get_extra_info("peername"),
+                    self._transport,
+                )
+            else:
+                self.network_manager.callback_msg(
+                    decode_chat_detail(k[2:-1]),  # rm b' '
+                    self._transport.get_extra_info("peername"),
+                    self._transport,
+                )

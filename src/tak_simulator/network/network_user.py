@@ -24,7 +24,8 @@ class NetworkUser:
         """Sends data to the user via multicast and server."""
         if self.transport is None:
             await self.make_connection()
-        if """envelope.control is not None""" and self.transport is not None:
+        if self.transport is not None:
+            # data = b'\xbf\x01\xbf\n\x1a\x1a\x18algal\x12\xb2\x05\n\x05b-t-f\x12\tUndefined*KGeoChat.algal.ANDROID-6eb795c71729d40b.b2072ac9-0c8f-4e5e-be6c-66171f799b8b0\xd2\x94\xd0\xed\xe038\xd2\x94\xd0\xed\xe03@\xd2\xcc\xe9\x96\xe13J\th-g-i-g-oQ\x11\xe2\xca\xd9;\x01M@Y\xdd\x99\t\x86s\xfd-@a\x93\x18\x04V\x0e1n@i\x00\x00\x00\x00\x00\x00\x18@q\x00\x00\x00\xe0\xcf\x12cAz\x83\x04\n\x80\x04<__chat parent="RootContactGroup" groupOwner="false" messageId="b2072ac9-0c8f-4e5e-be6c-66171f799b8b" chatroom="MISSIONARY" id="ANDROID-6eb795c71729d40b" senderCallsign="Algot Johansson"><chatgrp uid0="algal" uid1="ANDROID-6eb795c71729d40b" id="ANDROID-6eb795c71729d40b"/></__chat><link uid="algal" type="a-f-G-U-C" relation="p-p"/><__serverdestination destinations="192.168.31.10:4242:tcp:algal"/><remarks source="BAO.F.ATAK.algal" to="ANDROID-6eb795c71729d40b" time="2026-05-09T17:06:03.474Z">bfcvfcnihob</remarks>'
             self.transport.write(data)
 
     async def make_connection(self):

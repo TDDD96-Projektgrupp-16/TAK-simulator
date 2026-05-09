@@ -34,7 +34,7 @@ class Link(BaseXmlModel, tag="link"):
 
 class Remarks(BaseXmlModel, tag="remarks"):
     source: str = attr()
-    source_id: str = attr(name="sourceID")
+    source_id: str | None = attr(name="sourceID", default=None)
     to: str = attr()
     time: str = attr()
 
@@ -44,7 +44,14 @@ class Remarks(BaseXmlModel, tag="remarks"):
 class ChatDetail(BaseXmlModel, tag="detail"):
     chat: Chat = element(tag="__chat")
     link: Link = element()
+    server_destination: ServerDestination | None = element(
+        tag="__serverdestination", default=None
+    )
     remarks: Remarks = element()
+
+
+class ServerDestination(BaseXmlModel, tag="__serverdestination"):
+    destinations: str = attr()
 
 
 def build_chat_detail_for_direct_message(
@@ -93,6 +100,9 @@ def build_chat_detail_for_direct_message(
             uid=sender.uid,
             type=sender.type,
             relation="p-p",
+        ),
+        server_destination=ServerDestination(
+            destinations="192.168.31.10:tcp:algal",  # TODO
         ),
         remarks=Remarks(
             source=f"BAO.F.{platform}.{sender.uid}",
