@@ -270,3 +270,56 @@ class TestV1Codec:
         assert decoded.event == original.event
         assert decoded.control == original.control
         assert decoded.context == MessageContext(origin_format=1)
+
+    def test_decode_xml_detail_overrides_typed_field(self):
+        proto = ProtoTakMessage(
+            cotEvent=ProtoCotEvent(
+                uid="TEST-1234567890",
+                type="a-f-G-U-C-I",
+                how="h-e",
+                sendTime=_dt_to_ms(SEND_TIME),
+                startTime=_dt_to_ms(START_TIME),
+                staleTime=_dt_to_ms(STALE_TIME),
+                lat=58.3980771,
+                lon=15.5770142,
+                detail=ProtoDetail(
+                    xmlDetail='<contact endpoint="10.0.0.1:4242:tcp" callsign="XML"/>',
+                    contact=ProtoContact(
+                        endpoint="192.0.2.10:4242:tcp",
+                        callsign="PROTO",
+                    ),
+                ),
+            )
+        )
+
+        message = V1Codec().decode(FRAME_PREFIX + proto.SerializeToString())
+
+        assert message.event is not None
+        assert message.event.detail is not None
+        assert message.event.detail.contact == Contact(
+            endpoint="10.0.0.1:4242:tcp", callsign="XML"
+        )
+
+    def test_decode_xml_detail_known_element_no_typed_field(self):
+        proto = ProtoTakMessage(
+            cotEvent=ProtoCotEvent(
+                uid="TEST-1234567890",
+                type="a-f-G-U-C-I",
+                how="h-e",
+                sendTime=_dt_to_ms(SEND_TIME),
+                startTime=_dt_to_ms(START_TIME),
+                staleTime=_dt_to_ms(STALE_TIME),
+                lat=58.3980771,
+                lon=15.5770142,
+                detail=ProtoDetail(
+                    xmlDetail='<track speed="55.5" course="180.0"/>',
+                ),
+            )
+        )
+
+        message = V1Codec().decode(FRAME_PREFIX + proto.SerializeToString())
+
+        assert message.event is not None
+        assert message.event.detail is not None
+        assert message.event.detail.track == Track(speed=55.5, course=180.0)
+        assert message.event.detail.contact is None

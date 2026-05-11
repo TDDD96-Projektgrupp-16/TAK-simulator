@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime
+from xml.etree import ElementTree as ET
 
 from tak_simulator.wire.exceptions import DecodeError
 from tak_simulator.wire.models import (
@@ -114,8 +115,6 @@ def _encode_control(control: TakControl) -> ProtoTakControl:
 
 
 def _decode_event(proto: ProtoCotEvent) -> CotEvent:
-    # TODO: Handle xmlDetail according to the comment in detail.proto
-
     if not proto.uid:
         raise DecodeError("Missing required field: uid", field="uid")
     if not proto.type:
@@ -193,6 +192,24 @@ def _encode_event(event: CotEvent) -> ProtoCotEvent:
     return proto
 
 
+_KNOWN_TAGS = {"contact", "__group", "precisionlocation", "status", "takv", "track"}
+
+
+def _parse_xml_detail(xml_detail: str) -> dict[str, ET.Element]:
+    wrapped = f'<?xml version="1.0" encoding="UTF-8"?><detail>{xml_detail}</detail>'
+    try:
+        root = ET.fromstring(wrapped)
+    except ET.ParseError:
+        return {}
+
+    result: dict[str, ET.Element] = {}
+    for child in root:
+        tag = child.tag
+        if tag in _KNOWN_TAGS:
+            result[tag] = child
+    return result
+
+
 def _decode_detail(proto: ProtoDetail) -> CotDetail:
     detail = CotDetail(
         opaque_xml=_none_if_empty(proto.xmlDetail),
@@ -202,30 +219,76 @@ def _decode_detail(proto: ProtoDetail) -> CotDetail:
         ],
     )
 
-    if proto.HasField("contact"):
+    xml_known = _parse_xml_detail(proto.xmlDetail) if proto.xmlDetail else {}
+
+    elem = xml_known.get("contact")
+    if elem is not None:
+        detail.contact = Contact(
+            endpoint=elem.get("endpoint") or None,
+            callsign=elem.get("callsign") or None,
+        )
+        if proto.HasField("contact"):
+            logger.warning("xmlDetail <contact> overrides typed contact field")
+    elif proto.HasField("contact"):
         detail.contact = Contact(
             endpoint=_none_if_empty(proto.contact.endpoint),
             callsign=_none_if_empty(proto.contact.callsign),
         )
 
-    if proto.HasField("group"):
+    elem = xml_known.get("__group")
+    if elem is not None:
+        detail.group = Group(
+            name=elem.get("name") or None,
+            role=elem.get("role") or None,
+        )
+        if proto.HasField("group"):
+            logger.warning("xmlDetail <__group> overrides typed group field")
+    elif proto.HasField("group"):
         detail.group = Group(
             name=_none_if_empty(proto.group.name),
             role=_none_if_empty(proto.group.role),
         )
 
-    if proto.HasField("precisionLocation"):
+    elem = xml_known.get("precisionlocation")
+    if elem is not None:
+        detail.precision_location = PrecisionLocation(
+            geopointsrc=elem.get("geopointsrc") or None,
+            altsrc=elem.get("altsrc") or None,
+        )
+        if proto.HasField("precisionLocation"):
+            logger.warning(
+                "xmlDetail <precisionlocation> overrides typed precisionLocation field"
+            )
+    elif proto.HasField("precisionLocation"):
         detail.precision_location = PrecisionLocation(
             geopointsrc=_none_if_empty(proto.precisionLocation.geopointsrc),
             altsrc=_none_if_empty(proto.precisionLocation.altsrc),
         )
 
-    if proto.HasField("status"):
+    elem = xml_known.get("status")
+    if elem is not None:
+        battery_str = elem.get("battery")
+        detail.status = Status(
+            battery=int(battery_str) if battery_str else None,
+        )
+        if proto.HasField("status"):
+            logger.warning("xmlDetail <status> overrides typed status field")
+    elif proto.HasField("status"):
         detail.status = Status(
             battery=proto.status.battery if proto.status.battery != 0 else None,
         )
 
-    if proto.HasField("takv"):
+    elem = xml_known.get("takv")
+    if elem is not None:
+        detail.takv = TakVersion(
+            device=elem.get("device") or None,
+            platform=elem.get("platform") or None,
+            os=elem.get("os") or None,
+            version=elem.get("version") or None,
+        )
+        if proto.HasField("takv"):
+            logger.warning("xmlDetail <takv> overrides typed takv field")
+    elif proto.HasField("takv"):
         detail.takv = TakVersion(
             device=_none_if_empty(proto.takv.device),
             platform=_none_if_empty(proto.takv.platform),
@@ -233,7 +296,17 @@ def _decode_detail(proto: ProtoDetail) -> CotDetail:
             version=_none_if_empty(proto.takv.version),
         )
 
-    if proto.HasField("track"):
+    elem = xml_known.get("track")
+    if elem is not None:
+        speed_str = elem.get("speed")
+        course_str = elem.get("course")
+        detail.track = Track(
+            speed=float(speed_str) if speed_str else None,
+            course=float(course_str) if course_str else None,
+        )
+        if proto.HasField("track"):
+            logger.warning("xmlDetail <track> overrides typed track field")
+    elif proto.HasField("track"):
         detail.track = Track(
             speed=proto.track.speed,
             course=proto.track.course,
