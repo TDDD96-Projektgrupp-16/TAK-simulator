@@ -18,12 +18,11 @@ from textual.widgets import (
 
 from tak_simulator.scenario import load_scenario
 from tak_simulator.simulator import Simulator
-
+from tak_simulator.ui.detail_view import EmulatorDetailMode
+from tak_simulator.ui.list_view import EmulatorListMode
 from tak_simulator.ui.load_view import LoadScenarioMode
 from tak_simulator.ui.log_view import SystemLogsMode
 from tak_simulator.ui.time_view import TimeTrackerMode
-from tak_simulator.ui.list_view import EmulatorListMode
-from tak_simulator.ui.detail_view import EmulatorDetailMode
 
 
 class SystemLogMessage(Message):
