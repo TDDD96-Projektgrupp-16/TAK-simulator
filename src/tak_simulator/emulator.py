@@ -85,6 +85,16 @@ class Emulator:
                     current_time,
                 )
                 return
+            messsage = event.message or ""
+            if not messsage:
+                logger.warning(
+                    "Scenario chat event for %s at t=%.3f has no message",
+                    self.options.callsign,
+                    current_time,
+                )
+                return
+            chat_envelope = self.chat_env(messsage)
+            self.connection.broadcast(chat_envelope)
 
             logger.info(
                 "Scenario chat event for %s at t=%.3f: %s",
@@ -92,6 +102,7 @@ class Emulator:
                 current_time,
                 event.message,
             )
+            
             return
 
         if event.event_type == "connect":
@@ -168,6 +179,42 @@ class Emulator:
                     version=self.options.takv.version,
                 ),
                 opaque_xml=f'<uid Droid="{self.options.callsign}"/>',
+            ),
+        )
+
+        return TakEnvelope(event=event)
+
+    def chat_env(self, message: str) -> TakEnvelope:
+        send_time = datetime.now(UTC)
+
+        lat, lon = self.get_position(self.time_keeper.get_time())
+
+        event = CotEvent(
+            type="b-t-f",
+            access=self.options.access,
+            caveat=None,
+            releasable_to=None,
+            qos=None,
+            opex=None,
+            uid=self.options.uid,
+            send_time=send_time,
+            start_time=send_time,
+            stale_time=send_time + timedelta(minutes=75),
+            how=self.options.how,
+            point=Point(
+                lat=lat,
+                lon=lon,
+            ),
+            detail=CotDetail(
+                contact=Contact(
+                    endpoint=self.connection.get_endpoint(),
+                    callsign=self.options.callsign,
+                ),
+                group=Group(
+                    name=self.options.group.name,
+                    role=self.options.group.role,
+                ),
+                remarks=message,
             ),
         )
 
