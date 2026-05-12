@@ -1,3 +1,10 @@
+[build-system]
+requires = ["hatchling", "grpcio-tools>=1.78.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.hooks.custom]
+path = "build.py"
+
 [project]
 name = "tak_simulator"
 version = "0.1.0"
