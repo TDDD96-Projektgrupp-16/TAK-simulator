@@ -101,9 +101,6 @@ def build_chat_detail_for_direct_message(
             type=sender.type,
             relation="p-p",
         ),
-        server_destination=ServerDestination(
-            destinations="192.168.31.10:tcp:algal",  # TODO
-        ),
         remarks=Remarks(
             source=f"BAO.F.{platform}.{sender.uid}",
             source_id=sender.uid,

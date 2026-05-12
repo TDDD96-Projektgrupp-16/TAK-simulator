@@ -1,3 +1,4 @@
+from tak_simulator.wire.v1 import V1Codec
 import asyncio
 import logging
 from typing import List, Tuple, cast
@@ -80,17 +81,18 @@ class NetworkManager:
         self.multicast.send(envelope)
         self.server_handler.send(envelope)
 
-    async def send_to(self, uid: str, data: bytes) -> bool:
+    async def send_to(self, uid: str, envelope: TakEnvelope) -> bool:
         """Sends data to a specific user via tcp or server."""
         if uid not in self.users:
             addr = self.multicast.get_user_addr(uid)
             logger.debug(f"Addr {addr} from uid {uid}")
             if addr is not None:
-                self.users[uid] = NetworkUser(uid, addr, V0Codec())
+                self.users[uid] = NetworkUser(uid, addr, V1Codec())
                 await self.users[uid].make_connection()
             else:
                 return False
-        await self.users[uid].send(data)
+
+        await self.users[uid].send(envelope)
         return True
 
     def get_endpoint(self):
@@ -110,6 +112,7 @@ class ServerProtocol(asyncio.Protocol):
 
     def data_received(self, data):
         logger.debug(f"Data received {data}")
+
         k = str(data)
         if self._transport is not None:
             if k[2] == "\\":

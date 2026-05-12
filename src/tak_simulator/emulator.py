@@ -184,8 +184,9 @@ class Emulator:
 
     async def send_msg(self, to_uid: str, msg: str):
         chat_detail = build_chat_detail_for_direct_message(self.options, to_uid, msg)
-        data = encode_chat_detail(chat_detail)
-        await self.connection.send_to(to_uid, data)
+        xml = encode_chat_detail(chat_detail).decode() # type: ignore
+        envelope = self._create_msg(self.time_keeper.get_time(), xml)
+        await self.connection.send_to(to_uid, envelope)
         logger.info(
             "Emulator %s sent message %s to %s at time %.3f",
             self.options.uid,

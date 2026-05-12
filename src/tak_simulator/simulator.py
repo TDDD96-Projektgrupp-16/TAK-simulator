@@ -37,7 +37,6 @@ class Simulator:
         port = DEFAULT_START_PORT
         async with asyncio.TaskGroup() as tg:
             self.multicast = await MulticastHandler.create_multicast_connection(
-                V1Codec(),
                 self.data_received,
             )
 
@@ -62,8 +61,8 @@ class Simulator:
     async def rea(self):
         for i in range(40):
             await asyncio.sleep(10)
-            a = "ANDROID-6eb795c71729d40b"
-            # b = "argar"
+            # a = "ANDROID-6eb795c71729d40b"
+            a = "argar"
             await self.emulators[0].send_msg(a, "Hej")
 
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
