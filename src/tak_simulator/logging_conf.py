@@ -26,7 +26,7 @@ def logging_setup(level):
         },
         "loggers": {
             "": {  # root logger
-                "handlers": ["default"],
+                "handlers": ["default", "file"],
                 "level": level,
                 "propagate": False,
             }

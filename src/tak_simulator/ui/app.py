@@ -77,9 +77,13 @@ class TakApp(App):
         yield Footer()
 
     async def on_mount(self) -> None:
-        # set up logger
+        # set up logger - remove stdout handlers to avoid clashing with TUI
+        root_logger = logging.getLogger()
+        for handler in list(root_logger.handlers):
+            if isinstance(handler, logging.StreamHandler):
+                root_logger.removeHandler(handler)
         self.textual_log_handler = TextualLogHandler(self)
-        logging.getLogger().addHandler(self.textual_log_handler)
+        root_logger.addHandler(self.textual_log_handler)
 
         # set up data table
         table = self.query_one(DataTable)
