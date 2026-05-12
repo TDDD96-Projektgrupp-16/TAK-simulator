@@ -354,5 +354,10 @@ def _decode_detail(elem: ET.Element | None) -> CotDetail | None:
                 speed=_parse_float(child.get("speed")),
                 course=_parse_float(child.get("course")),
             )
+        else:
+            if detail.opaque_xml is None:
+                detail.opaque_xml = str(ET.tostring(child))[2:-1]
+            else:
+                detail.opaque_xml += str(ET.tostring(child))[2:-1]
 
     return detail

@@ -9,7 +9,9 @@ from tak_simulator.util import host_ip
 from tak_simulator.wire import Codec, TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
 
-from tak_simulator.xml_parse import ChatDetail, decode_chat_detail
+from tak_simulator.xml_parse import decode_chat_detail
+
+from tak_simulator.wire.v1 import V1Codec
 
 logger = logging.getLogger(__name__)
 
@@ -52,23 +54,13 @@ class NetworkManager:
         self, envelope: TakEnvelope, addr: Tuple[str, int], transport: asyncio.Transport
     ) -> None:
         logger.debug(f"Received data from {addr}: {envelope}")
-        if envelope.event is None:
-            return
-        uid = envelope.event.uid
-
-        if uid not in self.users:
-            self.users[uid] = NetworkUser(uid, addr, V0Codec(), transport)
-
-        self.users[uid].callback(envelope)
-
-    def callback_msg(
-        self, data: ChatDetail, addr: Tuple[str, int], transport: asyncio.Transport
-    ) -> None:
-        logger.debug(f"Received data from {addr}: {data}")
+        data = decode_chat_detail(envelope.event.detail.opaque_xml)
         logger.info(
             f"[{data.remarks.to}] received msg {data.remarks.text} from {data.chat.sender_callsign} [{data.remarks.source_id}] {addr}."
         )
-        uid = data.link.uid
+        if envelope.event is None:
+            return
+        uid = envelope.event.uid
 
         if uid not in self.users:
             self.users[uid] = NetworkUser(uid, addr, V0Codec(), transport)
@@ -80,17 +72,17 @@ class NetworkManager:
         self.multicast.send(envelope)
         self.server_handler.send(envelope)
 
-    async def send_to(self, uid: str, data: bytes) -> bool:
+    async def send_to(self, uid: str, envelope: TakEnvelope) -> bool:
         """Sends data to a specific user via tcp or server."""
         if uid not in self.users:
             addr = self.multicast.get_user_addr(uid)
-            logger.debug(f"Addr {addr} from uid {uid}")
+            logger.info(f"Addr {addr} from uid {uid}")
             if addr is not None:
                 self.users[uid] = NetworkUser(uid, addr, V0Codec())
                 await self.users[uid].make_connection()
             else:
                 return False
-        await self.users[uid].send(data)
+        await self.users[uid].send(envelope)
         return True
 
     def get_endpoint(self):
@@ -109,21 +101,17 @@ class ServerProtocol(asyncio.Protocol):
         )
 
     def data_received(self, data):
-        logger.debug(f"Data received {data}")
-        k = str(data)
+        logger.info(data)
         if self._transport is not None:
-            if k[2] == "\\":
-                logger.debug("<__chat" + k.split("<__chat")[1][:-1])
-                self.network_manager.callback_msg(
-                    decode_chat_detail(
-                        "<__chat" + k.split("<__chat")[1][:-1]
-                    ),  # ignore protobuf
+            if str(data)[2] == "\\":
+                self.network_manager.callback(
+                    V1Codec().decode(data),
                     self._transport.get_extra_info("peername"),
                     self._transport,
                 )
             else:
-                self.network_manager.callback_msg(
-                    decode_chat_detail(k[2:-1]),  # rm b' '
+                self.network_manager.callback(
+                    self.network_manager.codec.decode(data),
                     self._transport.get_extra_info("peername"),
                     self._transport,
                 )

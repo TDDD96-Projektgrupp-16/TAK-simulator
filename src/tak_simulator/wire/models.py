@@ -116,7 +116,7 @@ class CotEvent:
     # Required
     point: Point
     detail: CotDetail | None = None
-    # Defaults to "Undefined" if left as None when enoding.
+    # Defaults to "Undefined" if left as None when encoding.
     access: str | None = None
     # Optional (v1 protobuf only?)
     caveat: str | None = None

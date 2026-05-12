@@ -1,4 +1,5 @@
 import logging
+import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from typing import List
@@ -27,6 +28,8 @@ from tak_simulator.xml_parse import (
     build_chat_detail_for_direct_message,
     encode_chat_detail,
 )
+
+from tak_simulator.wire import TakControl
 
 logger = logging.getLogger(__name__)
 
@@ -134,7 +137,7 @@ class Emulator:
             )
             return
 
-    def _create_msg(self, t: float, msg: str) -> TakEnvelope:
+    def _create_msg(self, t: float, msg: str, detail: bool) -> TakEnvelope:
         send_time = datetime.now(UTC)
 
         lat, lon = self.get_position(t)
@@ -180,12 +183,47 @@ class Emulator:
         )
 
     def tak_env(self, t: float) -> TakEnvelope:
-        return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>')
+        return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>', True)
+
+    def _create_msg2(self, t: float, msg: str, to_uid: str) -> TakEnvelope:
+        send_time = datetime.now(UTC)
+
+        lat, lon = self.get_position(t)
+
+        return TakEnvelope(
+            event=CotEvent(
+                type=self.options.type,
+                access=self.options.access,
+                caveat=None,
+                releasable_to=None,
+                qos=None,
+                opex=None,
+                uid=f"Geochat.{self.options.uid}.{to_uid}.{uuid.uuid4()}",
+                send_time=send_time,
+                start_time=send_time,
+                stale_time=send_time + timedelta(seconds=75),  # TODO
+                how=self.options.how,
+                point=Point(
+                    lat=lat,
+                    lon=lon,
+                ),
+                detail=CotDetail(
+                    opaque_xml=msg,
+                ),
+            ),
+            control=TakControl(
+                min_proto_version=None,
+                max_proto_version=None,
+                contact_uid=self.options.uid,
+                extension_ids=[],
+            ),
+        )
 
     async def send_msg(self, to_uid: str, msg: str):
         chat_detail = build_chat_detail_for_direct_message(self.options, to_uid, msg)
         data = encode_chat_detail(chat_detail)
-        await self.connection.send_to(to_uid, data)
+        env = self._create_msg2(self.time_keeper.get_time(), str(data)[10:-10], to_uid)
+        await self.connection.send_to(to_uid, env)
         logger.info(
             "Emulator %s sent message %s to %s at time %.3f",
             self.options.uid,

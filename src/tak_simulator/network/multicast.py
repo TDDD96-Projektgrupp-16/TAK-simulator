@@ -55,16 +55,13 @@ class MulticastHandler:
 
     def _multicast_data_received(self, data: bytes, addr: tuple[str, int]) -> None:
         envelope = self.codec.decode(data)
-        if envelope.event is not None and envelope.event.detail is not None:
-            if (
-                envelope.event.detail.contact is not None
-                and envelope.event.detail.contact.endpoint is not None
-            ):
-                endpoint = envelope.event.detail.contact.endpoint
-            else:
-                endpoint = envelope.event.detail.opaque_xml.split('endpoint="')[
-                    1
-                ].split('"')[0]
+        if (
+            envelope.event is not None
+            and envelope.event.detail is not None
+            and envelope.event.detail.contact is not None
+            and envelope.event.detail.contact.endpoint is not None
+        ):
+            endpoint = envelope.event.detail.contact.endpoint
             self._user[envelope.event.uid] = (
                 endpoint.split(":")[0],
                 int(endpoint.split(":")[1]),
@@ -87,5 +84,4 @@ class MulticastProtocol(asyncio.DatagramProtocol):
         self.handler = handler
 
     def datagram_received(self, data: bytes, addr: tuple[str, int]):
-        logger.info(data)
         self.handler._multicast_data_received(data, addr)

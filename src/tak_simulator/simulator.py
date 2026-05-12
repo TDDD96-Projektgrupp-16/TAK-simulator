@@ -1,10 +1,10 @@
 import asyncio
 import logging
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 
 from tak_simulator.emulator import Emulator
 from tak_simulator.network.multicast import MulticastHandler
-from tak_simulator.network.server import Server
+from tak_simulator.network.server import Server, ServerConfig
 from tak_simulator.scenario import Scenario
 from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.time_keeper import TimeKeeper
@@ -18,18 +18,25 @@ DEFAULT_START_PORT = 8000
 
 
 class Simulator:
-    def __init__(self):
+    def __init__(self, server_configs: list[ServerConfig] | None = None):
         self.emulators: list[Emulator] = []
         self.time_keeper = TimeKeeper()
         self.scheduler = ScenarioScheduler(self.time_keeper)
-        self.servers: List[Server] = [
+
+        if server_configs is None:
+            server_configs = []
+
+        self.servers = [
             Server(
-                "192.71.171.115",
-                "./certs/ca.pem",
-                "./certs/client.pem",
-                "./certs/client.key",
-                V0Codec(),
+                ip=config.ip,
+                port=config.port,
+                codec=V0Codec(),
+                cafile=config.cafile,
+                certfile=config.certfile,
+                keyfile=config.keyfile,
+                upgrade=config.upgrade,
             )
+            for config in server_configs
         ]
         self.servers = []  # ingen server
 
@@ -69,3 +76,18 @@ class Simulator:
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
         """Multicast data received handler. If we need to handle it, we can do so here."""
         logger.debug(f"Received data from {addr}")
+
+    def stop(self):
+        self.time_keeper.stop()
+        self.scheduler.stop()
+        self.scheduler.clear()
+
+        if hasattr(self, "multicast") and self.multicast and self.multicast.transport:
+            self.multicast.transport.close()
+
+        for emu in self.emulators:
+            emu.is_connected = False
+            if hasattr(emu, "connection") and emu.connection and emu.connection._server:
+                emu.connection._server.close()
+
+        self.emulators.clear()
