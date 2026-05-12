@@ -16,6 +16,7 @@ from textual.widgets import (
     TabbedContent,
 )
 
+from tak_simulator.network.server import ServerConfig
 from tak_simulator.scenario import load_scenario
 from tak_simulator.simulator import Simulator
 from tak_simulator.ui.detail_view import EmulatorDetailMode
@@ -59,10 +60,13 @@ class TakApp(App):
 
     BINDINGS = [("q", "quit", "Quit")]
 
-    def __init__(self, filename: str | None = None):
+    def __init__(self, filename: str | None = None, server_configs: list[ServerConfig] | None = None):
         super().__init__()
         self.filename = filename
-        self.simulator = Simulator()
+        if server_configs is None:
+            server_configs = []
+        self.server_configs = server_configs
+        self.simulator = Simulator(server_configs=self.server_configs)
         self.scenario = None
         self.active_uid = None
 
