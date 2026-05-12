@@ -6,7 +6,7 @@ from tak_simulator.ui import TakApp
 
 def main():
     args = get_args()
-    logging_setup(args.log)
+    logging_setup(args.log, is_tui=args.notui)
 
     if args.notui:
         if not args.filename:
