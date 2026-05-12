@@ -6,14 +6,15 @@
   "emulators": [
     {
       "like": "atak",
-      "callsign": "Flaga",
+      "type": "b-n-p-s-i",
+      "callsign": "Flagga",
       "takv": {
         "device": "SAMSUNG SM-S901B"
       },
       "path": [
         [0, [58.414708028, 15.579595063]],
         [70, [58.414708028, 15.579595063]],
-        [70, [58.414719267, 15.578822587]],
+        [71, [58.414719267, 15.578822587]],
         [80, [58.414567542, 15.578178857]],
         [85, [58.415073288, 15.577862356]],
         [90, [58.415337396, 15.577379558]],
@@ -29,7 +30,8 @@
       "like": "atak",
       "callsign": "Arvid",
       "group": {
-        "role": "Team Leader"
+        "role": "Team Leader",
+        "name": "Red"
       },
       "takv": {
         "device": "LENOVO LNVNB161216"
@@ -46,7 +48,8 @@
       "like": "atak",
       "callsign": "Lukas",
       "group": {
-        "role": "Team Leader"
+        "role": "Team Leader",
+        "name": "Red"
       },
       "takv": {
         "device": "LENOVO LNVNB161216"
@@ -67,7 +70,8 @@
       "like": "atak",
       "callsign": "Joel",
       "group": {
-        "role": "Team Leader"
+        "role": "Team Leader",
+        "name": "Blue"
       },
       "takv": {
         "device": "LENOVO LNVNB161216"
@@ -96,7 +100,8 @@
       "like": "atak",
       "callsign": "Algot",
       "group": {
-        "role": "Team Leader"
+        "role": "Team Leader",
+        "name": "Blue"
       },
       "takv": {
         "device": "LENOVO LNVNB161216"
