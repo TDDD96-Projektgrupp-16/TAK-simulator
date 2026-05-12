@@ -11,11 +11,13 @@ class NetworkUser:
     def __init__(
         self,
         uid: str,
+        callsign: str,
         addr: Tuple[str, int],
         codec: Codec,
         transport: asyncio.Transport | None = None,
     ) -> None:
         self.uid = uid
+        self.callsign = callsign
         self.addr = addr
         self.transport = transport
         self.codec = codec
@@ -40,8 +42,6 @@ class NetworkUser:
     def callback(self, data: TakEnvelope):
         logger.info(f"Received data from {self.uid}: {data}")
 
-    def callback(self, data: TakEnvelope):
-        logger.info(f"Received data from {self.uid}: {data}")
 
 class TcpUserProtocol(asyncio.Protocol):
     def __init__(self, user: NetworkUser):
@@ -51,14 +51,5 @@ class TcpUserProtocol(asyncio.Protocol):
         return super().connection_made(transport)
 
     def data_received(self, data: bytes):
-        self.user.callback(self.user.codec.decode(data))
-
-class TcpUserProtocol(asyncio.Protocol):
-    def __init__(self, user: NetworkUser):
-        self.user = user
-
-    def connection_made(self, transport: asyncio.BaseTransport) -> None:
-        return super().connection_made(transport)
-
-    def data_received(self, data: bytes):
+        logger.debug(f"Received TCP data from {self.user.uid}: {data}")
         self.user.callback(self.user.codec.decode(data))

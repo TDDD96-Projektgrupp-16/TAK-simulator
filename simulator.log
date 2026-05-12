@@ -1,0 +1,457 @@
+2026-05-12 18:42:41,680 [INFO] tak_simulator.logging_conf: Set up logger(DEBUG)
+2026-05-12 18:42:41,680 [DEBUG] asyncio: Using selector: EpollSelector
+2026-05-12 18:42:41,707 [INFO] tak_simulator.time_keeper: Time keeper started
+2026-05-12 18:42:41,717 [INFO] tak_simulator.scenario_scheduler: Scenario scheduler started
+2026-05-12 18:42:41,728 [INFO] tak_simulator.emulator: started emulator with callsign: Flaga
+2026-05-12 18:42:41,738 [DEBUG] tak_simulator.scenario_scheduler: Scheduled recurring event 'publish_position:Flaga' at t=0.000 every 3.000s
+2026-05-12 18:42:41,749 [INFO] tak_simulator.emulator: Emulator Flaga registered recurring position updates and 0 scenario events
+2026-05-12 18:42:41,759 [INFO] tak_simulator.emulator: started emulator with callsign: Arvid
+2026-05-12 18:42:41,769 [DEBUG] tak_simulator.scenario_scheduler: Scheduled recurring event 'publish_position:Arvid' at t=0.000 every 3.000s
+2026-05-12 18:42:41,780 [INFO] tak_simulator.emulator: Emulator Arvid registered recurring position updates and 0 scenario events
+2026-05-12 18:42:41,790 [INFO] tak_simulator.emulator: started emulator with callsign: Lukas
+2026-05-12 18:42:41,801 [DEBUG] tak_simulator.scenario_scheduler: Scheduled recurring event 'publish_position:Lukas' at t=0.000 every 3.000s
+2026-05-12 18:42:41,811 [INFO] tak_simulator.emulator: Emulator Lukas registered recurring position updates and 0 scenario events
+2026-05-12 18:42:41,816 [INFO] tak_simulator.emulator: started emulator with callsign: Joel
+2026-05-12 18:42:41,826 [DEBUG] tak_simulator.scenario_scheduler: Scheduled recurring event 'publish_position:Joel' at t=0.000 every 3.000s
+2026-05-12 18:42:41,832 [INFO] tak_simulator.emulator: Emulator Joel registered recurring position updates and 0 scenario events
+2026-05-12 18:42:41,832 [INFO] tak_simulator.emulator: started emulator with callsign: Algot
+2026-05-12 18:42:41,837 [DEBUG] tak_simulator.scenario_scheduler: Scheduled recurring event 'publish_position:Algot' at t=0.000 every 3.000s
+2026-05-12 18:42:41,837 [INFO] tak_simulator.emulator: Emulator Algot registered recurring position updates and 0 scenario events
+2026-05-12 18:42:41,842 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=0.135
+2026-05-12 18:42:41,858 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:41,864 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=0.157
+2026-05-12 18:42:41,884 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:41,890 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=0.183
+2026-05-12 18:42:41,890 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:41,890 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=0.183
+2026-05-12 18:42:41,901 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:41,911 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=0.204
+2026-05-12 18:42:41,942 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:41,963 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:41,974 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xbd\xf6\xc6\xe8\xe138\xbd\xf6\xc6\xe8\xe13@\xb5\xc0\xcb\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:41,974 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:42:41,974 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:41,985 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:41,990 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xd2\xf6\xc6\xe8\xe138\xd2\xf6\xc6\xe8\xe13@\xca\xc0\xcb\xe8\xe13J\x03m-gQr\xb8N\x15\xdf4M@Y\xce\x8d\xc5\xe1D(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:42,001 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:42:42,006 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:42,047 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:42,057 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xe2\xf6\xc6\xe8\xe138\xe2\xf6\xc6\xe8\xe13@\xda\xc0\xcb\xe8\xe13J\x03m-gQ\x8c\x0e\xdc\x12\xdf4M@Y\'^\xec\x88I(/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:42,068 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:42:42,073 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:42,079 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:42,084 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xe2\xf6\xc6\xe8\xe138\xe2\xf6\xc6\xe8\xe13@\xda\xc0\xcb\xe8\xe13J\x03m-gQ(\x80\xe3\xfeR5M@YM%JQ\xd8\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:42,084 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:42:42,084 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:42,084 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:42,084 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\x82\xf7\xc6\xe8\xe138\x82\xf7\xc6\xe8\xe13@\xfa\xc0\xcb\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:42,084 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:42:42,084 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:42,084 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.189', 44651)
+2026-05-12 18:42:42,090 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.189', 44651): b'\xbf\x01\xbf\n\x00\x12\xf3\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-dbdc90afc2ca13280\xec\xf7\xc6\xe8\xe138\xec\xf7\xc6\xe8\xe13@\xe4\xc1\xcb\xe8\xe13J\x03h-eQ\xdc\xb2\xe8BQ5M@Y\xc6\x83\xd2\xbc\x88+/@a\x8bl\xe7\xfb\xa9\xe1Z@i\x00\x00\x00\xe0\xcf\x12cAq\x00\x00\x00\xe0\xcf\x12cAz\xf9\x01\nu<contact endpoint="10.225.252.189:4242:tcp" phone="+46729116873" callsign="tak-emulator"/><uid Droid="tak-emulator"/>\x1a\x13\n\x04Cyan\x12\x0bTeam Member"\r\n\x04USER\x12\x05SRTM1*\x02\x08>2M\n\x0eGOOGLE PIXEL 8\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 (9c9a5897)[playstore].1769863102-CIV:\t\x11x\xbb\xd7z*Ku@'
+2026-05-12 18:42:42,090 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.189:4242:tcp
+2026-05-12 18:42:42,090 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.189', 44651)
+2026-05-12 18:42:42,090 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.243', 42185)
+2026-05-12 18:42:42,095 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.243', 42185): b'\xbf\x01\xbf\n\x00\x12\xb7\x02\n\x0ba-h-A-M-H-A\x12\tUndefined*\x18ANDROID-f9ed9e12c2b095300\x80\xf2\xc6\xe8\xe138\x80\xf2\xc6\xe8\xe13@\xf8\xbb\xcb\xe8\xe13J\th-g-i-g-oa\x00\x00\x00\xe0\xcf\x12cAi\x00\x00\x00\xe0\xcf\x12cAq\x00\x00\x00\xe0\xcf\x12cAz\xc7\x01\n\x14<uid Droid="BORBA"/>\x12:\n\x1710.225.252.243:4242:tcp\x12\x05BORBA\x1a\x1810.225.252.243:4243:quic\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08\x192O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 (9c9a5897)[playstore].1769863102-CIV:\t\x11\xce\xc6\xad\xe8\xfb\x9ep@'
+2026-05-12 18:42:42,101 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.243:4242:tcp
+2026-05-12 18:42:42,101 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.243', 42185)
+2026-05-12 18:42:44,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=3.006
+2026-05-12 18:42:44,714 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:44,719 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=3.012
+2026-05-12 18:42:44,719 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:44,719 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=3.012
+2026-05-12 18:42:44,740 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:44,740 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=3.033
+2026-05-12 18:42:44,755 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:44,761 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=3.054
+2026-05-12 18:42:44,782 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:44,787 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,787 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xe9\x8c\xc7\xe8\xe138\xe9\x8c\xc7\xe8\xe13@\xe1\xd6\xcb\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:44,788 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:42:44,788 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,788 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,788 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xef\x8c\xc7\xe8\xe138\xef\x8c\xc7\xe8\xe13@\xe7\xd6\xcb\xe8\xe13J\x03m-gQ\xe5\xa9\x14a\xe34M@Y\xb5\xee^\xe4s(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:44,788 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:42:44,788 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,793 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,804 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xef\x8c\xc7\xe8\xe138\xef\x8c\xc7\xe8\xe13@\xe7\xd6\xcb\xe8\xe13J\x03m-gQ\x81\xff-\xd3\xe24M@Y-\xe4\x86\x1f\xbc(/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:44,804 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:42:44,804 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,804 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,804 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\x84\x8d\xc7\xe8\xe138\x84\x8d\xc7\xe8\xe13@\xfc\xd6\xcb\xe8\xe13J\x03m-gQ\x1d\t9vU5M@Y{\xd3gD\xbd\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:44,804 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:42:44,804 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,809 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:44,809 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\x9e\x8d\xc7\xe8\xe138\x9e\x8d\xc7\xe8\xe13@\x96\xd7\xcb\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:44,809 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:42:44,809 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,718 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=6.011
+2026-05-12 18:42:47,744 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:47,744 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=6.037
+2026-05-12 18:42:47,744 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:47,755 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=6.048
+2026-05-12 18:42:47,786 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:47,786 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=6.079
+2026-05-12 18:42:47,796 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:47,802 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=6.095
+2026-05-12 18:42:47,802 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:47,813 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,823 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xb0\xa4\xc7\xe8\xe138\xb0\xa4\xc7\xe8\xe13@\xa8\xee\xcb\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:47,834 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:42:47,844 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,865 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,875 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xc0\xa4\xc7\xe8\xe138\xc0\xa4\xc7\xe8\xe13@\xb8\xee\xcb\xe8\xe13J\x03m-gQ\xfb!\x87\xf2\xe74M@Y\x0f\xdce\xe1\xa5(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xd5\xa4\xc7\xe8\xe138\xd5\xa4\xc7\xe8\xe13@\xcd\xee\xcb\xe8\xe13J\x03m-gQ\x1dl\x03\xdd\xe64M@Y\xc3f\xba{7)/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xef\xa4\xc7\xe8\xe138\xef\xa4\xc7\xe8\xe13@\xe7\xee\xcb\xe8\xe13J\x03m-gQ\x054*\x1aX5M@Y\xb7\x88;N\xa0\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:47,876 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xfa\xa4\xc7\xe8\xe138\xfa\xa4\xc7\xe8\xe13@\xf2\xee\xcb\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:47,882 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:42:47,882 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,712 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=9.005
+2026-05-12 18:42:50,713 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:50,718 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=9.011
+2026-05-12 18:42:50,729 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:50,734 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=9.027
+2026-05-12 18:42:50,734 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:50,734 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=9.028
+2026-05-12 18:42:50,740 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:50,740 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=9.033
+2026-05-12 18:42:50,745 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:50,750 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,756 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xd9\xbb\xc7\xe8\xe138\xd9\xbb\xc7\xe8\xe13@\xd1\x85\xcc\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:50,756 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:42:50,756 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,756 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,756 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xde\xbb\xc7\xe8\xe138\xde\xbb\xc7\xe8\xe13@\xd6\x85\xcc\xe8\xe13J\x03m-gQ\xd6\xe4\'p\xec4M@YE6\x8c\x05\xd7(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:50,756 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:42:50,761 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,772 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,772 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xee\xbb\xc7\xe8\xe138\xee\xbb\xc7\xe8\xe13@\xe6\x85\xcc\xe8\xe13J\x03m-gQ\xae\x05\xb9\xcc\xea4M@Y\xba\xfc\xea\xb9\xaf)/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:50,772 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:42:50,772 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,772 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,772 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xf4\xbb\xc7\xe8\xe138\xf4\xbb\xc7\xe8\xe13@\xec\x85\xcc\xe8\xe13J\x03m-gQH6[\xa7Z5M@Y1i\x9aQ\x84\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:50,777 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:42:50,783 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,783 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:50,783 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xf9\xbb\xc7\xe8\xe138\xf9\xbb\xc7\xe8\xe13@\xf1\x85\xcc\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:50,783 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:42:50,783 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,712 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=12.005
+2026-05-12 18:42:53,718 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:53,723 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=12.016
+2026-05-12 18:42:53,723 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:53,728 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=12.021
+2026-05-12 18:42:53,728 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:53,733 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=12.027
+2026-05-12 18:42:53,744 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:53,749 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=12.042
+2026-05-12 18:42:53,749 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:53,749 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,750 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\x96\xd3\xc7\xe8\xe138\x96\xd3\xc7\xe8\xe13@\x8e\x9d\xcc\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:53,755 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:42:53,755 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,766 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,776 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\x9b\xd3\xc7\xe8\xe138\x9b\xd3\xc7\xe8\xe13@\x93\x9d\xcc\xe8\xe13J\x03m-gQ\x89H3\\\xef4M@Y\xae\xc2\xcdl\xde(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:53,781 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:42:53,787 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,787 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,792 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xa0\xd3\xc7\xe8\xe138\xa0\xd3\xc7\xe8\xe13@\x98\x9d\xcc\xe8\xe13J\x03m-gQ\xbc\x15h\xff\xef4M@Y\x9f\xb49\xbc\xea)/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:53,803 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:42:53,813 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,823 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,824 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xb0\xd3\xc7\xe8\xe138\xb0\xd3\xc7\xe8\xe13@\xa8\x9d\xcc\xe8\xe13J\x03m-gQ)\x06\xa9=\\5M@Y\x17\t\xb3;h\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:53,824 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:42:53,824 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,829 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:53,839 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xb5\xd3\xc7\xe8\xe138\xb5\xd3\xc7\xe8\xe13@\xad\x9d\xcc\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:53,850 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:42:53,850 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=15.006
+2026-05-12 18:42:56,718 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:56,729 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=15.022
+2026-05-12 18:42:56,734 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:56,740 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=15.033
+2026-05-12 18:42:56,740 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:56,740 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=15.034
+2026-05-12 18:42:56,746 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:56,746 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=15.039
+2026-05-12 18:42:56,751 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:56,762 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,772 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xce\xea\xc7\xe8\xe138\xce\xea\xc7\xe8\xe13@\xc6\xb4\xcc\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:56,782 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:42:56,793 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,798 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,798 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xde\xea\xc7\xe8\xe138\xde\xea\xc7\xe8\xe13@\xd6\xb4\xcc\xe8\xe13J\x03m-gQB\xec\xb3~\xf14M@Y\xb7\x7f\x1c\x16\xd1(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:56,803 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:42:56,803 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,814 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,814 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xe4\xea\xc7\xe8\xe138\xe4\xea\xc7\xe8\xe13@\xdc\xb4\xcc\xe8\xe13J\x03m-gQ\x92L6\xd2\xf54M@Y\x10\x95\xbe\xf5\x07*/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:56,814 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:42:56,814 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,814 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,819 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xea\xea\xc7\xe8\xe138\xea\xea\xc7\xe8\xe13@\xe2\xb4\xcc\xe8\xe13J\x03m-gQ,\x1c\xa9X]5M@Y\xc6p\x0e_L\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:56,830 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:42:56,841 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,841 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:56,846 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xef\xea\xc7\xe8\xe138\xef\xea\xc7\xe8\xe13@\xe7\xb4\xcc\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:56,846 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:42:56,846 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,711 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=18.004
+2026-05-12 18:42:59,711 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:59,717 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=18.010
+2026-05-12 18:42:59,717 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:59,717 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=18.010
+2026-05-12 18:42:59,717 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:59,717 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=18.010
+2026-05-12 18:42:59,717 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:59,717 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=18.010
+2026-05-12 18:42:59,717 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:42:59,728 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,733 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xff\x81\xc8\xe8\xe138\xff\x81\xc8\xe8\xe13@\xf7\xcb\xcc\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:59,743 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:42:59,749 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,754 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\x85\x82\xc8\xe8\xe138\x85\x82\xc8\xe8\xe13@\xfd\xcb\xcc\xe8\xe13J\x03m-gQ_\xda\n\x9c\xf34M@Y\xc9\xa0\xad\xdf\xc3(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\x85\x82\xc8\xe8\xe138\x85\x82\xc8\xe8\xe13@\xfd\xcb\xcc\xe8\xe13J\x03m-gQ\xa7\xa4\xcb\x93\xfb4M@YO\xce\xd5\xd8$*/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\x85\x82\xc8\xe8\xe138\x85\x82\xc8\xe8\xe13@\xfd\xcb\xcc\xe8\xe13J\x03m-gQ\x9e\xbf\xcep^5M@Y\x10\xcbS\xca0\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\x85\x82\xc8\xe8\xe138\x85\x82\xc8\xe8\xe13@\xfd\xcb\xcc\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:42:59,759 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=21.006
+2026-05-12 18:43:02,724 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:02,729 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=21.022
+2026-05-12 18:43:02,729 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:02,729 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=21.022
+2026-05-12 18:43:02,729 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:02,734 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=21.027
+2026-05-12 18:43:02,734 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:02,734 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=21.028
+2026-05-12 18:43:02,740 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:02,740 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,740 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xc4\x99\xc8\xe8\xe138\xc4\x99\xc8\xe8\xe13@\xbc\xe3\xcc\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:02,740 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:43:02,740 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,740 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,740 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xc9\x99\xc8\xe8\xe138\xc9\x99\xc8\xe8\xe13@\xc1\xe3\xcc\xe8\xe13J\x03m-gQ-\xc6\xb5\xbe\xf54M@Y\x1e.\xf4\x87\xb6(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:02,740 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:43:02,745 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,756 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,766 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xc9\x99\xc8\xe8\xe138\xc9\x99\xc8\xe8\xe13@\xc1\xe3\xcc\xe8\xe13J\x03m-gQJ\x16:\xd1\x005M@Yb\xca\xc2\x83-*/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:02,766 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:43:02,766 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,766 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,771 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xce\x99\xc8\xe8\xe138\xce\x99\xc8\xe8\xe13@\xc6\xe3\xcc\xe8\xe13J\x03m-gQ\xeb\xbc\xe6U\\5M@Y\x0c\xd3\x95f\x18\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:02,772 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:43:02,772 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,777 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:02,777 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xd4\x99\xc8\xe8\xe138\xd4\x99\xc8\xe8\xe13@\xcc\xe3\xcc\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:02,777 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:43:02,777 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=24.006
+2026-05-12 18:43:05,714 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:05,719 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=24.012
+2026-05-12 18:43:05,740 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:05,745 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=24.038
+2026-05-12 18:43:05,750 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:05,756 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=24.049
+2026-05-12 18:43:05,756 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:05,761 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=24.054
+2026-05-12 18:43:05,792 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:05,808 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,813 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xf1\xb0\xc8\xe8\xe138\xf1\xb0\xc8\xe8\xe13@\xe9\xfa\xcc\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:05,813 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:43:05,813 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,813 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,818 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xf7\xb0\xc8\xe8\xe138\xf7\xb0\xc8\xe8\xe13@\xef\xfa\xcc\xe8\xe13J\x03m-gQ\xac\xbb^\xdd\xf74M@Y)7EI\xa9(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:05,824 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:43:05,824 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,824 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,829 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\x96\xb1\xc8\xe8\xe138\x96\xb1\xc8\xe8\xe13@\x8e\xfb\xcc\xe8\xe13J\x03m-gQZ\xa4\x18\xef\x045M@Y\xadW|\x13\x0e*/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:05,840 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:43:05,850 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,860 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,866 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\x9c\xb1\xc8\xe8\xe138\x9c\xb1\xc8\xe8\xe13@\x94\xfb\xcc\xe8\xe13J\x03m-gQDl\x8d\xfdS5M@Y\xecW\xda\xfa\x06\'/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:05,871 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:43:05,871 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,871 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:05,871 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xab\xb1\xc8\xe8\xe138\xab\xb1\xc8\xe8\xe13@\xa3\xfb\xcc\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:05,871 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:43:05,871 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=27.006
+2026-05-12 18:43:08,718 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:08,718 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=27.011
+2026-05-12 18:43:08,734 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:08,739 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=27.032
+2026-05-12 18:43:08,739 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:08,755 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=27.048
+2026-05-12 18:43:08,766 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:08,781 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=27.074
+2026-05-12 18:43:08,802 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:08,817 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,828 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xae\xc8\xc8\xe8\xe138\xae\xc8\xc8\xe8\xe13@\xa6\x92\xcd\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:08,838 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:43:08,848 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,864 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,874 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xae\xc8\xc8\xe8\xe138\xae\xc8\xc8\xe8\xe13@\xa6\x92\xcd\xe8\xe13J\x03m-gQ\xc2\xb4\xb4\xfd\xf94M@YV\xa8\x1d\x00\x9c(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:08,885 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:43:08,895 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,916 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,916 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xc3\xc8\xc8\xe8\xe138\xc3\xc8\xc8\xe8\xe13@\xbb\x92\xcd\xe8\xe13J\x03m-gQ\x1d\xf0{\x92\r5M@Y\xe3u\x19\xf9\xee)/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:08,916 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:43:08,921 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,921 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,921 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xde\xc8\xc8\xe8\xe138\xde\xc8\xc8\xe8\xe13@\xd6\x92\xcd\xe8\xe13J\x03m-gQ\x84\xdes\xadK5M@YaDW\xa0\xf5&/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:08,921 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:43:08,921 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,921 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:08,921 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xf8\xc8\xc8\xe8\xe138\xf8\xc8\xc8\xe8\xe13@\xf0\x92\xcd\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:08,921 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:43:08,926 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=30.006
+2026-05-12 18:43:11,713 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:11,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=30.007
+2026-05-12 18:43:11,713 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:11,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=30.007
+2026-05-12 18:43:11,713 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:11,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=30.007
+2026-05-12 18:43:11,714 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:11,714 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=30.007
+2026-05-12 18:43:11,714 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:11,724 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,724 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xe1\xdf\xc8\xe8\xe138\xe1\xdf\xc8\xe8\xe13@\xd9\xa9\xcd\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:11,724 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:43:11,724 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,735 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,740 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xe1\xdf\xc8\xe8\xe138\xe1\xdf\xc8\xe8\xe13@\xd9\xa9\xcd\xe8\xe13J\x03m-gQ\xad\xd2\x8c\x1c\xfc4M@Y[}\xc4\xc0\x8e(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:11,750 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:43:11,761 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,781 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,786 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xe1\xdf\xc8\xe8\xe138\xe1\xdf\xc8\xe8\xe13@\xd9\xa9\xcd\xe8\xe13J\x03m-gQ\x0f\x10\x8fK\x185M@Y\xe4/\x16\t\xd0)/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:11,797 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:43:11,797 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,807 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,812 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xe1\xdf\xc8\xe8\xe138\xe1\xdf\xc8\xe8\xe13@\xd9\xa9\xcd\xe8\xe13J\x03m-gQ\x19\xa3k\x8aC5M@Y\xb1\xe1\x91\xac\xe4&/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:11,823 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:43:11,833 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,844 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:11,844 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xe2\xdf\xc8\xe8\xe138\xe2\xdf\xc8\xe8\xe13@\xda\xa9\xcd\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:11,844 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:43:11,844 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:12,003 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.189', 44651)
+2026-05-12 18:43:12,004 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.189', 44651): b'\xbf\x01\xbf\n\x00\x12\xf3\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-dbdc90afc2ca13280\xaa\xe2\xc8\xe8\xe138\xaa\xe2\xc8\xe8\xe13@\xa2\xac\xcd\xe8\xe13J\x03h-eQ\xdc\xb2\xe8BQ5M@Y\xc6\x83\xd2\xbc\x88+/@a\x8bl\xe7\xfb\xa9\xe1Z@i\x00\x00\x00\xe0\xcf\x12cAq\x00\x00\x00\xe0\xcf\x12cAz\xf9\x01\nu<contact endpoint="10.225.252.189:4242:tcp" phone="+46729116873" callsign="tak-emulator"/><uid Droid="tak-emulator"/>\x1a\x13\n\x04Cyan\x12\x0bTeam Member"\r\n\x04USER\x12\x05SRTM1*\x02\x08=2M\n\x0eGOOGLE PIXEL 8\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 (9c9a5897)[playstore].1769863102-CIV:\t\x11\xc7\x98\xdf>\x0bHu@'
+2026-05-12 18:43:12,004 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.189:4242:tcp
+2026-05-12 18:43:12,004 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.189', 44651)
+2026-05-12 18:43:12,141 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.243', 42185)
+2026-05-12 18:43:12,147 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.243', 42185): b'\xbf\x01\xbf\n\x00\x12\xb7\x02\n\x0ba-h-A-M-H-A\x12\tUndefined*\x18ANDROID-f9ed9e12c2b095300\xdd\xdc\xc8\xe8\xe138\xdd\xdc\xc8\xe8\xe13@\xd5\xa6\xcd\xe8\xe13J\th-g-i-g-oa\x00\x00\x00\xe0\xcf\x12cAi\x00\x00\x00\xe0\xcf\x12cAq\x00\x00\x00\xe0\xcf\x12cAz\xc7\x01\n\x14<uid Droid="BORBA"/>\x12:\n\x1710.225.252.243:4242:tcp\x12\x05BORBA\x1a\x1810.225.252.243:4243:quic\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08\x192O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 (9c9a5897)[playstore].1769863102-CIV:\t\x11\x88\xebs\xf8\xfe\x86p@'
+2026-05-12 18:43:12,152 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.243:4242:tcp
+2026-05-12 18:43:12,152 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.243', 42185)
+2026-05-12 18:43:14,712 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=33.005
+2026-05-12 18:43:14,728 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:14,744 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=33.037
+2026-05-12 18:43:14,749 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:14,765 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=33.058
+2026-05-12 18:43:14,796 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:14,801 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=33.094
+2026-05-12 18:43:14,802 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:14,807 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=33.100
+2026-05-12 18:43:14,807 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:14,807 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,807 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\x99\xf7\xc8\xe8\xe138\x99\xf7\xc8\xe8\xe13@\x91\xc1\xcd\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:14,817 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:43:14,828 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,828 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,828 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xbd\xf7\xc8\xe8\xe138\xbd\xf7\xc8\xe8\xe13@\xb5\xc1\xcd\xe8\xe13J\x03m-gQ\xdc\x98\xa1\xef\xfc4M@Y\xfd\xff\xe3{\x8a(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:14,828 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:43:14,838 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,854 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,859 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xd7\xf7\xc8\xe8\xe138\xd7\xf7\xc8\xe8\xe13@\xcf\xc1\xcd\xe8\xe13J\x03m-gQT0\xe0\xee\x1d5M@Yz\x92\xb1\xa1\xb6)/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:14,865 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:43:14,875 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,890 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,901 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xf1\xf7\xc8\xe8\xe138\xf1\xf7\xc8\xe8\xe13@\xe9\xc1\xcd\xe8\xe13J\x03m-gQ-\xcaNI=5M@Y\xeb\xa2\x91G\xe7&/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:14,906 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:43:14,911 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,922 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:14,922 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xf7\xf7\xc8\xe8\xe138\xf7\xf7\xc8\xe8\xe13@\xef\xc1\xcd\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:14,922 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:43:14,922 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,713 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=36.006
+2026-05-12 18:43:17,724 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:17,729 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=36.022
+2026-05-12 18:43:17,755 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:17,765 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=36.058
+2026-05-12 18:43:17,776 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:17,781 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=36.075
+2026-05-12 18:43:17,782 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:17,792 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=36.085
+2026-05-12 18:43:17,792 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:17,803 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,803 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\xd6\x8e\xc9\xe8\xe138\xd6\x8e\xc9\xe8\xe13@\xce\xd8\xcd\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:17,803 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:43:17,813 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,834 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,844 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xeb\x8e\xc9\xe8\xe138\xeb\x8e\xc9\xe8\xe13@\xe3\xd8\xcd\xe8\xe13J\x03m-gQ\xa4\xf1\x8b\xbf\xfd4M@Y\x9e\x83gG\x86(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:17,855 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:43:17,865 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,865 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,865 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\x85\x8f\xc9\xe8\xe138\x85\x8f\xc9\xe8\xe13@\xfd\xd8\xcd\xe8\xe13J\x03m-gQB\xf3Yp#5M@Y\x93\xeb\xc8\xd2\x9d)/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:17,865 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\x95\x8f\xc9\xe8\xe138\x95\x8f\xc9\xe8\xe13@\x8d\xd9\xcd\xe8\xe13J\x03m-gQ\x05$Z\xec75M@YE\xa9}\x9b\xeb&/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xa0\x8f\xc9\xe8\xe138\xa0\x8f\xc9\xe8\xe13@\x98\xd9\xcd\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:43:17,866 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,712 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Flaga' at t=39.005
+2026-05-12 18:43:20,743 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:20,754 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Arvid' at t=39.047
+2026-05-12 18:43:20,754 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:20,754 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Lukas' at t=39.047
+2026-05-12 18:43:20,754 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:20,754 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Joel' at t=39.047
+2026-05-12 18:43:20,764 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:20,770 [DEBUG] tak_simulator.scenario_scheduler: Executing event 'publish_position:Algot' at t=39.063
+2026-05-12 18:43:20,790 [DEBUG] tak_simulator.network.multicast: sending multicast data
+2026-05-12 18:43:20,801 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,811 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-ffd11c3d31a94d950\x93\xa6\xc9\xe8\xe138\x93\xa6\xc9\xe8\xe13@\x8b\xf0\xcd\xe8\xe13J\x03m-gQ\x07\xd3\x14\'\x155M@Y \x04!\xaf\xc0(/@z\xa1\x01\n\x14<uid Droid="Flaga"/>\x12\x1f\n\x1610.225.252.88:8000:tcp\x12\x05Flaga\x1a\x13\n\x04Cyan\x12\x0bTeam Member*\x02\x08d2O\n\x10SAMSUNG SM-S901B\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:20,816 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8000:tcp
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-96b53a82db3983170\xb2\xa6\xc9\xe8\xe138\xb2\xa6\xc9\xe8\xe13@\xaa\xf0\xcd\xe8\xe13J\x03m-gQ+\xc5"\x91\xfe4M@Y6\x91@\n\x82(/@z\xa3\x01\n\x14<uid Droid="Arvid"/>\x12\x1f\n\x1610.225.252.88:8001:tcp\x12\x05Arvid\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8001:tcp
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-39aa451a3dd3c8270\xb2\xa6\xc9\xe8\xe138\xb2\xa6\xc9\xe8\xe13@\xaa\xf0\xcd\xe8\xe13J\x03m-gQm:\x11\xf1(5M@Y\xad\x95L\x07\x85)/@z\xa3\x01\n\x14<uid Droid="Lukas"/>\x12\x1f\n\x1610.225.252.88:8002:tcp\x12\x05Lukas\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8002:tcp
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,817 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,822 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x80\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-00b56217a724bee20\xbc\xa6\xc9\xe8\xe138\xbc\xa6\xc9\xe8\xe13@\xb4\xf0\xcd\xe8\xe13J\x03m-gQ\x8c\xb3\xc8\xbf35M@Y\xc7?P(\xf3&/@z\xa1\x01\n\x13<uid Droid="Joel"/>\x12\x1e\n\x1610.225.252.88:8003:tcp\x12\x04Joel\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:20,822 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8003:tcp
+2026-05-12 18:43:20,827 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,843 [DEBUG] tak_simulator.network.multicast: MulticastProtocol received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:20,843 [DEBUG] tak_simulator.network.multicast: MulticastHandler received data from ('10.225.252.88', 6969): b'\xbf\x01\xbf\x12\x82\x02\n\ta-f-G-U-C\x12\tUndefined*\x18ANDROID-4d2fbfc48d295cc30\xcc\xa6\xc9\xe8\xe138\xcc\xa6\xc9\xe8\xe13@\xc4\xf0\xcd\xe8\xe13J\x03m-gQ&\xdc=\xd6R5M@YO\xfe!\x0f\xda\'/@z\xa3\x01\n\x14<uid Droid="Algot"/>\x12\x1f\n\x1610.225.252.88:8004:tcp\x12\x05Algot\x1a\x13\n\x04Cyan\x12\x0bTeam Leader*\x02\x08d2Q\n\x12LENOVO LNVNB161216\x12\x08ATAK-CIV\x1a\x0236"-5.6.0.12 [9c9a5897](playstore).1769863102-CIV'
+2026-05-12 18:43:20,843 [DEBUG] tak_simulator.network.multicast: Extracted endpoint from envelope: 10.225.252.88:8004:tcp
+2026-05-12 18:43:20,848 [DEBUG] tak_simulator.simulator: Received data from ('10.225.252.88', 6969)
+2026-05-12 18:43:21,689 [INFO] tak_simulator.time_keeper: Time keeper stopped
+2026-05-12 18:43:21,689 [DEBUG] tak_simulator.scenario_scheduler: Cleared all scheduled events

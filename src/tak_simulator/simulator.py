@@ -61,10 +61,10 @@ class Simulator:
     async def rea(self):
         for i in range(40):
             await asyncio.sleep(10)
-            # a = "ANDROID-6eb795c71729d40b"
-            a = "argar"
+            a = "ANDROID-dbdc90afc2ca1328"
+            # a = "argar"
             await self.emulators[0].send_msg(a, "Hej")
 
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
         """Multicast data received handler. If we need to handle it, we can do so here."""
-        logger.debug(f"Received data from {addr}")
+        logger.debug(f"Received data from {addr}: {data}")

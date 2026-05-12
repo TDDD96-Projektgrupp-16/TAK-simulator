@@ -21,8 +21,6 @@ from tak_simulator.wire import (
     TakVersion,
 )
 from tak_simulator.wire.v0 import V0Codec
-
-
 from tak_simulator.xml_parse import (
     build_chat_detail_for_direct_message,
     encode_chat_detail,
@@ -183,9 +181,20 @@ class Emulator:
         return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>')
 
     async def send_msg(self, to_uid: str, msg: str):
-        chat_detail = build_chat_detail_for_direct_message(self.options, to_uid, msg)
-        xml = encode_chat_detail(chat_detail).decode() # type: ignore
+        to_callsign = (
+            self.connection.multicast.get_user_callsign(to_uid)
+            or self.connection.users[to_uid].callsign
+        )
+        chat_detail = build_chat_detail_for_direct_message(
+            self.options, to_uid, to_callsign, msg
+        )
+        xml = encode_chat_detail(chat_detail).decode()  # type: ignore
         envelope = self._create_msg(self.time_keeper.get_time(), xml)
+        envelope.event.uid = (
+            f"GeoChat.{self.options.uid}.{to_uid}.{chat_detail.chat.message_id}"
+        )
+        envelope.event.type = "b-t-f"
+        envelope.event.type = "h-g-i-g-o"
         await self.connection.send_to(to_uid, envelope)
         logger.info(
             "Emulator %s sent message %s to %s at time %.3f",

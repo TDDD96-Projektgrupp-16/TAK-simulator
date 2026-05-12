@@ -1,6 +1,6 @@
-from datetime import datetime, UTC
-import uuid
 import logging
+import uuid
+from datetime import UTC, datetime
 
 from pydantic_xml import BaseXmlModel, attr, element
 
@@ -17,6 +17,7 @@ class ChatGroup(BaseXmlModel, tag="chatgrp"):
 
 
 class Chat(BaseXmlModel, tag="__chat"):
+    parent: str = attr()
     chatroom: str = attr()
     group_owner: bool = attr(name="groupOwner")
     id: str = attr()
@@ -30,6 +31,10 @@ class Link(BaseXmlModel, tag="link"):
     uid: str = attr()
     type: str = attr()
     relation: str = attr()
+
+
+class ServerDestination(BaseXmlModel, tag="__serverdestination"):
+    destinations: str = attr()
 
 
 class Remarks(BaseXmlModel, tag="remarks"):
@@ -50,13 +55,10 @@ class ChatDetail(BaseXmlModel, tag="detail"):
     remarks: Remarks = element()
 
 
-class ServerDestination(BaseXmlModel, tag="__serverdestination"):
-    destinations: str = attr()
-
-
 def build_chat_detail_for_direct_message(
     sender: EmulatorOptions,
     recipient_id: str,
+    recipient_callsign: str,
     message: str,
     *,
     time: datetime | None = None,
@@ -85,7 +87,8 @@ def build_chat_detail_for_direct_message(
 
     return ChatDetail(
         chat=Chat(
-            chatroom=recipient_id,
+            parent="RootContactGroup",
+            chatroom=recipient_callsign,
             group_owner=False,
             id=recipient_id,
             sender_callsign=sender.callsign,

@@ -1,14 +1,15 @@
-from pygments.lexers.basic import QBasicLexer
-from tak_simulator.wire.exceptions import DecodeError
-from tak_simulator.wire.v0 import V0Codec
-from tak_simulator.wire.v1 import V1Codec
 import asyncio
 import logging
 import socket
 import struct
 from typing import Callable, Self, Tuple
 
-from tak_simulator.wire import Codec, TakEnvelope, Contact
+from pygments.lexers.basic import QBasicLexer
+
+from tak_simulator.wire import Codec, Contact, TakEnvelope
+from tak_simulator.wire.exceptions import DecodeError
+from tak_simulator.wire.v0 import V0Codec
+from tak_simulator.wire.v1 import V1Codec
 
 MULTICAST_ADDR = "239.2.3.1"
 MULTICAST_PORT = 6969
@@ -17,8 +18,6 @@ logger = logging.getLogger(__name__)
 
 
 class MulticastHandler:
-
-
     def __init__(
         self,
         transport: asyncio.DatagramTransport | None,
@@ -29,6 +28,7 @@ class MulticastHandler:
         self.v0_codec = V0Codec()
         self.v1_codec = V1Codec()
         self._user: dict[str, Tuple[str, int]] = {}
+        self._callsigns: dict[str, str] = {}
 
     @classmethod
     async def create_multicast_connection(
@@ -59,7 +59,7 @@ class MulticastHandler:
         return instance
 
     def _multicast_data_received(self, data: bytes, addr: tuple[str, int]) -> None:
-        try: 
+        try:
             if data.startswith(b"\277\001\277"):
                 envelope = self.v1_codec.decode(data)
             else:
@@ -70,17 +70,31 @@ class MulticastHandler:
 
         logger.debug("Received multicast envelope from %s", addr)
 
-        if envelope.event is not None and envelope.event.detail is not None \
-            and envelope.event.detail.contact is not None and envelope.event.detail.contact.endpoint is not None:
-
+        if (
+            envelope.event is not None
+            and envelope.event.detail is not None
+            and envelope.event.detail.contact is not None
+            and envelope.event.detail.contact.endpoint is not None
+        ):
             try:
                 user, port, protocol = envelope.event.detail.contact.endpoint.split(":")
 
                 if protocol.lower() == "tcp":
                     self._user[envelope.event.uid] = (user, int(port))
-                    logger.debug("Registered TCP endpoint for %s: %s:%s", envelope.event.uid, user, port)
+                    self._callsigns[envelope.event.uid] = (
+                        envelope.event.detail.contact.callsign
+                    )
+                    logger.debug(
+                        "Registered TCP endpoint for %s: %s:%s",
+                        envelope.event.uid,
+                        user,
+                        port,
+                    )
             except ValueError:
-                logger.warning("Ignoring malformed contact endpoint: %s", envelope.event.detail.contact.endpoint)
+                logger.warning(
+                    "Ignoring malformed contact endpoint: %s",
+                    envelope.event.detail.contact.endpoint,
+                )
                 return
 
         self.callback(envelope, addr)
@@ -88,13 +102,19 @@ class MulticastHandler:
     def get_user_addr(self, uid: str) -> Tuple[str, int] | None:
         return self._user.get(uid)
 
+    def get_user_callsign(self, uid: str) -> str | None:
+        return self._callsigns.get(uid)
+
     def send(self, envelope: TakEnvelope) -> None:
         if self.transport is None:
             return
 
         data = self.v1_codec.encode(envelope)
-        logger.debug("Sending multicast envelope to %s:%s", MULTICAST_ADDR, MULTICAST_PORT)
+        logger.debug(
+            "Sending multicast envelope to %s:%s", MULTICAST_ADDR, MULTICAST_PORT
+        )
         self.transport.sendto(data, (MULTICAST_ADDR, MULTICAST_PORT))
+
 
 class MulticastProtocol(asyncio.DatagramProtocol):
     def __init__(self, handler: MulticastHandler) -> None:
