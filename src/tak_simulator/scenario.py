@@ -9,11 +9,6 @@ from tak_simulator.uid import (
     generate_believable_wintak_uid,
 )
 
-import logging
-
-logger = logging.getLogger(__name__)
-
-
 # All display type options from WINTAK, ATAK has a gazillion more.
 # Ground Troop, Armoured Vehicle, Civilian Vehicle,
 # Generic Air, Generic Ground, Generic Sea Surface

@@ -1,7 +1,7 @@
 import asyncio
 import logging
-import time
 import threading
+import time
 
 from tak_simulator.network.server import ServerConfig
 from tak_simulator.scenario import load_scenario
@@ -63,5 +63,6 @@ class TAK:
         except KeyboardInterrupt:
             pass
         finally:
-            self.simulator.stop()
-            print("\nSimulator shut down safely.")
+            if self.simulator:
+                self.simulator.stop()
+            logger.info("Headless simulation shut down")

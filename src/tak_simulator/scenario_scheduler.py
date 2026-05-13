@@ -154,15 +154,17 @@ class ScenarioScheduler:
         self._wake_up.set()
 
     async def _execute_event(self, event: ScheduledEvent) -> None:
-        logger.debug(
-            "Executing event '%s' at t=%.3f",
-            event.name,
-            self.time_keeper.get_time(),
-        )
-
-        result = event.callback(*event.args, **event.kwargs)
-        if inspect.isawaitable(result):
-            await result
+        try:
+            result = event.callback(*event.args, **event.kwargs)
+            if inspect.isawaitable(result):
+                await result
+        except Exception:
+            logger.error(
+                "Event '%s' raised an exception at t=%.3f",
+                event.name,
+                self.time_keeper.get_time(),
+                exc_info=True,
+            )
 
     def _reschedule_recurring_event(self, event: ScheduledEvent) -> None:
         """
