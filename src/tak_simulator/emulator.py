@@ -74,9 +74,7 @@ class Emulator:
         self.connection = await NetworkManager.create_connection(
             self.multicast, self.servers, self.port, self.codec
         )
-        logger.info(
-            "Emulator %s connected", self.options.callsign
-        )
+        logger.info("Emulator %s connected", self.options.callsign)
 
     @property
     def is_connected(self) -> bool:
@@ -169,9 +167,7 @@ class Emulator:
         envelope.event.how = "h-g-i-g-o"
         success = await self.connection.send_to(to_uid, envelope)
         if not success:
-            logger.warning(
-                "Failed to deliver message to %s", to_uid
-            )
+            logger.warning("Failed to deliver message to %s", to_uid)
 
     def get_known_users(self) -> dict[str, str]:
         if not hasattr(self, "connection") or self.connection is None:

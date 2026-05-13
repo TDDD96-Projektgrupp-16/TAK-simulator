@@ -1,4 +1,5 @@
 import logging
+import sys
 
 from textual.app import App, ComposeResult
 from textual.message import Message
@@ -93,12 +94,24 @@ class TakApp(App):
 
     async def on_mount(self) -> None:
         # set up logger - remove stdout handlers to avoid clashing with TUI
+        # keep any existing stderr/warning handlers
         root_logger = logging.getLogger()
         for handler in list(root_logger.handlers):
-            if isinstance(handler, logging.StreamHandler):
+            if isinstance(handler, logging.StreamHandler) and getattr(handler, "stream", None) is sys.stdout:
                 root_logger.removeHandler(handler)
         self.textual_log_handler = TextualLogHandler(self)
         root_logger.addHandler(self.textual_log_handler)
+
+        if not any(
+            isinstance(h, logging.StreamHandler) and getattr(h, "stream", None) is sys.stderr
+            for h in root_logger.handlers
+        ):
+            stderr_handler = logging.StreamHandler(sys.stderr)
+            stderr_handler.setLevel(logging.WARNING)
+            stderr_handler.setFormatter(
+                logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+            )
+            root_logger.addHandler(stderr_handler)
 
         # set up data table
         table = self.query_one(DataTable)

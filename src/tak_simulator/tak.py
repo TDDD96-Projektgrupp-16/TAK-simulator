@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import threading
+import time
 
 from tak_simulator.network.server import ServerConfig
 from tak_simulator.scenario import load_scenario
@@ -35,14 +36,30 @@ class TAK:
 
         self.simulator = Simulator(server_configs=self.server_configs)
 
-        asyncio.run_coroutine_threadsafe(self.simulator.run(scenario), self.loop)
+        self._run_future = asyncio.run_coroutine_threadsafe(
+            self.simulator.run(scenario), self.loop
+        )
 
         self._run_loop()
 
     def _run_loop(self):
         try:
+            last_tick = 0.0
             while True:
-                ...
+                if self._run_future.done():
+                    exc = self._run_future.exception()
+                    if exc is not None:
+                        logger.error("Simulator failed: %s", exc)
+                    break
+                t = self.simulator.time_keeper.get_time()
+                if t - last_tick >= 5.0:
+                    logger.info(
+                        "Simulation running at %.2fs with %d emulator(s)",
+                        t,
+                        len(self.simulator.emulators),
+                    )
+                    last_tick = t
+                time.sleep(0.1)
         except KeyboardInterrupt:
             pass
         finally:
