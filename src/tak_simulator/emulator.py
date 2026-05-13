@@ -181,12 +181,13 @@ class Emulator:
         return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>')
 
     async def send_msg(self, to_uid: str, msg: str):
+        logger.info(f"Emulator.send_msg({to_uid}, {msg}) begins")
         to_callsign = (
             self.connection.multicast.get_user_callsign(to_uid)
             or self.connection.users[to_uid].callsign
         )
         chat_detail = build_chat_detail_for_direct_message(
-            self.options, to_uid, to_callsign, msg
+            self.options, to_uid, to_callsign, self.connection.get_endpoint(), msg
         )
         xml = encode_chat_detail(chat_detail).decode()  # type: ignore
         envelope = self._create_msg(self.time_keeper.get_time(), xml)
@@ -194,7 +195,7 @@ class Emulator:
             f"GeoChat.{self.options.uid}.{to_uid}.{chat_detail.chat.message_id}"
         )
         envelope.event.type = "b-t-f"
-        envelope.event.type = "h-g-i-g-o"
+        envelope.event.how = "h-g-i-g-o"
         await self.connection.send_to(to_uid, envelope)
         logger.info(
             "Emulator %s sent message %s to %s at time %.3f",

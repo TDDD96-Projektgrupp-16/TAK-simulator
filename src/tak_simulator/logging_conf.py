@@ -14,12 +14,19 @@ def logging_setup(level):
                 "level": level,
                 "formatter": "standard",
                 "class": "logging.StreamHandler",
-                "stream": "ext://sys.stdout",  # Default is stderr
+                "stream": "ext://sys.stdout",
+            },
+            "file": {
+                "level": level,
+                "formatter": "standard",
+                "class": "logging.FileHandler",
+                "filename": "simulator.log",  # Background log file
+                "mode": "w",
             },
         },
         "loggers": {
             "": {  # root logger
-                "handlers": ["default"],
+                "handlers": ["default", "file"],
                 "level": level,
                 "propagate": False,
             }

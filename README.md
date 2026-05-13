@@ -2,17 +2,16 @@
 
 ```sh
 # Update environment
-uv sync
-
-# Generate protobufs
-uv run python-grpc-tools-protoc \
-    --proto_path=proto \
-    --python_out=src/tak_simulator/proto \
-    --pyi_out=src/tak_simulator/proto \
-    proto/*.proto
+uv sync --locked && uv build
 
 # Run simulator
+uv run tak_simulator
+
+# Run simulator with file specified
 uv run tak_simulator examples/scenario.json
+
+# Run simulator headless
+uv run tak_simulator --notui examples/scenario.json
 
 # Export scenario json schema
 uv run scenario_schema > scenario.schema.json

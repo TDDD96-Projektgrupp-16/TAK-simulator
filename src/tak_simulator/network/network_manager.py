@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from socket import socket
 from typing import List, Tuple, cast
 
 from tak_simulator.network.multicast import MulticastHandler
@@ -70,18 +71,17 @@ class NetworkManager:
 
     async def send_to(self, uid: str, envelope: TakEnvelope) -> bool:
         """Sends data to a specific user via tcp or server."""
-        if uid not in self.users:
-            addr = self.multicast.get_user_addr(uid)
-            logger.debug(f"Addr {addr} from uid {uid}")
-            if addr is not None:
-                self.users[uid] = NetworkUser(
-                    uid, envelope.event.contact.callsign, addr, V1Codec()
-                )
-                await self.users[uid].make_connection()
-            else:
-                return False
+        logger.info(f"Network.send_to({uid}) begins")
 
-        await self.users[uid].send(envelope)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            logger.debug(f"Attempting to send data to {uid} via TCP")
+            addr = self.multicast.get_user_addr(uid)
+            logger.debug(f"Got address for {uid} from multicast: {addr}")
+            s.connect(addr)
+            logger.debug(f"Connected to {uid} at {addr}, sending data: {envelope}")
+            s.sendall(self.codec.encode(envelope))
+            logger.debug(f"Data sent to {uid} at {addr}")
+
         return True
 
     def get_endpoint(self):

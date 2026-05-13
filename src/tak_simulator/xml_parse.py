@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 
 from pydantic_xml import BaseXmlModel, attr, element
 
+from tak_simulator import uid
 from tak_simulator.scenario import EmulatorOptions
 
 logger = logging.getLogger(__name__)
@@ -59,6 +60,7 @@ def build_chat_detail_for_direct_message(
     sender: EmulatorOptions,
     recipient_id: str,
     recipient_callsign: str,
+    endpoint: str,
     message: str,
     *,
     time: datetime | None = None,
@@ -104,6 +106,7 @@ def build_chat_detail_for_direct_message(
             type=sender.type,
             relation="p-p",
         ),
+        server_destination=ServerDestination(destinations=f"{endpoint}:{sender.uid}"),
         remarks=Remarks(
             source=f"BAO.F.{platform}.{sender.uid}",
             source_id=sender.uid,
@@ -122,5 +125,5 @@ def decode_chat_detail(detail: str) -> ChatDetail:
     return ChatDetail.from_xml(detail)
 
 
-def encode_chat_detail(detail: ChatDetail) -> str | bytes:
-    return detail.to_xml()
+def encode_chat_detail(detail: ChatDetail) -> bytes:
+    return detail.to_xml()[8:-9]

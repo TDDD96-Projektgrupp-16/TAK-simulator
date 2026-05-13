@@ -6,6 +6,8 @@ from tak_simulator.wire import Codec, TakEnvelope
 
 logger = logging.getLogger(__name__)
 
+CONNECT_TIMEOUT = 3.0
+
 
 class NetworkUser:
     def __init__(
@@ -23,21 +25,51 @@ class NetworkUser:
         self.codec = codec
 
     async def send(self, envelope: TakEnvelope):
-        """Sends data to the user via multicast and server."""
-        if self.transport is None:
-            await self.make_connection()
-        if self.transport is not None:
-            # data = b'\xbf\x01\xbf\n\x1a\x1a\x18algal\x12\xb2\x05\n\x05b-t-f\x12\tUndefined*KGeoChat.algal.ANDROID-6eb795c71729d40b.b2072ac9-0c8f-4e5e-be6c-66171f799b8b0\xd2\x94\xd0\xed\xe038\xd2\x94\xd0\xed\xe03@\xd2\xcc\xe9\x96\xe13J\th-g-i-g-oQ\x11\xe2\xca\xd9;\x01M@Y\xdd\x99\t\x86s\xfd-@a\x93\x18\x04V\x0e1n@i\x00\x00\x00\x00\x00\x00\x18@q\x00\x00\x00\xe0\xcf\x12cAz\x83\x04\n\x80\x04<__chat parent="RootContactGroup" groupOwner="false" messageId="b2072ac9-0c8f-4e5e-be6c-66171f799b8b" chatroom="MISSIONARY" id="ANDROID-6eb795c71729d40b" senderCallsign="Algot Johansson"><chatgrp uid0="algal" uid1="ANDROID-6eb795c71729d40b" id="ANDROID-6eb795c71729d40b"/></__chat><link uid="algal" type="a-f-G-U-C" relation="p-p"/><__serverdestination destinations="192.168.31.10:4242:tcp:algal"/><remarks source="BAO.F.ATAK.algal" to="ANDROID-6eb795c71729d40b" time="2026-05-09T17:06:03.474Z">bfcvfcnihob</remarks>'
-            self.transport.write(self.codec.encode(envelope))
+        """Sends data to the user via a short-lived TCP connection."""
+        logger.debug("Sending data to %s at %s: %s", self.uid, self.addr, envelope)
 
-    async def make_connection(self):
+        transport = await self._open_ephemeral_transport()
+        if transport is None:
+            logger.debug("Failed to open transport for uid=%s", self.uid)
+            return
+
+        try:
+            payload = self.codec.encode(envelope)
+            logger.debug(
+                "Sending TCP data to %s at %s: %s", self.uid, self.addr, payload
+            )
+            transport.write(payload)
+        finally:
+            transport.close()
+
+    async def _open_ephemeral_transport(
+        self, timeout: float | None = CONNECT_TIMEOUT
+    ) -> asyncio.Transport | None:
         loop = asyncio.get_running_loop()
         host, port = self.addr
-
-        transport, _ = await loop.create_connection(
-            lambda: TcpUserProtocol(self), host, port
+        logger.debug(
+            "Attempting ephemeral connect to %s at %s:%s (timeout=%s)",
+            self.uid,
+            host,
+            port,
+            timeout,
         )
-        self.transport = transport
+        connect_coro = loop.create_connection(lambda: TcpUserProtocol(self), host, port)
+        try:
+            if timeout is None:
+                transport, _ = await connect_coro
+            else:
+                transport, _ = await asyncio.wait_for(connect_coro, timeout=timeout)
+        except asyncio.TimeoutError:
+            logger.error("Timed out connecting to %s at %s:%s", self.uid, host, port)
+            return None
+        except Exception:
+            logger.exception("Failed to connect to %s at %s:%s", self.uid, host, port)
+            return None
+        logger.debug(
+            "Ephemeral connection established to %s at %s:%s", self.uid, host, port
+        )
+        return transport
 
     def callback(self, data: TakEnvelope):
         logger.info(f"Received data from {self.uid}: {data}")
