@@ -42,11 +42,13 @@ class Simulator:
         self.servers = []  # ingen server
 
     async def run(self, scenario: Scenario):
+        logger.info("Starting simulation with %d emulators", len(scenario.emulators))
         port = DEFAULT_START_PORT
         async with asyncio.TaskGroup() as tg:
             self.multicast = await MulticastHandler.create_multicast_connection(
                 self.data_received,
             )
+            logger.info("Multicast handler ready on %s:%d", "239.2.3.1", 6969)
 
             for options in scenario.emulators:
                 emulator = Emulator(
@@ -65,14 +67,15 @@ class Simulator:
                 self.emulators.append(emulator)
 
             tg.create_task(self.scheduler.run())
+            logger.info("Scenario scheduler started")
 
             self.time_keeper.start()
 
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
-        """Multicast data received handler."""
-        logger.debug(f"Received data from {addr}: {data}")
+        pass
 
     def stop(self):
+        logger.info("Simulation stopped")
         self.time_keeper.stop()
         self.scheduler.stop()
         self.scheduler.clear()

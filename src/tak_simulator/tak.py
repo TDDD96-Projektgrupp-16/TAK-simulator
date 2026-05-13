@@ -1,9 +1,12 @@
 import asyncio
+import logging
 import threading
 
 from tak_simulator.network.server import ServerConfig
 from tak_simulator.scenario import load_scenario
 from tak_simulator.simulator import Simulator
+
+logger = logging.getLogger(__name__)
 
 
 def _start_background_loop(loop: asyncio.AbstractEventLoop):
@@ -41,7 +44,8 @@ class TAK:
             while True:
                 ...
         except KeyboardInterrupt:
-            pass  # Caught Ctrl+C
+            pass
         finally:
-            self.simulator.stop()
-            print("\nSimulator shut down safely.")
+            if self.simulator:
+                self.simulator.stop()
+            logger.info("Headless simulation shut down")
