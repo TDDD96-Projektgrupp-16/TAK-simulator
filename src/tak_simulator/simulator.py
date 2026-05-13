@@ -10,7 +10,7 @@ from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.time_keeper import TimeKeeper
 from tak_simulator.wire import TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
-from tak_simulator.xml_parse import ChatMessage, extract_chat_message
+from tak_simulator.xml_parse import ChatMessage
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,6 @@ class Simulator:
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
         """Multicast data received handler."""
         logger.debug(f"Received data from {addr}: {data}")
-        self._extract_chat_message(data)
 
     def stop(self):
         self.time_keeper.stop()
