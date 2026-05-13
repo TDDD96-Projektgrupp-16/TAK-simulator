@@ -1,12 +1,42 @@
 import logging
 import uuid
+from dataclasses import dataclass
 from datetime import UTC, datetime
 
 from pydantic_xml import BaseXmlModel, attr, element
 
 from tak_simulator.scenario import EmulatorOptions
+from tak_simulator.wire import TakEnvelope
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ChatMessage:
+    from_uid: str
+    from_callsign: str
+    to_uid: str | None
+    message: str
+
+
+def extract_chat_message(envelope: TakEnvelope) -> ChatMessage | None:
+    if envelope.event is None or not envelope.event.uid:
+        return None
+    if not envelope.event.uid.startswith("GeoChat.") or envelope.event.type != "b-t-f":
+        return None
+    if envelope.event.detail is None or not envelope.event.detail.opaque_xml:
+        return None
+    try:
+        chat_detail = decode_chat_detail(envelope.event.detail.opaque_xml)
+        return ChatMessage(
+            from_uid=chat_detail.chat.chatgrp.uid0,
+            from_callsign=chat_detail.chat.sender_callsign,
+            to_uid=chat_detail.chat.chatgrp.uid1,
+            message=chat_detail.remarks.text,
+        )
+    except Exception:
+        logger.warning("Failed to decode chat detail from %s", envelope.event.uid)
+        return None
 
 
 class ChatGroup(BaseXmlModel, tag="chatgrp"):
