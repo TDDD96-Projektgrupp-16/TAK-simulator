@@ -10,7 +10,6 @@ from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.time_keeper import TimeKeeper
 from tak_simulator.wire import TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
-from tak_simulator.wire.v1 import V1Codec
 
 logger = logging.getLogger(__name__)
 
@@ -38,16 +37,14 @@ class Simulator:
             )
             for config in server_configs
         ]
+        self.servers = []  # ingen server
 
     async def run(self, scenario: Scenario):
         port = DEFAULT_START_PORT
         async with asyncio.TaskGroup() as tg:
             self.multicast = await MulticastHandler.create_multicast_connection(
-                V1Codec(),
                 self.data_received,
             )
-
-            tg.create_task(self.scheduler.run())
 
             for options in scenario.emulators:
                 emulator = Emulator(
@@ -58,15 +55,20 @@ class Simulator:
                     port,
                     self.servers,
                 )
+
+                emulator.init()
+
                 port += 1
                 tg.create_task(emulator.run())
                 self.emulators.append(emulator)
+
+            tg.create_task(self.scheduler.run())
 
             self.time_keeper.start()
 
     def data_received(self, data: TakEnvelope, addr: Tuple[str | Any, int]) -> None:
         """Multicast data received handler. If we need to handle it, we can do so here."""
-        logger.debug(f"Received data from {addr}")
+        logger.debug(f"Received data from {addr}: {data}")
 
     def stop(self):
         self.time_keeper.stop()
@@ -77,7 +79,6 @@ class Simulator:
             self.multicast.transport.close()
 
         for emu in self.emulators:
-            emu.is_connected = False
             if hasattr(emu, "connection") and emu.connection and emu.connection._server:
                 emu.connection._server.close()
 

@@ -20,9 +20,7 @@ class ServerConfig(BaseModel):
 class ServerHandler:
     def __init__(self, servers: List[Server]) -> None:
         self.servers: List[Server] = servers
-        self.callback: (
-            Callable[[TakEnvelope, tuple[str, int], asyncio.Transport], None] | None
-        ) = None
+        self.callback: Callable[[TakEnvelope, tuple[str, int]], None] | None = None
 
     @classmethod
     async def create_server_connection(
@@ -39,11 +37,23 @@ class ServerHandler:
         for server in self.servers:
             server.send(envelope)
 
-    def _callback(
-        self, envelope: TakEnvelope, addr: tuple[str, int], transport: asyncio.Transport
-    ) -> None:
+    def _callback(self, envelope: TakEnvelope, addr: tuple[str, int]) -> None:
         if self.callback:
-            self.callback(envelope, addr, transport)
+            self.callback(envelope, addr)
+
+    def get_user_addr(self, uid: str) -> tuple[str, int] | None:
+        for server in self.servers:
+            addr = server.get_user_addr(uid)
+            if addr is not None:
+                return addr
+        return None
+
+    def get_user_callsign(self, uid: str) -> str | None:
+        for server in self.servers:
+            callsign = server.get_user_callsign(uid)
+            if callsign is not None:
+                return callsign
+        return None
 
 
 class Server:
@@ -68,13 +78,15 @@ class Server:
         self.upgrade = upgrade
         self.transport = None
         self.callback = None
+        self._users: dict[str, tuple[str, int]] = {}
+        self._callsigns: dict[str, str | None] = {}
 
     def set_server(self, transport: asyncio.Transport) -> None:
         self.transport = transport
 
     def set_callback(
         self,
-        callback: Callable[[TakEnvelope, tuple[str, int], asyncio.Transport], None],
+        callback: Callable[[TakEnvelope, tuple[str, int]], None],
     ) -> None:
         self.callback = callback
 
@@ -100,11 +112,26 @@ class Server:
         )
         self.set_server(transport)
 
-    def _callback(
-        self, data: bytes, addr: tuple[str, int], transport: asyncio.Transport
-    ) -> None:
+    def _callback(self, data: bytes, addr: tuple[str, int]) -> None:
+        envelope = self.codec.decode(data)
+        if envelope.event is not None and envelope.event.detail is not None:
+            contact = envelope.event.detail.contact
+            if contact is not None and contact.endpoint is not None:
+                try:
+                    user, port, protocol = contact.endpoint.split(":")
+                    if protocol.lower() == "tcp":
+                        self._users[envelope.event.uid] = (user, int(port))
+                        self._callsigns[envelope.event.uid] = contact.callsign
+                except ValueError:
+                    pass
         if self.callback:
-            self.callback(self.codec.decode(data), addr, transport)
+            self.callback(envelope, addr)
+
+    def get_user_addr(self, uid: str) -> tuple[str, int] | None:
+        return self._users.get(uid)
+
+    def get_user_callsign(self, uid: str) -> str | None:
+        return self._callsigns.get(uid)
 
 
 class ServerProtocol(asyncio.Protocol):
@@ -128,7 +155,7 @@ class ServerProtocol(asyncio.Protocol):
             try:
                 ET.fromstring(self.buffer)
                 # If we get here, the entire buffer is one valid XML document
-                self.server._callback(self.buffer, addr, self.transport)
+                self.server._callback(self.buffer, addr)
                 self.buffer = b""
                 break
             except ET.ParseError as e:
@@ -153,7 +180,7 @@ class ServerProtocol(asyncio.Protocol):
                     first_msg = self.buffer[:split_idx]
 
                     if first_msg:
-                        self.server._callback(first_msg, addr, self.transport)
+                        self.server._callback(first_msg, addr)
 
                     # 4. Save the "junk" (the next message) for the next while-loop iteration
                     self.buffer = self.buffer[split_idx:]

@@ -6,6 +6,7 @@
     "emulators": [
         {
             "like": "atak",
+            "uid": "algal",
             "callsign": "Algot Johansson",
             "takv": {
                 "device": "SAMSUNG SM-S901B"
@@ -24,10 +25,14 @@
                 [162, [58.3983333333, 15.5776944444]],
                 [180, [58.3983333333, 15.5768888889]],
                 [193.5, [58.3980833333, 15.5768611111]]
+            ],
+            "events": [
+                { "type": "chat", "time": 5, "recipient_uid": "argar", "message": "Försov mig!! Sorry"}
             ]
         },
         {
             "like": "wintak",
+            "uid": "argar",
             "callsign": "Arvid Ramsberg",
             "group": {
                 "role": "Team Leader"

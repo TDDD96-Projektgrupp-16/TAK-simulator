@@ -1,13 +1,14 @@
 import asyncio
 import logging
+import socket
 from typing import List, Tuple, cast
 
 from tak_simulator.network.multicast import MulticastHandler
-from tak_simulator.network.network_user import NetworkUser
 from tak_simulator.network.server import Server, ServerHandler
 from tak_simulator.util import host_ip
 from tak_simulator.wire import Codec, TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
+from tak_simulator.wire.v1 import V1Codec
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,6 @@ class NetworkManager:
         self._server = None
         self.multicast = multicast
         self.server_handler = server_handler
-        self.users: dict[str, NetworkUser] = {}
         self.codec = codec
         self.port = port
 
@@ -46,18 +46,11 @@ class NetworkManager:
         )
         await self._server.serve_forever()
 
-    def callback(
-        self, envelope: TakEnvelope, addr: Tuple[str, int], transport: asyncio.Transport
-    ) -> None:
+    def callback(self, envelope: TakEnvelope, addr: Tuple[str, int]) -> None:
         logger.debug(f"Received data from {addr}: {envelope}")
         if envelope.event is None:
             return
         uid = envelope.event.uid
-
-        if uid not in self.users:
-            self.users[uid] = NetworkUser(uid, addr, V0Codec(), transport)
-
-        self.users[uid].callback(envelope)
 
     def broadcast(self, envelope: TakEnvelope):
         """Sends data to all servers and multicast group."""
@@ -66,14 +59,26 @@ class NetworkManager:
 
     async def send_to(self, uid: str, envelope: TakEnvelope) -> bool:
         """Sends data to a specific user via tcp or server."""
-        if uid not in self.users:
-            addr = self.multicast.get_user_addr(uid)
-            if addr is not None:
-                self.users[uid] = NetworkUser(uid, addr, V0Codec())
-                await self.users[uid].make_connection()
-            else:
+        logger.info(f"Network.send_to({uid}) begins")
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            logger.debug(f"Attempting to send data to {uid} via TCP")
+            addr = self.multicast.get_user_addr(
+                uid
+            ) or self.server_handler.get_user_addr(uid)
+            if addr is None:
+                logger.warning(
+                    f"Could not find address for {uid} in multicast or server"
+                )
                 return False
-        await self.users[uid].send(envelope)
+            logger.debug(f"Got address for {uid} from multicast: {addr}")
+            s.connect(addr)
+            logger.debug(f"Connected to {uid} at {addr}, sending data: {envelope}")
+            data = V1Codec().encode(envelope)
+            logger.debug(f"Encoded bytes as: {data}")
+            s.sendall(data)
+            logger.debug(f"Data sent to {uid} at {addr}")
+
         return True
 
     def get_endpoint(self):
@@ -92,9 +97,14 @@ class ServerProtocol(asyncio.Protocol):
         )
 
     def data_received(self, data):
+        logger.debug(f"Data received {data}")
+
         if self._transport is not None:
+            if data.startswith(b"\277\001\277"):
+                envelope = V1Codec().decode(data)
+            else:
+                envelope = V0Codec().decode(data)
+
             self.network_manager.callback(
-                self.network_manager.codec.decode(data),
-                self._transport.get_extra_info("peername"),
-                self._transport,
+                envelope, self._transport.get_extra_info("peername")
             )

@@ -4,7 +4,11 @@ import socket
 import struct
 from typing import Callable, Self, Tuple
 
-from tak_simulator.wire import Codec, TakEnvelope
+
+from tak_simulator.wire import TakEnvelope
+from tak_simulator.wire.exceptions import DecodeError
+from tak_simulator.wire.v0 import V0Codec
+from tak_simulator.wire.v1 import V1Codec
 
 MULTICAST_ADDR = "239.2.3.1"
 MULTICAST_PORT = 6969
@@ -16,22 +20,22 @@ class MulticastHandler:
     def __init__(
         self,
         transport: asyncio.DatagramTransport | None,
-        codec: Codec,
         callback: Callable[[TakEnvelope, tuple[str, int]], None],
     ) -> None:
         self.transport = transport
-        self.codec = codec
         self.callback = callback
+        self.v0_codec = V0Codec()
+        self.v1_codec = V1Codec()
         self._user: dict[str, Tuple[str, int]] = {}
+        self._callsigns: dict[str, str] = {}
 
     @classmethod
     async def create_multicast_connection(
         cls,
-        codec: Codec,
         callback: Callable[[TakEnvelope, tuple[str, int]], None],
     ) -> Self:
 
-        instanse = cls(None, codec, callback)
+        instance = cls(None, callback)
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 
@@ -48,31 +52,68 @@ class MulticastHandler:
 
         loop = asyncio.get_event_loop()
         transport, _ = await loop.create_datagram_endpoint(
-            lambda: MulticastProtocol(instanse), sock=sock
+            lambda: MulticastProtocol(instance), sock=sock
         )
-        instanse.transport = transport
-        return instanse
+        instance.transport = transport
+        return instance
 
     def _multicast_data_received(self, data: bytes, addr: tuple[str, int]) -> None:
-        envelope = self.codec.decode(data)
+        try:
+            if data.startswith(b"\277\001\277"):
+                envelope = self.v1_codec.decode(data)
+            else:
+                envelope = self.v0_codec.decode(data)
+        except DecodeError:
+            logger.warning("Failed to decode multicast packet from %s", addr)
+            return
+
+        logger.debug("Received multicast envelope from %s", addr)
+
         if (
             envelope.event is not None
             and envelope.event.detail is not None
             and envelope.event.detail.contact is not None
             and envelope.event.detail.contact.endpoint is not None
+            and envelope.event.detail.contact is not None
+            and envelope.event.detail.contact.callsign is not None
         ):
-            endpoint = envelope.event.detail.contact.endpoint
-            self._user[endpoint] = (endpoint.split(":")[0], int(endpoint.split(":")[1]))
+            try:
+                user, port, protocol = envelope.event.detail.contact.endpoint.split(":")
+
+                if protocol.lower() == "tcp":
+                    self._user[envelope.event.uid] = (user, int(port))
+                    self._callsigns[envelope.event.uid] = (
+                        envelope.event.detail.contact.callsign
+                    )
+                    logger.debug(
+                        "Registered TCP endpoint for %s: %s:%s",
+                        envelope.event.uid,
+                        user,
+                        port,
+                    )
+            except ValueError:
+                logger.warning(
+                    "Ignoring malformed contact endpoint: %s",
+                    envelope.event.detail.contact.endpoint,
+                )
+                return
+
         self.callback(envelope, addr)
 
     def get_user_addr(self, uid: str) -> Tuple[str, int] | None:
         return self._user.get(uid)
 
+    def get_user_callsign(self, uid: str) -> str | None:
+        return self._callsigns.get(uid)
+
     def send(self, envelope: TakEnvelope) -> None:
         if self.transport is None:
             return
-        data = self.codec.encode(envelope)
-        logger.debug("sending multicast data")
+
+        data = self.v1_codec.encode(envelope)
+        logger.debug(
+            "Sending multicast envelope to %s:%s", MULTICAST_ADDR, MULTICAST_PORT
+        )
         self.transport.sendto(data, (MULTICAST_ADDR, MULTICAST_PORT))
 
 

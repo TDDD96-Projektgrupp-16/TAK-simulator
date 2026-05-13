@@ -21,6 +21,10 @@ from tak_simulator.wire import (
     TakVersion,
 )
 from tak_simulator.wire.v0 import V0Codec
+from tak_simulator.xml_parse import (
+    build_chat_detail_for_direct_message,
+    encode_chat_detail,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,15 +40,9 @@ class Emulator:
 
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
     publish_position_event: ScheduledEvent | None = field(init=False, default=None)
-    is_connected: bool = field(init=False, default=True)
     codec: Codec = field(default_factory=V0Codec)
 
-    async def run(self) -> None:
-
-        self.connection = await NetworkManager.create_connection(
-            self.multicast, self.servers, self.port, self.codec
-        )
-
+    def init(self):
         logger.info("started emulator with callsign: %s", self.options.callsign)
 
         self.publish_position_event = self.scheduler.schedule_recurring(
@@ -54,18 +52,27 @@ class Emulator:
             name=f"publish_position:{self.options.callsign}",
         )
 
+        logger.debug(f"Emulator events: {self.options.events}")
+
         for event in self.options.events:
+            logger.debug(f"Trying to schedule event: {event}")
+
             self.scheduler.schedule_once(
                 due_time=event.time,
                 callback=self.handle_scenario_event,
                 event=event,
-                name=f"{event.event_type}:{self.options.callsign}",
+                name=f"{event.type}:{self.options.callsign}",
             )
 
         logger.info(
             "Emulator %s registered recurring position updates and %d scenario events",
             self.options.callsign,
             len(self.options.events),
+        )
+
+    async def run(self) -> None:
+        self.connection = await NetworkManager.create_connection(
+            self.multicast, self.servers, self.port, self.codec
         )
 
     async def publish_position(self) -> None:
@@ -75,103 +82,85 @@ class Emulator:
         self.connection.broadcast(envelope)
 
     async def handle_scenario_event(self, event: ScenarioEvent) -> None:
-        current_time = self.time_keeper.get_time()
+        logger.debug(f"Handling event of type: {event.type}")
 
-        if event.event_type == "chat":
-            if not self.is_connected:
-                logger.info(
-                    "Skipping scenario chat event for disconnected emulator %s at t=%.3f",
-                    self.options.callsign,
-                    current_time,
-                )
-                return
+        if event.type == "chat":
+            await self.send_msg(event.recipient_uid, event.message)
 
-            logger.info(
-                "Scenario chat event for %s at t=%.3f: %s",
-                self.options.callsign,
-                current_time,
-                event.message,
-            )
-            return
-
-        if event.event_type == "connect":
-            if self.is_connected:
-                logger.info(
-                    "%s is already connected at t=%.3f",
-                    self.options.callsign,
-                    current_time,
-                )
-                return
-
-            self.is_connected = True
-            logger.info(
-                "Scenario connect event for %s at t=%.3f",
-                self.options.callsign,
-                current_time,
-            )
-            return
-
-        if event.event_type == "disconnect":
-            if not self.is_connected:
-                logger.info(
-                    "%s is already disconnected at t=%.3f",
-                    self.options.callsign,
-                    current_time,
-                )
-                return
-
-            self.is_connected = False
-            logger.info(
-                "Scenario disconnect event for %s at t=%.3f",
-                self.options.callsign,
-                current_time,
-            )
-            return
-
-    def tak_env(self, t: float) -> TakEnvelope:
+    def _create_msg(self, t: float, msg: str) -> TakEnvelope:
         send_time = datetime.now(UTC)
 
         lat, lon = self.get_position(t)
 
-        event = CotEvent(
-            type=self.options.type,
-            access=self.options.access,
-            caveat=None,
-            releasable_to=None,
-            qos=None,
-            opex=None,
-            uid=self.options.uid,
-            send_time=send_time,
-            start_time=send_time,
-            stale_time=send_time + timedelta(seconds=75),  # TODO
-            how=self.options.how,
-            point=Point(
-                lat=lat,
-                lon=lon,
-            ),
-            detail=CotDetail(
-                contact=Contact(
-                    endpoint=self.connection.get_endpoint(),
-                    callsign=self.options.callsign,
+        return TakEnvelope(
+            event=CotEvent(
+                type=self.options.type,
+                access=self.options.access,
+                caveat=None,
+                releasable_to=None,
+                qos=None,
+                opex=None,
+                uid=self.options.uid,
+                send_time=send_time,
+                start_time=send_time,
+                stale_time=send_time + timedelta(seconds=75),  # TODO
+                how=self.options.how,
+                point=Point(
+                    lat=lat,
+                    lon=lon,
                 ),
-                group=Group(
-                    name=self.options.group.name,
-                    role=self.options.group.role,
+                detail=CotDetail(
+                    contact=Contact(
+                        endpoint=self.connection.get_endpoint(),
+                        callsign=self.options.callsign,
+                    ),
+                    group=Group(
+                        name=self.options.group.name,
+                        role=self.options.group.role,
+                    ),
+                    status=Status(
+                        battery=100,  # TODO
+                    ),
+                    takv=TakVersion(
+                        device=self.options.takv.device,
+                        platform=self.options.takv.platform,
+                        os=self.options.takv.os,
+                        version=self.options.takv.version,
+                    ),
+                    opaque_xml=msg,
                 ),
-                status=Status(
-                    battery=100,  # TODO
-                ),
-                takv=TakVersion(
-                    device=self.options.takv.device,
-                    platform=self.options.takv.platform,
-                    os=self.options.takv.os,
-                    version=self.options.takv.version,
-                ),
-                opaque_xml=f'<uid Droid="{self.options.callsign}"/>',
-            ),
+            )
         )
 
-        return TakEnvelope(event=event)
+    def tak_env(self, t: float) -> TakEnvelope:
+        return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>')
+
+    async def send_msg(self, to_uid: str, msg: str):
+        logger.info(f"Emulator.send_msg({to_uid}, {msg}) begins")
+        to_callsign = self.connection.multicast.get_user_callsign(
+            to_uid
+        ) or self.connection.server_handler.get_user_callsign(to_uid)
+        if to_callsign is None:
+            logger.warning("Cannot send message to %s: callsign not found", to_uid)
+            return
+        chat_detail = build_chat_detail_for_direct_message(
+            self.options, to_uid, to_callsign, self.connection.get_endpoint(), msg
+        )
+        xml = encode_chat_detail(chat_detail).decode()  # type: ignore
+        envelope = self._create_msg(self.time_keeper.get_time(), xml)
+        envelope.event.uid = (
+            f"GeoChat.{self.options.uid}.{to_uid}.{chat_detail.chat.message_id}"
+        )
+        envelope.event.type = "b-t-f"
+        envelope.event.how = "h-g-i-g-o"
+        await self.connection.send_to(to_uid, envelope)
+        logger.info(
+            "Emulator %s sent message %s to %s at time %.3f",
+            self.options.uid,
+            msg,
+            to_uid,
+            self.time_keeper.get_time(),
+        )
 
     def get_position(self, t: float) -> tuple[float, float]:
         i = 0

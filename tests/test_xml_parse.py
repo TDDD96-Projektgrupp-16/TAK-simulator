@@ -21,6 +21,7 @@ FIXED_UUID = uuid.UUID("12345678-1234-5678-1234-567812345678")
 
 RAW_DETAIL_FRAGMENT = (
     '<__chat chatroom="S-1-2-3" groupOwner="false" id="S-1-2-3" '
+    'parent="RootContactGroup" '
     'senderCallsign="Raven" messageId="12345678123456781234567812345678">'
     '<chatgrp id="S-1-2-3" uid0="ANDROID-0123456789abcdef" uid1="S-1-2-3"/>'
     "</__chat>"
@@ -63,17 +64,22 @@ def test_build_chat_detail_for_direct_message_populates_fields(
     expected_platform: str,
 ) -> None:
     recipient_uid = "S-1-5-21-444-555-666-1002"
+    recipient_callsign = "RCPT"
+    endpoint = "127.0.0.1:4242:tcp"
     sent_at = datetime(2026, 4, 28, 9, 30, 0, tzinfo=UTC)
 
     detail = build_chat_detail_for_direct_message(
         sender=sender,
         recipient_id=recipient_uid,
+        recipient_callsign=recipient_callsign,
+        endpoint=endpoint,
         message="Roger!",
         time=sent_at,
         message_id=FIXED_UUID.hex,
     )
 
-    assert detail.chat.chatroom == recipient_uid
+    assert detail.chat.parent == "RootContactGroup"
+    assert detail.chat.chatroom == recipient_callsign
     assert detail.chat.group_owner is False
     assert detail.chat.id == recipient_uid
     assert detail.chat.sender_callsign == sender.callsign
@@ -87,6 +93,8 @@ def test_build_chat_detail_for_direct_message_populates_fields(
     assert detail.link.type == sender.type
     assert detail.link.relation == "p-p"
 
+    assert detail.server_destination.destinations == f"{endpoint}:{sender.uid}"
+
     assert detail.remarks.source == f"BAO.F.{expected_platform}.{sender.uid}"
     assert detail.remarks.source_id == sender.uid
     assert detail.remarks.to == recipient_uid
@@ -98,6 +106,8 @@ def test_build_chat_detail_for_direct_message_converts_time_to_utc() -> None:
     detail = build_chat_detail_for_direct_message(
         sender=make_wintak_sender(),
         recipient_id="S-1-5-21-444-555-666-1002",
+        recipient_callsign="RCPT",
+        endpoint="127.0.0.1:4242:tcp",
         message="hold position",
         time=datetime(
             2026,
@@ -147,6 +157,8 @@ def test_build_chat_detail_for_direct_message_serializes_expected_xml() -> None:
             path=[(0.0, (59.0, 18.0))],
         ),
         recipient_id="S-1-5-21-881805813-4011829539-2499212253-1001",
+        recipient_callsign="DEST",
+        endpoint="127.0.0.1:4242:tcp",
         message="at VDO",
         time=datetime(2026, 4, 9, 10, 55, 26, 430000, tzinfo=UTC),
         message_id="b9833d56-660b-4e21-8797-1d5cd2c2a97f",
@@ -156,14 +168,18 @@ def test_build_chat_detail_for_direct_message_serializes_expected_xml() -> None:
 
     assert isinstance(xml, bytes)
     expected_xml = (
-        '<detail><__chat chatroom="S-1-5-21-881805813-4011829539-2499212253-1001" '
+        '<detail><__chat chatroom="DEST" '
         'groupOwner="false" id="S-1-5-21-881805813-4011829539-2499212253-1001" '
-        'senderCallsign="MUDBUG" messageId="b9833d56-660b-4e21-8797-1d5cd2c2a97f">'
+        'messageId="b9833d56-660b-4e21-8797-1d5cd2c2a97f" '
+        'parent="RootContactGroup" '
+        'senderCallsign="MUDBUG">'
         '<chatgrp id="S-1-5-21-881805813-4011829539-2499212253-1001" '
         'uid0="S-1-5-21-599088404-856123360-4043671938-1003" '
         'uid1="S-1-5-21-881805813-4011829539-2499212253-1001" uid2="" /></__chat>'
         '<link uid="S-1-5-21-599088404-856123360-4043671938-1003" type="a-f-G-U-C-I" '
-        'relation="p-p" /><remarks '
+        'relation="p-p" />'
+        '<__serverdestination destinations="127.0.0.1:4242:tcp:S-1-5-21-599088404-856123360-4043671938-1003" />'
+        '<remarks '
         'source="BAO.F.WinTAK.S-1-5-21-599088404-856123360-4043671938-1003" '
         'sourceID="S-1-5-21-599088404-856123360-4043671938-1003" '
         'to="S-1-5-21-881805813-4011829539-2499212253-1001" '

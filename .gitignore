@@ -27,3 +27,8 @@ simulator.log
 certs
 admin.p12
 p12converter.sh
+
+run.sh
+test.sh
+.idea/
+.gitignore

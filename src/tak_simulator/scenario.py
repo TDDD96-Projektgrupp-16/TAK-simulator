@@ -104,22 +104,6 @@ class Takv(BaseModel):
     )
 
 
-class ScenarioEvent(BaseModel):
-    """A timed event for one emulator in the scenario."""
-
-    time: float = Field(
-        description="Simulation time when the event should happen.",
-    )
-    event_type: EventType = Field(
-        description="Type of scenario event.",
-        alias="type",
-    )
-    message: Optional[str] = Field(
-        default=None,
-        description="Message text for chat events.",
-    )
-
-
 class ATAKTakv(Takv):
     """Device and platform metadata for an ATAK-CIV client."""
 
@@ -134,6 +118,27 @@ class WinTAKTakv(Takv):
     platform: str = "WinTAK-CIV"
     os: str = "Microsoft Windows 11 Home"
     version: str = "5.6.0.151"  # Latest stable WinTAK-CIV version as of 2026-03-31
+
+
+class ScenarioEventBase(BaseModel):
+    """A timed event for one emulator in the scenario."""
+
+    type: EventType = Field(
+        description="Type of scenario event.",
+        alias="type",
+    )
+    time: float = Field(
+        description="Simulation time when the event should happen.",
+    )
+
+
+class ChatEvent(ScenarioEventBase):
+    type: Literal["chat"]
+    recipient_uid: str = Field(description="The uid of the chat recipient.")
+    message: str = Field(description="The chat content.")
+
+
+ScenarioEvent = Annotated[ChatEvent, Field(discriminator="type")]
 
 
 class EmulatorOptionsBase(BaseModel):

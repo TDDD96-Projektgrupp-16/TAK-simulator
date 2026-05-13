@@ -1,6 +1,6 @@
-from datetime import datetime, UTC
-import uuid
 import logging
+import uuid
+from datetime import UTC, datetime
 
 from pydantic_xml import BaseXmlModel, attr, element
 
@@ -17,6 +17,7 @@ class ChatGroup(BaseXmlModel, tag="chatgrp"):
 
 
 class Chat(BaseXmlModel, tag="__chat"):
+    parent: str = attr()
     chatroom: str = attr()
     group_owner: bool = attr(name="groupOwner")
     id: str = attr()
@@ -32,9 +33,13 @@ class Link(BaseXmlModel, tag="link"):
     relation: str = attr()
 
 
+class ServerDestination(BaseXmlModel, tag="__serverdestination"):
+    destinations: str = attr()
+
+
 class Remarks(BaseXmlModel, tag="remarks"):
     source: str = attr()
-    source_id: str = attr(name="sourceID")
+    source_id: str | None = attr(name="sourceID", default=None)
     to: str = attr()
     time: str = attr()
 
@@ -44,12 +49,17 @@ class Remarks(BaseXmlModel, tag="remarks"):
 class ChatDetail(BaseXmlModel, tag="detail"):
     chat: Chat = element(tag="__chat")
     link: Link = element()
+    server_destination: ServerDestination | None = element(
+        tag="__serverdestination", default=None
+    )
     remarks: Remarks = element()
 
 
 def build_chat_detail_for_direct_message(
     sender: EmulatorOptions,
     recipient_id: str,
+    recipient_callsign: str,
+    endpoint: str,
     message: str,
     *,
     time: datetime | None = None,
@@ -78,7 +88,8 @@ def build_chat_detail_for_direct_message(
 
     return ChatDetail(
         chat=Chat(
-            chatroom=recipient_id,
+            parent="RootContactGroup",
+            chatroom=recipient_callsign,
             group_owner=False,
             id=recipient_id,
             sender_callsign=sender.callsign,
@@ -94,6 +105,7 @@ def build_chat_detail_for_direct_message(
             type=sender.type,
             relation="p-p",
         ),
+        server_destination=ServerDestination(destinations=f"{endpoint}:{sender.uid}"),
         remarks=Remarks(
             source=f"BAO.F.{platform}.{sender.uid}",
             source_id=sender.uid,
@@ -112,5 +124,5 @@ def decode_chat_detail(detail: str) -> ChatDetail:
     return ChatDetail.from_xml(detail)
 
 
-def encode_chat_detail(detail: ChatDetail) -> str | bytes:
-    return detail.to_xml()
+def encode_chat_detail(detail: ChatDetail) -> bytes:
+    return detail.to_xml()[8:-9]
