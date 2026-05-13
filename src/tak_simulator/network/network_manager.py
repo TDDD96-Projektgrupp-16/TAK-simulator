@@ -51,6 +51,13 @@ class NetworkManager:
     def callback(self, envelope: TakEnvelope, addr: Tuple[str, int]) -> None:
         msg = extract_chat_message(envelope)
         if msg is not None:
+            logger.debug(
+                "Received chat from %s (%s) to %s: %s",
+                msg.from_callsign,
+                msg.from_uid,
+                msg.to_uid,
+                msg.message,
+            )
             self._received_messages.append(msg)
 
     def broadcast(self, envelope: TakEnvelope):
