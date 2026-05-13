@@ -10,18 +10,19 @@ logger = logging.getLogger(__name__)
 
 
 class ChatGroup(BaseXmlModel, tag="chatgrp"):
-    id: str = attr()
     uid0: str = attr()
     uid1: str | None = attr(default=None)
     uid2: str | None = attr(default=None)
+    id: str = attr()
 
 
 class Chat(BaseXmlModel, tag="__chat"):
-    chatroom: str = attr()
+    parent: str | None = attr(default="RootContactGroup")
     group_owner: bool = attr(name="groupOwner")
+    message_id: str = attr(name="messageId")
+    chatroom: str = attr()
     id: str = attr()
     sender_callsign: str = attr(name="senderCallsign")
-    message_id: str = attr(name="messageId")
 
     chatgrp: ChatGroup = element()
 
@@ -56,6 +57,7 @@ class ServerDestination(BaseXmlModel, tag="__serverdestination"):
 
 def build_chat_detail_for_direct_message(
     sender: EmulatorOptions,
+    addr: tuple[str, int],
     recipient_id: str,
     message: str,
     *,
@@ -85,15 +87,15 @@ def build_chat_detail_for_direct_message(
 
     return ChatDetail(
         chat=Chat(
-            chatroom=recipient_id,
             group_owner=False,
             id=recipient_id,
             sender_callsign=sender.callsign,
             message_id=message_id,
+            chatroom=recipient_id,
             chatgrp=ChatGroup(
-                id=recipient_id,
                 uid0=sender.uid,
                 uid1=recipient_id,
+                id=recipient_id,
             ),
         ),
         link=Link(
@@ -102,7 +104,7 @@ def build_chat_detail_for_direct_message(
             relation="p-p",
         ),
         server_destination=ServerDestination(
-            destinations="192.168.31.10:tcp:algal",  # TODO
+            destinations=f"{addr[0]}:{addr[1]}:tcp:{sender.uid}",
         ),
         remarks=Remarks(
             source=f"BAO.F.{platform}.{sender.uid}",

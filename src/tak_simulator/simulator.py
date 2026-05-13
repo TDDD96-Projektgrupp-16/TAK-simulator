@@ -68,7 +68,7 @@ class Simulator:
 
     async def rea(self):
         for i in range(40):
-            await asyncio.sleep(10)
+            await asyncio.sleep(2)
             a = "ANDROID-6eb795c71729d40b"
             # b = "argar"
             await self.emulators[0].send_msg(a, "Hej")

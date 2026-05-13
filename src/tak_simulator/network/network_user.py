@@ -27,7 +27,6 @@ class NetworkUser:
         if self.transport is None:
             await self.make_connection()
         if self.transport is not None:
-            print(V1Codec().encode(envelope))
             self.transport.write(V1Codec().encode(envelope))
 
     async def make_connection(self):

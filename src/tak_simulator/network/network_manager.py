@@ -53,7 +53,7 @@ class NetworkManager:
     def callback(
         self, envelope: TakEnvelope, addr: Tuple[str, int], transport: asyncio.Transport
     ) -> None:
-        logger.debug(f"Received data from {addr}: {envelope}")
+        logger.info(f"Received data from {addr}: {envelope}")
         data = decode_chat_detail(envelope.event.detail.opaque_xml)
         logger.info(
             f"[{data.remarks.to}] received msg {data.remarks.text} from {data.chat.sender_callsign} [{data.remarks.source_id}] {addr}."
@@ -102,6 +102,10 @@ class ServerProtocol(asyncio.Protocol):
 
     def data_received(self, data):
         logger.info(data)
+        dec = V1Codec().decode(data)
+        logger.info(dec)
+        logger.info(V1Codec().encode(dec))
+        logger.info(V0Codec().encode(dec))
         if self._transport is not None:
             if str(data)[2] == "\\":
                 self.network_manager.callback(

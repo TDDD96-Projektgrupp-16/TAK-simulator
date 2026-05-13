@@ -185,7 +185,7 @@ class Emulator:
     def tak_env(self, t: float) -> TakEnvelope:
         return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>', True)
 
-    def _create_msg2(self, t: float, msg: str, to_uid: str) -> TakEnvelope:
+    def _create_msg2(self, t: float, msg: str, to_uid: str, msg_id: str) -> TakEnvelope:
         send_time = datetime.now(UTC)
 
         lat, lon = self.get_position(t)
@@ -198,10 +198,10 @@ class Emulator:
                 releasable_to=None,
                 qos=None,
                 opex=None,
-                uid=f"Geochat.{self.options.uid}.{to_uid}.{uuid.uuid4()}",
+                uid=f"GeoChat.{self.options.uid}.{to_uid}.{msg_id}",
                 send_time=send_time,
                 start_time=send_time,
-                stale_time=send_time + timedelta(seconds=75),  # TODO
+                stale_time=send_time + timedelta(days=1),  # Like ATAK
                 how=self.options.how,
                 point=Point(
                     lat=lat,
@@ -220,9 +220,14 @@ class Emulator:
         )
 
     async def send_msg(self, to_uid: str, msg: str):
-        chat_detail = build_chat_detail_for_direct_message(self.options, to_uid, msg)
+        msguid = str(uuid.uuid4())
+        chat_detail = build_chat_detail_for_direct_message(
+            self.options, ("192.168.31.10", 6969), to_uid, msg, message_id=msguid
+        )
         data = encode_chat_detail(chat_detail)
-        env = self._create_msg2(self.time_keeper.get_time(), str(data)[10:-10], to_uid)
+        env = self._create_msg2(
+            self.time_keeper.get_time(), str(data)[10:-10], to_uid, msguid
+        )
         await self.connection.send_to(to_uid, env)
         logger.info(
             "Emulator %s sent message %s to %s at time %.3f",
