@@ -4,7 +4,6 @@ from datetime import UTC, datetime
 
 from pydantic_xml import BaseXmlModel, attr, element
 
-from tak_simulator import uid
 from tak_simulator.scenario import EmulatorOptions
 
 logger = logging.getLogger(__name__)

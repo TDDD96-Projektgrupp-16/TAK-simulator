@@ -40,15 +40,9 @@ class Emulator:
 
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
     publish_position_event: ScheduledEvent | None = field(init=False, default=None)
-    is_connected: bool = field(init=False, default=True)
     codec: Codec = field(default_factory=V0Codec)
 
-    async def run(self) -> None:
-
-        self.connection = await NetworkManager.create_connection(
-            self.multicast, self.servers, self.port, self.codec
-        )
-
+    def init(self):
         logger.info("started emulator with callsign: %s", self.options.callsign)
 
         self.publish_position_event = self.scheduler.schedule_recurring(
@@ -58,18 +52,27 @@ class Emulator:
             name=f"publish_position:{self.options.callsign}",
         )
 
+        logger.debug(f"Emulator events: {self.options.events}")
+
         for event in self.options.events:
+            logger.debug(f"Trying to schedule event: {event}")
+
             self.scheduler.schedule_once(
                 due_time=event.time,
                 callback=self.handle_scenario_event,
                 event=event,
-                name=f"{event.event_type}:{self.options.callsign}",
+                name=f"{event.type}:{self.options.callsign}",
             )
 
         logger.info(
             "Emulator %s registered recurring position updates and %d scenario events",
             self.options.callsign,
             len(self.options.events),
+        )
+
+    async def run(self) -> None:
+        self.connection = await NetworkManager.create_connection(
+            self.multicast, self.servers, self.port, self.codec
         )
 
     async def publish_position(self) -> None:
@@ -79,58 +82,10 @@ class Emulator:
         self.connection.broadcast(envelope)
 
     async def handle_scenario_event(self, event: ScenarioEvent) -> None:
-        current_time = self.time_keeper.get_time()
+        logger.debug(f"Handling event of type: {event.type}")
 
-        if event.event_type == "chat":
-            if not self.is_connected:
-                logger.info(
-                    "Skipping scenario chat event for disconnected emulator %s at t=%.3f",
-                    self.options.callsign,
-                    current_time,
-                )
-                return
-
-            logger.info(
-                "Scenario chat event for %s at t=%.3f: %s",
-                self.options.callsign,
-                current_time,
-                event.message,
-            )
-            return
-
-        if event.event_type == "connect":
-            if self.is_connected:
-                logger.info(
-                    "%s is already connected at t=%.3f",
-                    self.options.callsign,
-                    current_time,
-                )
-                return
-
-            self.is_connected = True
-            logger.info(
-                "Scenario connect event for %s at t=%.3f",
-                self.options.callsign,
-                current_time,
-            )
-            return
-
-        if event.event_type == "disconnect":
-            if not self.is_connected:
-                logger.info(
-                    "%s is already disconnected at t=%.3f",
-                    self.options.callsign,
-                    current_time,
-                )
-                return
-
-            self.is_connected = False
-            logger.info(
-                "Scenario disconnect event for %s at t=%.3f",
-                self.options.callsign,
-                current_time,
-            )
-            return
+        if event.type == "chat":
+            await self.send_msg(event.recipient_uid, event.message)
 
     def _create_msg(self, t: float, msg: str) -> TakEnvelope:
         send_time = datetime.now(UTC)

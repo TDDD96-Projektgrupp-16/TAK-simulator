@@ -4,9 +4,8 @@ import socket
 import struct
 from typing import Callable, Self, Tuple
 
-from pygments.lexers.basic import QBasicLexer
 
-from tak_simulator.wire import Codec, Contact, TakEnvelope
+from tak_simulator.wire import TakEnvelope
 from tak_simulator.wire.exceptions import DecodeError
 from tak_simulator.wire.v0 import V0Codec
 from tak_simulator.wire.v1 import V1Codec

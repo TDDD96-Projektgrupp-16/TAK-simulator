@@ -10,7 +10,6 @@ from tak_simulator.util import host_ip
 from tak_simulator.wire import Codec, TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
 from tak_simulator.wire.v1 import V1Codec
-from tak_simulator.xml_parse import ChatDetail, decode_chat_detail
 
 logger = logging.getLogger(__name__)
 
