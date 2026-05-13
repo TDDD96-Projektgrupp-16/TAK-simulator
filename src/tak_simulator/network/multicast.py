@@ -106,6 +106,9 @@ class MulticastHandler:
     def get_user_callsign(self, uid: str) -> str | None:
         return self._callsigns.get(uid)
 
+    def get_known_users(self) -> dict[str, str]:
+        return dict(self._callsigns)
+
     def send(self, envelope: TakEnvelope) -> None:
         if self.transport is None:
             return

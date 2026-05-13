@@ -10,6 +10,7 @@ from tak_simulator.scenario_scheduler import ScenarioScheduler
 from tak_simulator.time_keeper import TimeKeeper
 from tak_simulator.wire import TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
+from tak_simulator.xml_parse import ChatMessage
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ class Simulator:
         self.emulators: list[Emulator] = []
         self.time_keeper = TimeKeeper()
         self.scheduler = ScenarioScheduler(self.time_keeper)
+        self.received_messages: list[ChatMessage] = []
 
         if server_configs is None:
             server_configs = []
