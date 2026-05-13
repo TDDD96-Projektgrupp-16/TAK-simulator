@@ -41,6 +41,7 @@ class Emulator:
     simulation_start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
     publish_position_event: ScheduledEvent | None = field(init=False, default=None)
     codec: Codec = field(default_factory=V0Codec)
+    connection: NetworkManager | None = field(init=False, default=None)
 
     def init(self):
         logger.info("started emulator with callsign: %s", self.options.callsign)
@@ -74,6 +75,10 @@ class Emulator:
         self.connection = await NetworkManager.create_connection(
             self.multicast, self.servers, self.port, self.codec
         )
+
+    @property
+    def is_connected(self) -> bool:
+        return self.connection is not None
 
     async def publish_position(self) -> None:
         t = self.time_keeper.get_time()
@@ -137,6 +142,9 @@ class Emulator:
 
     async def send_msg(self, to_uid: str, msg: str):
         logger.info(f"Emulator.send_msg({to_uid}, {msg}) begins")
+        if self.connection is None:
+            logger.warning("Cannot send message: emulator is not connected")
+            return
         to_callsign = self.connection.multicast.get_user_callsign(
             to_uid
         ) or self.connection.server_handler.get_user_callsign(to_uid)
@@ -161,6 +169,16 @@ class Emulator:
             to_uid,
             self.time_keeper.get_time(),
         )
+
+    def get_known_users(self) -> dict[str, str]:
+        if not hasattr(self, "connection") or self.connection is None:
+            return {}
+        return self.connection.get_known_users()
+
+    def get_received_messages(self) -> list:
+        if not hasattr(self, "connection") or self.connection is None:
+            return []
+        return self.connection.get_received_messages()
 
     def get_position(self, t: float) -> tuple[float, float]:
         i = 0

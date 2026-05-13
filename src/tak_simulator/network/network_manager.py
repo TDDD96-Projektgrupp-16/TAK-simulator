@@ -5,6 +5,7 @@ from typing import List, Tuple, cast
 
 from tak_simulator.network.multicast import MulticastHandler
 from tak_simulator.network.server import Server, ServerHandler
+from tak_simulator.xml_parse import ChatMessage, extract_chat_message
 from tak_simulator.util import host_ip
 from tak_simulator.wire import Codec, TakEnvelope
 from tak_simulator.wire.v0 import V0Codec
@@ -26,6 +27,7 @@ class NetworkManager:
         self.server_handler = server_handler
         self.codec = codec
         self.port = port
+        self._received_messages: list[ChatMessage] = []
 
     @classmethod
     async def create_connection(
@@ -48,9 +50,9 @@ class NetworkManager:
 
     def callback(self, envelope: TakEnvelope, addr: Tuple[str, int]) -> None:
         logger.debug(f"Received data from {addr}: {envelope}")
-        if envelope.event is None:
-            return
-        uid = envelope.event.uid
+        msg = extract_chat_message(envelope)
+        if msg is not None:
+            self._received_messages.append(msg)
 
     def broadcast(self, envelope: TakEnvelope):
         """Sends data to all servers and multicast group."""
@@ -83,6 +85,15 @@ class NetworkManager:
 
     def get_endpoint(self):
         return f"{host_ip()}:{self.port}:tcp"
+
+    def get_known_users(self) -> dict[str, str]:
+        known: dict[str, str] = {}
+        known.update(self.multicast.get_known_users())
+        known.update(self.server_handler.get_known_users())
+        return known
+
+    def get_received_messages(self) -> list[ChatMessage]:
+        return list(self._received_messages)
 
 
 class ServerProtocol(asyncio.Protocol):

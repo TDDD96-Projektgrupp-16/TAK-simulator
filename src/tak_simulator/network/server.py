@@ -55,6 +55,12 @@ class ServerHandler:
                 return callsign
         return None
 
+    def get_known_users(self) -> dict[str, str]:
+        known: dict[str, str] = {}
+        for server in self.servers:
+            known.update(server.get_known_users())
+        return known
+
 
 class Server:
     def __init__(
@@ -132,6 +138,9 @@ class Server:
 
     def get_user_callsign(self, uid: str) -> str | None:
         return self._callsigns.get(uid)
+
+    def get_known_users(self) -> dict[str, str]:
+        return {uid: callsign for uid, callsign in self._callsigns.items() if callsign}
 
 
 class ServerProtocol(asyncio.Protocol):
