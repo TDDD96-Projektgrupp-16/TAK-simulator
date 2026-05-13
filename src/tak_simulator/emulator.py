@@ -43,7 +43,7 @@ class Emulator:
     codec: Codec = field(default_factory=V0Codec)
 
     def init(self):
-        logger.info("started emulator with callsign: %s", self.options.callsign)
+        logger.info("Emulator %s started", self.options.callsign)
 
         self.publish_position_event = self.scheduler.schedule_recurring(
             start_time=0.0,
@@ -52,11 +52,7 @@ class Emulator:
             name=f"publish_position:{self.options.callsign}",
         )
 
-        logger.debug(f"Emulator events: {self.options.events}")
-
         for event in self.options.events:
-            logger.debug(f"Trying to schedule event: {event}")
-
             self.scheduler.schedule_once(
                 due_time=event.time,
                 callback=self.handle_scenario_event,
@@ -65,14 +61,20 @@ class Emulator:
             )
 
         logger.info(
-            "Emulator %s registered recurring position updates and %d scenario events",
+            "Emulator %s registered %d scenario events",
             self.options.callsign,
             len(self.options.events),
         )
 
     async def run(self) -> None:
+        logger.info(
+            "Emulator %s connecting on port %d", self.options.callsign, self.port
+        )
         self.connection = await NetworkManager.create_connection(
             self.multicast, self.servers, self.port, self.codec
+        )
+        logger.info(
+            "Emulator %s connected", self.options.callsign
         )
 
     async def publish_position(self) -> None:
@@ -82,9 +84,14 @@ class Emulator:
         self.connection.broadcast(envelope)
 
     async def handle_scenario_event(self, event: ScenarioEvent) -> None:
-        logger.debug(f"Handling event of type: {event.type}")
-
         if event.type == "chat":
+            logger.info(
+                "Emulator %s sending chat to %s at t=%.1f: %s",
+                self.options.callsign,
+                event.recipient_uid,
+                self.time_keeper.get_time(),
+                event.message,
+            )
             await self.send_msg(event.recipient_uid, event.message)
 
     def _create_msg(self, t: float, msg: str) -> TakEnvelope:
@@ -136,7 +143,6 @@ class Emulator:
         return self._create_msg(t, f'<uid Droid="{self.options.callsign}"/>')
 
     async def send_msg(self, to_uid: str, msg: str):
-        logger.info(f"Emulator.send_msg({to_uid}, {msg}) begins")
         to_callsign = self.connection.multicast.get_user_callsign(
             to_uid
         ) or self.connection.server_handler.get_user_callsign(to_uid)
@@ -153,14 +159,11 @@ class Emulator:
         )
         envelope.event.type = "b-t-f"
         envelope.event.how = "h-g-i-g-o"
-        await self.connection.send_to(to_uid, envelope)
-        logger.info(
-            "Emulator %s sent message %s to %s at time %.3f",
-            self.options.uid,
-            msg,
-            to_uid,
-            self.time_keeper.get_time(),
-        )
+        success = await self.connection.send_to(to_uid, envelope)
+        if not success:
+            logger.warning(
+                "Failed to deliver message to %s", to_uid
+            )
 
     def get_position(self, t: float) -> tuple[float, float]:
         i = 0

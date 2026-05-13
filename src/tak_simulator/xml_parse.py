@@ -1,12 +1,9 @@
-import logging
 import uuid
 from datetime import UTC, datetime
 
 from pydantic_xml import BaseXmlModel, attr, element
 
 from tak_simulator.scenario import EmulatorOptions
-
-logger = logging.getLogger(__name__)
 
 
 class ChatGroup(BaseXmlModel, tag="chatgrp"):

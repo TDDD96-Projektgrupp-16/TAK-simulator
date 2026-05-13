@@ -58,23 +58,23 @@ class MulticastHandler:
         return instance
 
     def _multicast_data_received(self, data: bytes, addr: tuple[str, int]) -> None:
+        host, port = addr
         try:
             if data.startswith(b"\277\001\277"):
                 envelope = self.v1_codec.decode(data)
             else:
                 envelope = self.v0_codec.decode(data)
         except DecodeError:
-            logger.warning("Failed to decode multicast packet from %s", addr)
+            logger.warning("Failed to decode multicast packet from %s:%d", host, port)
             return
 
-        logger.debug("Received multicast envelope from %s", addr)
+        logger.debug("Received multicast envelope from %s:%d", host, port)
 
         if (
             envelope.event is not None
             and envelope.event.detail is not None
             and envelope.event.detail.contact is not None
             and envelope.event.detail.contact.endpoint is not None
-            and envelope.event.detail.contact is not None
             and envelope.event.detail.contact.callsign is not None
         ):
             try:
@@ -86,7 +86,7 @@ class MulticastHandler:
                         envelope.event.detail.contact.callsign
                     )
                     logger.debug(
-                        "Registered TCP endpoint for %s: %s:%s",
+                        "Registered TCP endpoint for %s at %s:%s",
                         envelope.event.uid,
                         user,
                         port,
@@ -112,7 +112,7 @@ class MulticastHandler:
 
         data = self.v1_codec.encode(envelope)
         logger.debug(
-            "Sending multicast envelope to %s:%s", MULTICAST_ADDR, MULTICAST_PORT
+            "Sending multicast envelope to %s:%d", MULTICAST_ADDR, MULTICAST_PORT
         )
         self.transport.sendto(data, (MULTICAST_ADDR, MULTICAST_PORT))
 

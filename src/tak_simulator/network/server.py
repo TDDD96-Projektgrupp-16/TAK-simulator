@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import ssl
 from typing import Callable, List, Self, cast
 from xml.etree import ElementTree as ET
@@ -6,6 +7,8 @@ from xml.etree import ElementTree as ET
 from pydantic import BaseModel
 
 from tak_simulator.wire import Codec, TakEnvelope
+
+logger = logging.getLogger(__name__)
 
 
 class ServerConfig(BaseModel):
@@ -29,8 +32,14 @@ class ServerHandler:
     ) -> Self:
         instance = cls(servers)
         for server in instance.servers:
-            await server.connect()
-            server.set_callback(instance._callback)
+            try:
+                await server.connect()
+                server.set_callback(instance._callback)
+            except Exception:
+                logger.error(
+                    "Failed to connect to server %s:%d", server.ip, server.port
+                )
+                raise
         return instance
 
     def send(self, envelope: TakEnvelope) -> None:
@@ -103,7 +112,7 @@ class Server:
                 "Certificate files (cafile, certfile, keyfile) are required for TLS connection"
             )
         ctx = ssl.create_default_context(cafile=self.cafile)
-        ctx.check_hostname = False  # TODO
+        ctx.check_hostname = False
         ctx.load_cert_chain(certfile=self.certfile, keyfile=self.keyfile)
 
         loop = asyncio.get_event_loop()
@@ -111,6 +120,7 @@ class Server:
             lambda: ServerProtocol(self), self.ip, self.port, ssl=ctx
         )
         self.set_server(transport)
+        logger.info("Connected to TAK server %s:%d", self.ip, self.port)
 
     def _callback(self, data: bytes, addr: tuple[str, int]) -> None:
         envelope = self.codec.decode(data)

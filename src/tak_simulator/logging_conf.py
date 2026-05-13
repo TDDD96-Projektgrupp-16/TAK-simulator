@@ -7,7 +7,7 @@ def logging_setup(level):
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
-            "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
+            "standard": {"format": "%(asctime)s [%(levelname)-5s] %(name)s: %(message)s"},
         },
         "handlers": {
             "default": {
@@ -20,12 +20,12 @@ def logging_setup(level):
                 "level": level,
                 "formatter": "standard",
                 "class": "logging.FileHandler",
-                "filename": "simulator.log",  # Background log file
+                "filename": "simulator.log",
                 "mode": "w",
             },
         },
         "loggers": {
-            "": {  # root logger
+            "": {
                 "handlers": ["default", "file"],
                 "level": level,
                 "propagate": False,
@@ -34,6 +34,3 @@ def logging_setup(level):
     }
 
     logging.config.dictConfig(_LOGGING_CONFIG)
-
-    logger = logging.getLogger(__name__)
-    logger.info(f"Set up logger({level})")

@@ -47,10 +47,8 @@ class NetworkManager:
         await self._server.serve_forever()
 
     def callback(self, envelope: TakEnvelope, addr: Tuple[str, int]) -> None:
-        logger.debug(f"Received data from {addr}: {envelope}")
         if envelope.event is None:
             return
-        uid = envelope.event.uid
 
     def broadcast(self, envelope: TakEnvelope):
         """Sends data to all servers and multicast group."""
@@ -58,26 +56,24 @@ class NetworkManager:
         self.server_handler.send(envelope)
 
     async def send_to(self, uid: str, envelope: TakEnvelope) -> bool:
-        """Sends data to a specific user via tcp or server."""
-        logger.info(f"Network.send_to({uid}) begins")
-
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            logger.debug(f"Attempting to send data to {uid} via TCP")
             addr = self.multicast.get_user_addr(
                 uid
             ) or self.server_handler.get_user_addr(uid)
             if addr is None:
                 logger.warning(
-                    f"Could not find address for {uid} in multicast or server"
+                    "Could not find address for %s in multicast or server", uid
                 )
                 return False
-            logger.debug(f"Got address for {uid} from multicast: {addr}")
-            s.connect(addr)
-            logger.debug(f"Connected to {uid} at {addr}, sending data: {envelope}")
-            data = V1Codec().encode(envelope)
-            logger.debug(f"Encoded bytes as: {data}")
-            s.sendall(data)
-            logger.debug(f"Data sent to {uid} at {addr}")
+            try:
+                s.connect(addr)
+                data = V1Codec().encode(envelope)
+                s.sendall(data)
+            except OSError:
+                logger.error(
+                    "Failed to send message to %s at %s:%d", uid, addr[0], addr[1]
+                )
+                return False
 
         return True
 
@@ -92,12 +88,8 @@ class ServerProtocol(asyncio.Protocol):
 
     def connection_made(self, transport):
         self._transport = cast(asyncio.Transport, transport)
-        logger.debug(
-            f"Connection made from {self._transport.get_extra_info('peername')}"
-        )
 
     def data_received(self, data):
-        logger.debug(f"Data received {data}")
 
         if self._transport is not None:
             if data.startswith(b"\277\001\277"):

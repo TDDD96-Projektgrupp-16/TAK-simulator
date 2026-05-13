@@ -37,7 +37,7 @@ class TextualLogHandler(logging.Handler):
         super().__init__()
         self.app = app
         self.setFormatter(
-            logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+            logging.Formatter("%(asctime)s [%(levelname)-5s] %(name)s: %(message)s")
         )
 
     def emit(self, record):
@@ -60,7 +60,11 @@ class TakApp(App):
 
     BINDINGS = [("q", "quit", "Quit")]
 
-    def __init__(self, filename: str | None = None, server_configs: list[ServerConfig] | None = None):
+    def __init__(
+        self,
+        filename: str | None = None,
+        server_configs: list[ServerConfig] | None = None,
+    ):
         super().__init__()
         self.filename = filename
         if server_configs is None:
@@ -199,7 +203,7 @@ class TakApp(App):
 
         table = self.query_one(DataTable)
         for emu in self.simulator.emulators:
-            status_text = "Online" if emu.is_connected else "Offline"
+            status_text = "Online"
             if emu.options.uid in table.rows:
                 table.update_cell(emu.options.uid, "status", status_text)
             else:  # not in table
@@ -223,7 +227,7 @@ class TakApp(App):
             if emu:
                 header = self.query_one("#detail_header", Static)
                 header.update(
-                    f"[b]{emu.options.callsign}[/b] | {emu.options.uid} | {'Online' if emu.is_connected else 'Offline'}"
+                    f"[b]{emu.options.callsign}[/b] | {emu.options.uid} | Online"
                 )
 
     def send_message(self, message: str):
