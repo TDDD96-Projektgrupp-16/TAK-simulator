@@ -20,7 +20,7 @@ def logging_setup(level):
                 "level": level,
                 "formatter": "standard",
                 "class": "logging.FileHandler",
-                "filename": "simulator.log",  # Background log file
+                "filename": "simulator.log",
                 "mode": "w",
             },
         },

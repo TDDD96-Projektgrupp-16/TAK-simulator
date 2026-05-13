@@ -39,4 +39,5 @@ package = true
 
 [tool.coverage.run]
 source = ["src"]
-omit = ["src/tak_simulator/proto/*"]
+omit = ["src/tak_simulator/proto/*",
+    "src/tak_simulator/ui/*"]

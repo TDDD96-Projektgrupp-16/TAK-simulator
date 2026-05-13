@@ -57,7 +57,6 @@ class Emulator:
 
         for event in self.options.events:
             logger.debug(f"Trying to schedule event: {event}")
-
             self.scheduler.schedule_once(
                 due_time=event.time,
                 callback=self.handle_scenario_event,
