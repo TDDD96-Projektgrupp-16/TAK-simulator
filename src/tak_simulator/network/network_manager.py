@@ -4,7 +4,6 @@ import socket
 from typing import List, Tuple, cast
 
 from tak_simulator.network.multicast import MulticastHandler
-from tak_simulator.network.network_user import NetworkUser
 from tak_simulator.network.server import Server, ServerHandler
 from tak_simulator.util import host_ip
 from tak_simulator.wire import Codec, TakEnvelope
@@ -25,7 +24,6 @@ class NetworkManager:
         self._server = None
         self.multicast = multicast
         self.server_handler = server_handler
-        self.users: dict[str, NetworkUser] = {}
         self.codec = codec
         self.port = port
 
@@ -48,20 +46,11 @@ class NetworkManager:
         )
         await self._server.serve_forever()
 
-    def callback(
-        self, envelope: TakEnvelope, addr: Tuple[str, int], transport: asyncio.Transport
-    ) -> None:
+    def callback(self, envelope: TakEnvelope, addr: Tuple[str, int]) -> None:
         logger.debug(f"Received data from {addr}: {envelope}")
         if envelope.event is None:
             return
         uid = envelope.event.uid
-
-        if uid not in self.users:
-            self.users[uid] = NetworkUser(
-                uid, envelope.event.contact.callsign, addr, V0Codec(), transport
-            )
-
-        self.users[uid].callback(envelope)
 
     def broadcast(self, envelope: TakEnvelope):
         """Sends data to all servers and multicast group."""
@@ -74,7 +63,14 @@ class NetworkManager:
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             logger.debug(f"Attempting to send data to {uid} via TCP")
-            addr = self.multicast.get_user_addr(uid)
+            addr = self.multicast.get_user_addr(
+                uid
+            ) or self.server_handler.get_user_addr(uid)
+            if addr is None:
+                logger.warning(
+                    f"Could not find address for {uid} in multicast or server"
+                )
+                return False
             logger.debug(f"Got address for {uid} from multicast: {addr}")
             s.connect(addr)
             logger.debug(f"Connected to {uid} at {addr}, sending data: {envelope}")
@@ -110,5 +106,5 @@ class ServerProtocol(asyncio.Protocol):
                 envelope = V0Codec().decode(data)
 
             self.network_manager.callback(
-                envelope, self._transport.get_extra_info("peername"), self._transport
+                envelope, self._transport.get_extra_info("peername")
             )

@@ -74,6 +74,8 @@ class MulticastHandler:
             and envelope.event.detail is not None
             and envelope.event.detail.contact is not None
             and envelope.event.detail.contact.endpoint is not None
+            and envelope.event.detail.contact is not None
+            and envelope.event.detail.contact.callsign is not None
         ):
             try:
                 user, port, protocol = envelope.event.detail.contact.endpoint.split(":")

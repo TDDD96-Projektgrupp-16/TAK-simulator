@@ -137,10 +137,12 @@ class Emulator:
 
     async def send_msg(self, to_uid: str, msg: str):
         logger.info(f"Emulator.send_msg({to_uid}, {msg}) begins")
-        to_callsign = (
-            self.connection.multicast.get_user_callsign(to_uid)
-            or self.connection.users[to_uid].callsign
-        )
+        to_callsign = self.connection.multicast.get_user_callsign(
+            to_uid
+        ) or self.connection.server_handler.get_user_callsign(to_uid)
+        if to_callsign is None:
+            logger.warning("Cannot send message to %s: callsign not found", to_uid)
+            return
         chat_detail = build_chat_detail_for_direct_message(
             self.options, to_uid, to_callsign, self.connection.get_endpoint(), msg
         )
