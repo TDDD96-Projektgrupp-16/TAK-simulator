@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from socket import socket
+import socket
 from typing import List, Tuple, cast
 
 from tak_simulator.network.multicast import MulticastHandler
@@ -79,7 +79,9 @@ class NetworkManager:
             logger.debug(f"Got address for {uid} from multicast: {addr}")
             s.connect(addr)
             logger.debug(f"Connected to {uid} at {addr}, sending data: {envelope}")
-            s.sendall(self.codec.encode(envelope))
+            data = V1Codec().encode(envelope)
+            logger.debug(f"Encoded bytes as: {data}")
+            s.sendall(data)
             logger.debug(f"Data sent to {uid} at {addr}")
 
         return True
