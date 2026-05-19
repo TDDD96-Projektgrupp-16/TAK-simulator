@@ -94,10 +94,10 @@ class TakApp(App):
 
     async def on_mount(self) -> None:
         # set up logger - remove stdout handlers to avoid clashing with TUI
-        # keep any existing stderr/warning handlers
+        # keep existing FileHandler and stderr/warning handlers
         root_logger = logging.getLogger()
         for handler in list(root_logger.handlers):
-            if isinstance(handler, logging.StreamHandler) and getattr(handler, "stream", None) is sys.stdout:
+            if isinstance(handler, logging.StreamHandler) and type(handler) is logging.StreamHandler:
                 root_logger.removeHandler(handler)
         self.textual_log_handler = TextualLogHandler(self)
         root_logger.addHandler(self.textual_log_handler)
