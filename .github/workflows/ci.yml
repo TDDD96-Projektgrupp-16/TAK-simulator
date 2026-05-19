@@ -1,0 +1,50 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+env:
+  UV_CACHE_DIR: .uv-cache
+  REPORT_PATH: report.xml
+
+jobs:
+  run_tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.14-slim
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.UV_CACHE_DIR }}
+          key: uv-cache-${{ hashFiles('**/uv.lock') }}
+          restore-keys: |
+            uv-cache-
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Sync dependencies
+        run: uv sync --locked
+
+      - name: Generate Protobuf files
+        run: bash -c 'uv run python-grpc-tools-protoc --proto_path=proto --python_out=src/tak_simulator/proto proto/*.proto'
+
+      - name: Run pytest
+        run: uv run pytest tests/ --junitxml=${{ env.REPORT_PATH }}
+
+      - name: Upload JUnit report
+        if: always() # Ensures the report uploads even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: ${{ env.REPORT_PATH }}
+          retention-days: 30
