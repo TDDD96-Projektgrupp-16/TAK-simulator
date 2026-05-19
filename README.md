@@ -20,13 +20,13 @@ A **TAK (Team Awareness Kit) client simulator** that emulates multiple ATAK and 
 uv run tak_simulator
 
 # Run with a specific scenario
-uv run tak_simulator examples/scenario.json
+uv run tak_simulator scenarios/scenario.json
 
 # Run headless
-uv run tak_simulator --notui examples/scenario.json
+uv run tak_simulator --notui scenarios/scenario.json
 
 # Connect with mTLS
-uv run tak_simulator --server HOST:PORT:CAFILE:CERTFILE:KEYFILE examples/scenario.json
+uv run tak_simulator --server HOST:PORT:CAFILE:CERTFILE:KEYFILE scenarios/scenario.json
 ```
 
 ## Scenario Format
