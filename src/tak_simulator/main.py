@@ -21,6 +21,12 @@ def main():
         app = TAK(filename=args.filename, server_configs=args.servers)
         app.start()
     else:
+        # Remove stdout handlers before TUI starts to prevent log output
+        # from corrupting the Textual display
+        root_logger = logging.getLogger()
+        for handler in list(root_logger.handlers):
+            if isinstance(handler, logging.StreamHandler) and type(handler) is logging.StreamHandler:
+                root_logger.removeHandler(handler)
         logger.info("TAK Simulator starting (TUI mode)")
         app = TakApp(filename=args.filename, server_configs=args.servers)
         app.run()
