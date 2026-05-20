@@ -16,7 +16,7 @@ A **TAK (Team Awareness Kit) client simulator** that emulates multiple ATAK and 
 ## Usage
 
 ```sh
-# Run simulator (opens TUI)
+# Run the simulator (opens TUI)
 uv run tak_simulator
 
 # Run with a specific scenario
